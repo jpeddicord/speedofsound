@@ -1,4 +1,4 @@
-package edu.osu.musicspeed;
+package edu.osu.speedofsound;
 
 import android.app.Activity;
 import android.os.Bundle;
