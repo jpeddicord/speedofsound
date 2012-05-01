@@ -16,7 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class Speed extends Activity {
+public class SpeedActivity extends Activity {
 
 	LocationManager locationManager;
 	LocationUpdater locationUpdater;
@@ -99,7 +99,7 @@ public class Speed extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.preferences:
-			Intent intent = new Intent(this, Preferences.class);
+			Intent intent = new Intent(this, PreferencesActivity.class);
 			startActivity(intent);
 			break;
 		}
