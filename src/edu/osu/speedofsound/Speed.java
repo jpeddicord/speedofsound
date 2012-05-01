@@ -9,6 +9,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -90,6 +91,7 @@ public class Speed extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.speed_menu, menu);
+		MenuItemCompat.setShowAsAction(menu.findItem(R.id.preferences), 1);
 		return true;
 	}
 	
@@ -105,6 +107,9 @@ public class Speed extends Activity {
 	}
 
 	private class LocationUpdater implements LocationListener {
+		
+		private Location previousLocation = null;
+		
 		public void onLocationChanged(Location location) {
 			// grab the speed
 			float speed;
@@ -112,8 +117,13 @@ public class Speed extends Activity {
 			// use the GPS-provided speed if available
 			if (location.hasSpeed()) {
 				speed = location.getSpeed();
+			// speed fall-back (mostly for the emulator)
 			} else {
-				// TODO: speed fallback
+				if (this.previousLocation != null) {
+					previousLocation.distanceTo(location);
+				}
+				this.previousLocation = location;
+				// TODO: speed fall-back
 				speed = 0;
 			}
 			float mph = convertMPH(speed);
