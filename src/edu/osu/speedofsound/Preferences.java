@@ -1,13 +1,12 @@
 package edu.osu.speedofsound;
 
-import java.util.List;
-
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
 public class Preferences extends PreferenceActivity {
     
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
     	

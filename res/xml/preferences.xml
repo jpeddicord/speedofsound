@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    <CheckBoxPreference android:summary="who knows what this does" android:title="test preference"/>
+    
+    
+    <PreferenceCategory android:title="Slow Speed"><EditTextPreference android:summary="Minimum speed to start adjusting volume" android:title="Slowest Speed" android:key="low_speed" android:defaultValue="15"/><EditTextPreference android:title="Minimum Volume" android:summary="Volume at the minimum speed" android:key="low_volume" android:defaultValue="10"/></PreferenceCategory>
+    <PreferenceCategory android:title="High Speed">
+        <EditTextPreference android:summary="Speed where maximum volume applies" android:title="Fastest Speed" android:key="high_speed" android:defaultValue="50"/>
+        <EditTextPreference android:title="Max Volume" android:summary="Volume at the maximum speed" android:key="high_volume" android:defaultValue="100"/>
+    </PreferenceCategory>
     
 
 </PreferenceScreen>
