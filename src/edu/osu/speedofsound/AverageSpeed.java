@@ -1,12 +1,12 @@
 package edu.osu.speedofsound;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AverageSpeed {
 
 	private int size;
-	// XXX: should this be a queue?
-	private List<Float> speeds;
+	private List<Float> speeds = new ArrayList<Float>();
 
 	public AverageSpeed(int size) {
 		this.size = size;
