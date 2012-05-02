@@ -10,6 +10,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -32,7 +33,7 @@ public class SpeedActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		this.settings = getPreferences(0);
+		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
 		this.audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		this.maxVolume = this.audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 		this.locationUpdater = new LocationUpdater();
@@ -62,10 +63,12 @@ public class SpeedActivity extends Activity {
 		 * approach it.
 		 */
 		float volume = 0.0f;
-		int lowSpeed = this.settings.getInt("low_speed", 15);
-		int lowVolume = this.settings.getInt("low_volume", 50);
-		int highSpeed = this.settings.getInt("high_speed", 50);
-		int highVolume = this.settings.getInt("high_volume", 100);
+		
+		int lowSpeed = Integer.parseInt(this.settings.getString("low_speed", "15"));
+		int lowVolume = Integer.parseInt(this.settings.getString("low_volume", "50"));
+		int highSpeed = Integer.parseInt(this.settings.getString("high_speed", "50"));
+		int highVolume = Integer.parseInt(this.settings.getString("high_volume", "100"));
+		
 
 		// minimum volume
 		if (mphSpeed < lowSpeed) {
