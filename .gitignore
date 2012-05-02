@@ -3,3 +3,4 @@ gen/
 lib/
 .metadata
 local.properties
+proguard-project.txt
