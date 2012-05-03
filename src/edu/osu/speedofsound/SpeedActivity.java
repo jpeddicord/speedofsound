@@ -38,7 +38,7 @@ public class SpeedActivity extends Activity {
 		this.maxVolume = this.audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 		this.locationUpdater = new LocationUpdater();
 		this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		this.averager = new AverageSpeed(3);
+		this.averager = new AverageSpeed(6);
 
 		this.startListening();
 	}
@@ -184,6 +184,7 @@ public class SpeedActivity extends Activity {
 			averager.push(mph);
 
 			// update the speed
+			Log.v(TAG, "Getting average speed");
 			float avg = averager.getAverage();
 			Log.v(TAG, "Average currently " + avg);
 			int volume = updateVolume(avg);
