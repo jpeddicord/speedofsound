@@ -12,5 +12,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".PreferencesActivity"></activity>
+        <service android:name=".SoundService"></service>
     </application>
 </manifest>

@@ -16,6 +16,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
 public class SpeedActivity extends Activity {
@@ -40,6 +43,22 @@ public class SpeedActivity extends Activity {
 		this.locationUpdater = new LocationUpdater();
 		this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		this.averager = new AverageSpeed(6);
+
+		CheckBox enabledCheckBox = (CheckBox) findViewById(R.id.checkbox_enabled);
+		enabledCheckBox.setOnCheckedChangeListener(
+			new OnCheckedChangeListener() {
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					Intent intent = new Intent(SpeedActivity.this, SoundService.class);
+					if (isChecked) {
+						startService(intent);
+					} else {
+						stopService(intent);
+					}
+
+				}
+		
+			}
+		);
 
 		this.startListening();
 	}
@@ -85,8 +104,8 @@ public class SpeedActivity extends Activity {
 			float volumeRange = (highVolume - lowVolume) / 100.0f;
 			float speedRangeFrac = (mphSpeed - lowSpeed)
 					/ (highSpeed - lowSpeed);
-			float volumeRangeFrac = (float) (Math.log1p(speedRangeFrac) /
-					Math.log1p(1));
+			float volumeRangeFrac = (float) (Math.log1p(speedRangeFrac) / Math
+					.log1p(1));
 			volume = lowVolume / 100.0f + volumeRange * volumeRangeFrac;
 			Log.d(TAG, "Log scale triggered, using volume " + volume);
 		}
@@ -160,7 +179,8 @@ public class SpeedActivity extends Activity {
 
 					// get the distance between this and the previous update
 					float meters = previousLocation.distanceTo(location);
-					float timeDelta = location.getTime() - previousLocation.getTime();
+					float timeDelta = location.getTime()
+							- previousLocation.getTime();
 
 					Log.v(TAG, "Location distance: " + meters);
 
@@ -173,18 +193,18 @@ public class SpeedActivity extends Activity {
 
 				this.previousLocation = location;
 			}
-			float mph = convertMPH(speed);
+			float mph = SpeedActivity.this.convertMPH(speed);
 
 			// push average to filter out spikes
 			Log.v(TAG, "Pushing speed " + mph);
-			averager.push(mph);
+			SpeedActivity.this.averager.push(mph);
 
 			// update the speed
 			Log.v(TAG, "Getting average speed");
-			float avg = averager.getAverage();
+			float avg = SpeedActivity.this.averager.getAverage();
 			Log.v(TAG, "Average currently " + avg);
-			int volume = updateVolume(avg);
-			updateUI(mph, volume);
+			int volume = SpeedActivity.this.updateVolume(avg);
+			SpeedActivity.this.updateUI(mph, volume);
 		}
 
 		public void onProviderDisabled(String provider) {
