@@ -1,42 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    
-    
-    <PreferenceCategory android:title="General">
-        <CheckBoxPreference 
-            android:summary="Stop messing with the volume when changed" 
-            android:title="Disable on volume change" 
-            android:key="disable_on_change"/>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:osu="http://schemas.android.com/apk/res/edu.osu.speedofsound" >
+
+    <PreferenceCategory android:title="General" >
+        <CheckBoxPreference
+            android:key="disable_on_change"
+            android:summary="Stop messing with the volume when changed"
+            android:title="Disable on volume change" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="Slow Speed">
-        <EditTextPreference 
-            android:summary="Minimum speed to start adjusting volume" 
-            android:title="Slowest Speed" 
-            android:key="low_speed" 
-            android:numeric="integer" 
-            android:defaultValue="15"/>
-        <EditTextPreference 
-            android:title="Minimum Volume" 
-            android:summary="Volume at the minimum speed" 
-            android:key="low_volume" 
-            android:numeric="integer" 
-            android:defaultValue="40"/>
+    <PreferenceCategory android:title="Slow Speed" >
+        <edu.osu.speedofsound.SliderPreference
+            android:defaultValue="15"
+            android:key="low_speed"
+            android:summary="Minimum speed to start adjusting volume"
+            android:title="Slowest Speed"
+            osu:maxValue="80"
+            osu:minValue="0" />
+        <edu.osu.speedofsound.SliderPreference
+            android:defaultValue="60"
+            android:key="low_volume"
+            android:summary="Volume at the minimum speed"
+            android:title="Minimum Volume"
+            osu:maxValue="100"
+            osu:minValue="0" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="High Speed">
-        <EditTextPreference 
-            android:summary="Speed where maximum volume applies" 
-            android:title="Fastest Speed" 
-            android:key="high_speed" 
-            android:numeric="integer" 
-            android:defaultValue="50"/>
-        <EditTextPreference 
-            android:title="Max Volume" 
-            android:summary="Volume at the maximum speed" 
-            android:key="high_volume" 
-            android:numeric="integer" 
-            android:defaultValue="100"/>
+    <PreferenceCategory android:title="High Speed" >
+        <edu.osu.speedofsound.SliderPreference
+            android:defaultValue="50"
+            android:key="high_speed"
+            android:summary="Speed where maximum volume applies"
+            android:title="Fastest Speed"
+            osu:maxValue="80"
+            osu:minValue="0" />
+        <edu.osu.speedofsound.SliderPreference
+            android:defaultValue="100"
+            android:key="high_volume"
+            android:summary="Volume at the maximum speed"
+            android:title="Max Volume"
+            osu:maxValue="100"
+            osu:minValue="0" />
     </PreferenceCategory>
-    
-    
 
 </PreferenceScreen>
