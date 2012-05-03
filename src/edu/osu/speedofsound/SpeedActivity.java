@@ -32,10 +32,11 @@ public class SpeedActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		
+
 		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
 		this.audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		this.maxVolume = this.audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+		this.maxVolume = this.audioManager
+				.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 		this.locationUpdater = new LocationUpdater();
 		this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		this.averager = new AverageSpeed(6);
@@ -63,47 +64,43 @@ public class SpeedActivity extends Activity {
 		 * approach it.
 		 */
 		float volume = 0.0f;
-		
+
 		int lowSpeed = this.settings.getInt("low_speed", 15);
 		int lowVolume = this.settings.getInt("low_volume", 60);
 		int highSpeed = this.settings.getInt("high_speed", 50);
 		int highVolume = this.settings.getInt("high_volume", 100);
 
-		// minimum volume
 		if (mphSpeed < lowSpeed) {
+			// minimum volume
 			Log.d(TAG, "Low speed triggered");
 			volume = lowVolume / 100.0f;
-			
+
 		} else if (mphSpeed > highSpeed) {
 			// high volume
 			Log.d(TAG, "High speed triggered");
 			volume = highVolume / 100.0f;
-			
+
 		} else {
 			// log scaling
-			
-			// first get the linear scale we want
-			int speedRange = highSpeed - lowSpeed;
 			float volumeRange = (highVolume - lowVolume) / 100.0f;
-			float volumeMin = lowVolume / 100.0f;
-			int speedDelta = (int) mphSpeed - lowSpeed;
-			float speedValue = speedDelta / (float) speedRange;
-			float linear = volumeRange * speedValue;
-			float volumeDelta = (float) ((Math.exp(linear) - 1) / (Math.E - 1));
-			volume = (float) (volumeMin + volumeDelta);
+			float speedRangeFrac = (mphSpeed - lowSpeed)
+					/ (highSpeed - lowSpeed);
+			float volumeRangeFrac = (float) (Math.log1p(speedRangeFrac) /
+					Math.log1p(1));
+			volume = lowVolume / 100.0f + volumeRange * volumeRangeFrac;
 			Log.d(TAG, "Log scale triggered, using volume " + volume);
 		}
-		
+
 		// apply the volume
 		this.audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
 				(int) (this.maxVolume * volume), 0);
 		return (int) (volume * 100);
 	}
-	
+
 	private void updateUI(float mphSpeed, int volume) {
 		TextView speedView = (TextView) findViewById(R.id.speed);
 		speedView.setText(String.format("%.1f mph", mphSpeed));
-		
+
 		TextView volumeView = (TextView) findViewById(R.id.volume);
 		volumeView.setText(String.format("%d%%", volume));
 	}
@@ -154,30 +151,30 @@ public class SpeedActivity extends Activity {
 			// use the GPS-provided speed if available
 			if (location.hasSpeed()) {
 				speed = location.getSpeed();
-				
+
 			} else {
 				Log.v(TAG, "Location fallback mode");
-				
+
 				// speed fall-back (mostly for the emulator)
 				if (this.previousLocation != null) {
-					
+
 					// get the distance between this and the previous update
 					float meters = previousLocation.distanceTo(location);
 					float timeDelta = location.getTime() - previousLocation.getTime();
-					
+
 					Log.v(TAG, "Location distance: " + meters);
-					
+
 					// convert to meters/second
 					speed = 1000 * meters / timeDelta;
-					
+
 				} else {
 					speed = 0;
 				}
-				
+
 				this.previousLocation = location;
 			}
 			float mph = convertMPH(speed);
-			
+
 			// push average to filter out spikes
 			Log.v(TAG, "Pushing speed " + mph);
 			averager.push(mph);
