@@ -64,11 +64,10 @@ public class SpeedActivity extends Activity {
 		 */
 		float volume = 0.0f;
 		
-		int lowSpeed = Integer.parseInt(this.settings.getString("low_speed", "15"));
-		int lowVolume = Integer.parseInt(this.settings.getString("low_volume", "50"));
-		int highSpeed = Integer.parseInt(this.settings.getString("high_speed", "50"));
-		int highVolume = Integer.parseInt(this.settings.getString("high_volume", "100"));
-		
+		int lowSpeed = this.settings.getInt("low_speed", 15);
+		int lowVolume = this.settings.getInt("low_volume", 60);
+		int highSpeed = this.settings.getInt("high_speed", 50);
+		int highVolume = this.settings.getInt("high_volume", 100);
 
 		// minimum volume
 		if (mphSpeed < lowSpeed) {
