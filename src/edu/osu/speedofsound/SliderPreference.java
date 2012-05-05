@@ -10,7 +10,8 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 public class SliderPreference extends DialogPreference implements
-		OnSeekBarChangeListener {
+		OnSeekBarChangeListener
+{
 
 	private static final String ANDROID_NS = "http://schemas.android.com/apk/res/android";
 	private static final String LOCAL_NS = "http://schemas.android.com/apk/res/edu.osu.speedofsound";
@@ -24,7 +25,8 @@ public class SliderPreference extends DialogPreference implements
 	private int maxValue;
 	private int value;
 
-	public SliderPreference(Context context, AttributeSet attrs) {
+	public SliderPreference(Context context, AttributeSet attrs)
+	{
 		super(context, attrs);
 
 		this.defaultValue = attrs.getAttributeIntValue(ANDROID_NS,
@@ -34,7 +36,8 @@ public class SliderPreference extends DialogPreference implements
 	}
 
 	@Override
-	protected View onCreateDialogView() {
+	protected View onCreateDialogView()
+	{
 		this.value = getPersistedInt(this.defaultValue);
 
 		// load the layout
@@ -56,30 +59,36 @@ public class SliderPreference extends DialogPreference implements
 	}
 
 	@Override
-	protected void onDialogClosed(boolean positiveResult) {
+	protected void onDialogClosed(boolean positiveResult)
+	{
 		super.onDialogClosed(positiveResult);
 
-		if (!positiveResult) {
+		if (!positiveResult)
+		{
 			return;
 		}
 
-		if (shouldPersist()) {
+		if (shouldPersist())
+		{
 			this.persistInt(this.value);
 		}
 
 		this.notifyChanged();
 	}
 
-	public void onProgressChanged(SeekBar seekBar, int value, boolean fromTouch) {
+	public void onProgressChanged(SeekBar seekBar, int value, boolean fromTouch)
+	{
 		// update the display on change
 		this.value = value + this.minValue;
 		this.valueDisplay.setText(Integer.toString(this.value));
 	}
 
-	public void onStartTrackingTouch(SeekBar sb) {
+	public void onStartTrackingTouch(SeekBar sb)
+	{
 	}
 
-	public void onStopTrackingTouch(SeekBar sb) {
+	public void onStopTrackingTouch(SeekBar sb)
+	{
 	}
 
 }

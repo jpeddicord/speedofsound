@@ -21,7 +21,8 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
-public class SpeedActivity extends Activity {
+public class SpeedActivity extends Activity
+{
 
 	private static final String TAG = "SpeedActivity";
 	private SharedPreferences settings;
@@ -32,7 +33,8 @@ public class SpeedActivity extends Activity {
 	private AverageSpeed averager;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
@@ -46,24 +48,27 @@ public class SpeedActivity extends Activity {
 
 		CheckBox enabledCheckBox = (CheckBox) findViewById(R.id.checkbox_enabled);
 		enabledCheckBox.setOnCheckedChangeListener(
-			new OnCheckedChangeListener() {
-				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					Intent intent = new Intent(SpeedActivity.this, SoundService.class);
-					if (isChecked) {
-						startService(intent);
-					} else {
-						stopService(intent);
+				new OnCheckedChangeListener()
+				{
+					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+					{
+						Intent intent = new Intent(SpeedActivity.this, SoundService.class);
+						if (isChecked)
+						{
+							startService(intent);
+						} else
+						{
+							stopService(intent);
+						}
 					}
-
 				}
-		
-			}
-		);
+				);
 
 		this.startListening();
 	}
 
-	private void startListening() {
+	private void startListening()
+	{
 		Criteria criteria = new Criteria();
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
 		criteria.setSpeedRequired(true);
@@ -72,11 +77,13 @@ public class SpeedActivity extends Activity {
 				this.locationUpdater);
 	}
 
-	private float convertMPH(float metersPerSecond) {
+	private float convertMPH(float metersPerSecond)
+	{
 		return (float) (2.237 * metersPerSecond);
 	}
 
-	private int updateVolume(float mphSpeed) {
+	private int updateVolume(float mphSpeed)
+	{
 		/*
 		 * Instead of changing the volume directly, we may want to update a
 		 * "target volume" and have something else process that to slowly
@@ -89,17 +96,20 @@ public class SpeedActivity extends Activity {
 		int highSpeed = this.settings.getInt("high_speed", 50);
 		int highVolume = this.settings.getInt("high_volume", 100);
 
-		if (mphSpeed < lowSpeed) {
+		if (mphSpeed < lowSpeed)
+		{
 			// minimum volume
 			Log.d(TAG, "Low speed triggered");
 			volume = lowVolume / 100.0f;
 
-		} else if (mphSpeed > highSpeed) {
+		} else if (mphSpeed > highSpeed)
+		{
 			// high volume
 			Log.d(TAG, "High speed triggered");
 			volume = highVolume / 100.0f;
 
-		} else {
+		} else
+		{
 			// log scaling
 			float volumeRange = (highVolume - lowVolume) / 100.0f;
 			float speedRangeFrac = (mphSpeed - lowSpeed)
@@ -116,7 +126,8 @@ public class SpeedActivity extends Activity {
 		return (int) (volume * 100);
 	}
 
-	private void updateUI(float mphSpeed, int volume) {
+	private void updateUI(float mphSpeed, int volume)
+	{
 		TextView speedView = (TextView) findViewById(R.id.speed);
 		speedView.setText(String.format("%.1f mph", mphSpeed));
 
@@ -125,7 +136,8 @@ public class SpeedActivity extends Activity {
 	}
 
 	@Override
-	public void onPause() {
+	public void onPause()
+	{
 		super.onPause();
 		this.locationManager.removeUpdates(this.locationUpdater);
 
@@ -133,7 +145,8 @@ public class SpeedActivity extends Activity {
 	}
 
 	@Override
-	public void onResume() {
+	public void onResume()
+	{
 		super.onResume();
 		this.startListening();
 
@@ -141,7 +154,8 @@ public class SpeedActivity extends Activity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.speed_menu, menu);
 		MenuItemCompat.setShowAsAction(menu.findItem(R.id.preferences), 1);
@@ -149,33 +163,40 @@ public class SpeedActivity extends Activity {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.preferences:
-			Intent intent = new Intent(this, PreferencesActivity.class);
-			startActivity(intent);
-			break;
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case R.id.preferences:
+				Intent intent = new Intent(this, PreferencesActivity.class);
+				startActivity(intent);
+				break;
 		}
 		return true;
 	}
 
-	private class LocationUpdater implements LocationListener {
+	private class LocationUpdater implements LocationListener
+	{
 
 		private Location previousLocation = null;
 
-		public void onLocationChanged(Location location) {
+		public void onLocationChanged(Location location)
+		{
 			// grab the speed
 			float speed;
 
 			// use the GPS-provided speed if available
-			if (location.hasSpeed()) {
+			if (location.hasSpeed())
+			{
 				speed = location.getSpeed();
 
-			} else {
+			} else
+			{
 				Log.v(TAG, "Location fallback mode");
 
 				// speed fall-back (mostly for the emulator)
-				if (this.previousLocation != null) {
+				if (this.previousLocation != null)
+				{
 
 					// get the distance between this and the previous update
 					float meters = previousLocation.distanceTo(location);
@@ -187,7 +208,8 @@ public class SpeedActivity extends Activity {
 					// convert to meters/second
 					speed = 1000 * meters / timeDelta;
 
-				} else {
+				} else
+				{
 					speed = 0;
 				}
 
@@ -207,13 +229,16 @@ public class SpeedActivity extends Activity {
 			SpeedActivity.this.updateUI(mph, volume);
 		}
 
-		public void onProviderDisabled(String provider) {
+		public void onProviderDisabled(String provider)
+		{
 		}
 
-		public void onProviderEnabled(String provider) {
+		public void onProviderEnabled(String provider)
+		{
 		}
 
-		public void onStatusChanged(String provider, int status, Bundle extras) {
+		public void onStatusChanged(String provider, int status, Bundle extras)
+		{
 		}
 	}
 }
