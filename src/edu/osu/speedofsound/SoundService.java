@@ -66,7 +66,6 @@ public class SoundService extends Service
 		// request updates
 		Criteria criteria = new Criteria();
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
-		criteria.setSpeedRequired(true);
 		String provider = this.locationManager.getBestProvider(criteria, true);
 		this.locationManager.requestLocationUpdates(provider, 0, 0, this.locationUpdater);
 
@@ -119,14 +118,12 @@ public class SoundService extends Service
 			// minimum volume
 			Log.d(TAG, "Low speed triggered");
 			volume = lowVolume / 100.0f;
-
 		}
 		else if (mphSpeed > highSpeed)
 		{
 			// high volume
 			Log.d(TAG, "High speed triggered");
 			volume = highVolume / 100.0f;
-
 		}
 		else
 		{
@@ -167,7 +164,6 @@ public class SoundService extends Service
 				// speed fall-back (mostly for the emulator)
 				if (this.previousLocation != null)
 				{
-
 					// get the distance between this and the previous update
 					float meters = previousLocation.distanceTo(location);
 					float timeDelta = location.getTime()
@@ -177,7 +173,6 @@ public class SoundService extends Service
 
 					// convert to meters/second
 					speed = 1000 * meters / timeDelta;
-
 				}
 				else
 				{

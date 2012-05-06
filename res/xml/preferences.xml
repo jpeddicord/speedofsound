@@ -2,12 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:osu="http://schemas.android.com/apk/res/edu.osu.speedofsound" >
 
-    <PreferenceCategory android:title="General" >
-        <CheckBoxPreference
-            android:key="disable_on_change"
-            android:summary="Stop messing with the volume when changed"
-            android:title="Disable on volume change" />
-    </PreferenceCategory>
     <PreferenceCategory android:title="Slow Speed" >
         <edu.osu.speedofsound.SliderPreference
             android:defaultValue="15"
@@ -39,6 +33,12 @@
             android:title="Max Volume"
             osu:maxValue="100"
             osu:minValue="0" />
+    </PreferenceCategory><PreferenceCategory android:title="Activation">
+        <CheckBoxPreference android:title="Enable on Car Dock" android:key="enable_cardock" android:summary="Start tracking when you put your phone in a car dock"/><CheckBoxPreference android:key="enable_headphones" android:summary="Start tracking when headphoens are plugged in" android:title="Enable on Headphones" />
+        <CheckBoxPreference android:key="enable_only_charged" android:summary="Only automatically track when charging" android:title="Only when Charging" />
+        <CheckBoxPreference android:title="Disable when unplugged" android:key="disable_unplug" android:summary="Stop tracking your speed when you unplug from your car dock or headphones" />
+        
+        
     </PreferenceCategory>
 
 </PreferenceScreen>
