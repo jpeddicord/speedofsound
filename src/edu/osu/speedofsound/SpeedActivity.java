@@ -77,7 +77,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 	{
 		super.onPause();
 		Log.d(TAG, "Paused, unsubscribing from updates");
-		
+
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(this.messageReceiver);
 	}
 
@@ -86,7 +86,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 	{
 		super.onResume();
 		Log.d(TAG, "Resumed, subscribing to service updates");
-		
+
 		LocalBroadcastManager.getInstance(this).registerReceiver(this.messageReceiver,
 				new IntentFilter("speed-sound-changed"));
 	}
@@ -104,7 +104,8 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 		if (isChecked)
 		{
 			this.service.startTracking();
-		} else
+		}
+		else
 		{
 			this.service.stopTracking();
 		}

@@ -87,10 +87,10 @@ public class SoundService extends Service
 	{
 		this.tracking = false;
 		Log.d(TAG, "Tracking stopped");
-		
+
 		// disable location updates
 		this.locationManager.removeUpdates(this.locationUpdater);
-		
+
 		// remove notification and go to background
 		stopForeground(true);
 	}
@@ -120,13 +120,15 @@ public class SoundService extends Service
 			Log.d(TAG, "Low speed triggered");
 			volume = lowVolume / 100.0f;
 
-		} else if (mphSpeed > highSpeed)
+		}
+		else if (mphSpeed > highSpeed)
 		{
 			// high volume
 			Log.d(TAG, "High speed triggered");
 			volume = highVolume / 100.0f;
 
-		} else
+		}
+		else
 		{
 			// log scaling
 			float volumeRange = (highVolume - lowVolume) / 100.0f;
@@ -157,7 +159,8 @@ public class SoundService extends Service
 			if (location.hasSpeed())
 			{
 				speed = location.getSpeed();
-			} else
+			}
+			else
 			{
 				Log.v(TAG, "Location fallback mode");
 
@@ -175,7 +178,8 @@ public class SoundService extends Service
 					// convert to meters/second
 					speed = 1000 * meters / timeDelta;
 
-				} else
+				}
+				else
 				{
 					speed = 0;
 				}
@@ -194,7 +198,7 @@ public class SoundService extends Service
 			float avg = SoundService.this.averager.getAverage();
 			Log.v(TAG, "Average currently " + avg);
 			int volume = SoundService.this.updateVolume(avg);
-			
+
 			// send out a local broadcast with the details
 			Intent intent = new Intent("speed-sound-changed");
 			intent.putExtra("speed", mph);
