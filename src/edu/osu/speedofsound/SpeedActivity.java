@@ -1,16 +1,16 @@
 package edu.osu.speedofsound;
 
+import edu.osu.speedofsound.SoundService.LocalBinder;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.media.AudioManager;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -21,16 +21,13 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
-public class SpeedActivity extends Activity
+public class SpeedActivity extends Activity implements OnCheckedChangeListener
 {
-
 	private static final String TAG = "SpeedActivity";
-	private SharedPreferences settings;
-	private AudioManager audioManager;
-	private int maxVolume;
-	private LocationUpdater locationUpdater;
-	private LocationManager locationManager;
-	private AverageSpeed averager;
+
+	private CheckBox enabledCheckBox;
+	private boolean bound = false;
+	private SoundService service;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -38,120 +35,116 @@ public class SpeedActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
-		this.audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		this.maxVolume = this.audioManager
-				.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-		this.locationUpdater = new LocationUpdater();
-		this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		this.averager = new AverageSpeed(6);
-
-		CheckBox enabledCheckBox = (CheckBox) findViewById(R.id.checkbox_enabled);
-		enabledCheckBox.setOnCheckedChangeListener(
-				new OnCheckedChangeListener()
-				{
-					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-					{
-						Intent intent = new Intent(SpeedActivity.this, SoundService.class);
-						if (isChecked)
-						{
-							startService(intent);
-						} else
-						{
-							stopService(intent);
-						}
-					}
-				}
-				);
-
-		this.startListening();
+		this.enabledCheckBox = (CheckBox) findViewById(R.id.checkbox_enabled);
+		this.enabledCheckBox.setOnCheckedChangeListener(this);
 	}
 
-	private void startListening()
+	@Override
+	public void onStart()
 	{
-		Criteria criteria = new Criteria();
-		criteria.setAccuracy(Criteria.ACCURACY_FINE);
-		criteria.setSpeedRequired(true);
-		String provider = this.locationManager.getBestProvider(criteria, true);
-		this.locationManager.requestLocationUpdates(provider, 0, 0,
-				this.locationUpdater);
+		super.onStart();
+		Log.d(TAG, "View starting");
+
+		// bind to our service after explicitly starting it
+		Intent intent = new Intent(this, SoundService.class);
+		startService(intent);
+		bindService(intent, this.serviceConnection, 0);
 	}
 
-	private float convertMPH(float metersPerSecond)
+	@Override
+	public void onStop()
 	{
-		return (float) (2.237 * metersPerSecond);
-	}
+		super.onStop();
+		Log.d(TAG, "View stopping");
 
-	private int updateVolume(float mphSpeed)
-	{
-		/*
-		 * Instead of changing the volume directly, we may want to update a
-		 * "target volume" and have something else process that to slowly
-		 * approach it.
-		 */
-		float volume = 0.0f;
-
-		int lowSpeed = this.settings.getInt("low_speed", 15);
-		int lowVolume = this.settings.getInt("low_volume", 60);
-		int highSpeed = this.settings.getInt("high_speed", 50);
-		int highVolume = this.settings.getInt("high_volume", 100);
-
-		if (mphSpeed < lowSpeed)
+		// unbind from our service
+		if (this.bound)
 		{
-			// minimum volume
-			Log.d(TAG, "Low speed triggered");
-			volume = lowVolume / 100.0f;
+			// if tracking is disabled, just shut off the service
+			if (!this.service.tracking)
+			{
+				Intent intent = new Intent(this, SoundService.class);
+				stopService(intent);
+			}
 
-		} else if (mphSpeed > highSpeed)
-		{
-			// high volume
-			Log.d(TAG, "High speed triggered");
-			volume = highVolume / 100.0f;
-
-		} else
-		{
-			// log scaling
-			float volumeRange = (highVolume - lowVolume) / 100.0f;
-			float speedRangeFrac = (mphSpeed - lowSpeed)
-					/ (highSpeed - lowSpeed);
-			float volumeRangeFrac = (float) (Math.log1p(speedRangeFrac) / Math
-					.log1p(1));
-			volume = lowVolume / 100.0f + volumeRange * volumeRangeFrac;
-			Log.d(TAG, "Log scale triggered, using volume " + volume);
+			unbindService(this.serviceConnection);
+			this.bound = false;
 		}
-
-		// apply the volume
-		this.audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,
-				(int) (this.maxVolume * volume), 0);
-		return (int) (volume * 100);
-	}
-
-	private void updateUI(float mphSpeed, int volume)
-	{
-		TextView speedView = (TextView) findViewById(R.id.speed);
-		speedView.setText(String.format("%.1f mph", mphSpeed));
-
-		TextView volumeView = (TextView) findViewById(R.id.volume);
-		volumeView.setText(String.format("%d%%", volume));
 	}
 
 	@Override
 	public void onPause()
 	{
 		super.onPause();
-		this.locationManager.removeUpdates(this.locationUpdater);
-
-		Log.d(TAG, "Paused, removing location updates");
+		Log.d(TAG, "Paused, unsubscribing from updates");
+		
+		LocalBroadcastManager.getInstance(this).unregisterReceiver(this.messageReceiver);
 	}
 
 	@Override
 	public void onResume()
 	{
 		super.onResume();
-		this.startListening();
-
-		Log.d(TAG, "Resumed, subscribing to location updates");
+		Log.d(TAG, "Resumed, subscribing to service updates");
+		
+		LocalBroadcastManager.getInstance(this).registerReceiver(this.messageReceiver,
+				new IntentFilter("speed-sound-changed"));
 	}
+
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+	{
+		Log.d(TAG, "Checkbox changed to " + isChecked);
+
+		if (!this.bound)
+		{
+			Log.e(TAG, "Service is unavailable");
+			return;
+		}
+
+		if (isChecked)
+		{
+			this.service.startTracking();
+		} else
+		{
+			this.service.stopTracking();
+		}
+	}
+
+	private BroadcastReceiver messageReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			Log.v(TAG, "Received broadcast");
+
+			TextView speedView = (TextView) findViewById(R.id.speed);
+			speedView.setText(String.format("%.1f mph", intent.getFloatExtra("speed", -1.0f)));
+
+			TextView volumeView = (TextView) findViewById(R.id.volume);
+			volumeView.setText(String.format("%d%%", intent.getIntExtra("volume", -1)));
+		}
+	};
+
+	private ServiceConnection serviceConnection = new ServiceConnection()
+	{
+		public void onServiceConnected(ComponentName className, IBinder service)
+		{
+			Log.v(TAG, "ServiceConnection connected");
+
+			LocalBinder binder = (LocalBinder) service;
+			SpeedActivity.this.service = binder.getService();
+			SpeedActivity.this.bound = true;
+
+			// update the enabled check box
+			SpeedActivity.this.enabledCheckBox.setChecked(SpeedActivity.this.service.tracking);
+		}
+
+		public void onServiceDisconnected(ComponentName arg)
+		{
+			Log.v(TAG, "ServiceConnection disconnected");
+			SpeedActivity.this.bound = false;
+		}
+	};
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
@@ -175,70 +168,4 @@ public class SpeedActivity extends Activity
 		return true;
 	}
 
-	private class LocationUpdater implements LocationListener
-	{
-
-		private Location previousLocation = null;
-
-		public void onLocationChanged(Location location)
-		{
-			// grab the speed
-			float speed;
-
-			// use the GPS-provided speed if available
-			if (location.hasSpeed())
-			{
-				speed = location.getSpeed();
-
-			} else
-			{
-				Log.v(TAG, "Location fallback mode");
-
-				// speed fall-back (mostly for the emulator)
-				if (this.previousLocation != null)
-				{
-
-					// get the distance between this and the previous update
-					float meters = previousLocation.distanceTo(location);
-					float timeDelta = location.getTime()
-							- previousLocation.getTime();
-
-					Log.v(TAG, "Location distance: " + meters);
-
-					// convert to meters/second
-					speed = 1000 * meters / timeDelta;
-
-				} else
-				{
-					speed = 0;
-				}
-
-				this.previousLocation = location;
-			}
-			float mph = SpeedActivity.this.convertMPH(speed);
-
-			// push average to filter out spikes
-			Log.v(TAG, "Pushing speed " + mph);
-			SpeedActivity.this.averager.push(mph);
-
-			// update the speed
-			Log.v(TAG, "Getting average speed");
-			float avg = SpeedActivity.this.averager.getAverage();
-			Log.v(TAG, "Average currently " + avg);
-			int volume = SpeedActivity.this.updateVolume(avg);
-			SpeedActivity.this.updateUI(mph, volume);
-		}
-
-		public void onProviderDisabled(String provider)
-		{
-		}
-
-		public void onProviderEnabled(String provider)
-		{
-		}
-
-		public void onStatusChanged(String provider, int status, Bundle extras)
-		{
-		}
-	}
 }
