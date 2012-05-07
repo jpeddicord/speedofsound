@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class SoundService extends Service
@@ -60,7 +61,6 @@ public class SoundService extends Service
 		Log.d(TAG, "Service shutting down");
 	}
 
-	@SuppressWarnings("deprecation")
 	public void startTracking()
 	{
 		// request updates
@@ -69,14 +69,16 @@ public class SoundService extends Service
 		String provider = this.locationManager.getBestProvider(criteria, true);
 		this.locationManager.requestLocationUpdates(provider, 0, 0, this.locationUpdater);
 
-		// force foreground
-		Notification notification = new Notification(
-				R.drawable.ic_launcher, "Speed of Sound is running",
-				System.currentTimeMillis());
+		// force foreground with an ongoing notification
 		Intent notificationIntent = new Intent(this, SpeedActivity.class);
-		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-		notification.setLatestEventInfo(this, "Speed of Sound", "Currently running", pendingIntent);
-		startForeground(9001, notification); // XXX: 1 is a magic number/id
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+		builder.setContentTitle("Speed of Sound");
+		builder.setContentText("Tracking your speed");
+		builder.setContentIntent(PendingIntent.getActivity(this, 0, notificationIntent, 0));
+		builder.setTicker("Speed of Sound is running");
+		builder.setSmallIcon(R.drawable.ic_launcher);
+		builder.setWhen(System.currentTimeMillis());
+		startForeground(9001, builder.getNotification());
 
 		this.tracking = true;
 		Log.d(TAG, "Tracking started with location provider " + provider);
