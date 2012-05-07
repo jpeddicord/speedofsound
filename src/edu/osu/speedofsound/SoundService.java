@@ -38,6 +38,7 @@ public class SoundService extends Service
 		Log.d(TAG, "Service starting up");
 
 		// register handlers & audio
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
 		this.broadcastManager = LocalBroadcastManager.getInstance(this);
 		this.audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);

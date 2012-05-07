@@ -1,6 +1,5 @@
 package edu.osu.speedofsound;
 
-import edu.osu.speedofsound.SoundService.LocalBinder;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -20,6 +19,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
+import edu.osu.speedofsound.SoundService.LocalBinder;
 
 public class SpeedActivity extends Activity implements OnCheckedChangeListener
 {
@@ -60,13 +60,6 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 		// unbind from our service
 		if (this.bound)
 		{
-			// if tracking is disabled, just shut off the service
-			if (!this.service.tracking)
-			{
-				Intent intent = new Intent(this, SoundService.class);
-				stopService(intent);
-			}
-
 			unbindService(this.serviceConnection);
 			this.bound = false;
 		}

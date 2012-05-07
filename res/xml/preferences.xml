@@ -33,12 +33,28 @@
             android:title="Max Volume"
             osu:maxValue="100"
             osu:minValue="0" />
-    </PreferenceCategory><PreferenceCategory android:title="Activation">
-        <CheckBoxPreference android:title="Enable on Car Dock" android:key="enable_cardock" android:summary="Start tracking when you put your phone in a car dock"/><CheckBoxPreference android:key="enable_headphones" android:summary="Start tracking when headphoens are plugged in" android:title="Enable on Headphones" />
-        <CheckBoxPreference android:key="enable_only_charged" android:summary="Only automatically track when charging" android:title="Only when Charging" />
-        <CheckBoxPreference android:title="Disable when unplugged" android:key="disable_unplug" android:summary="Stop tracking your speed when you unplug from your car dock or headphones" />
-        
-        
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Activation (IN DEVELOPMENT)" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="enable_only_charged"
+            android:summary="Only automatically track when charging"
+            android:title="Only when Charging" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="enable_carmode"
+            android:summary="Start tracking when you put your phone in car mode"
+            android:title="Enable on Car Mode" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="enable_headphones"
+            android:summary="Start tracking when headphoens are plugged in"
+            android:title="Enable on Headphones" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="disable_unplug"
+            android:summary="Stop tracking your speed when you unplug your headphones and/or exit car mode"
+            android:title="Disable when unplugged" />
     </PreferenceCategory>
 
 </PreferenceScreen>
