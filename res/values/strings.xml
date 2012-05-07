@@ -7,4 +7,6 @@
     <string name="volume_header_max">So we have your volume set to the maximum:</string>
     <string name="enabled">Enabled</string>
     <string name="waiting">(Waiting)</string>
+    <string name="notification_text">Tracking your speed</string>
+    <string name="ticker_text">Speed of Sound is running</string>
 </resources>

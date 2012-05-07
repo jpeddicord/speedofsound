@@ -9,10 +9,12 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+/**
+ * A preference that is displayed as a seek bar.
+ */
 public class SliderPreference extends DialogPreference implements
 		OnSeekBarChangeListener
 {
-
 	private static final String ANDROID_NS = "http://schemas.android.com/apk/res/android";
 	private static final String LOCAL_NS = "http://schemas.android.com/apk/res/edu.osu.speedofsound";
 
@@ -25,6 +27,14 @@ public class SliderPreference extends DialogPreference implements
 	private int maxValue;
 	private int value;
 
+	/**
+	 * Create a new slider preference.
+	 * 
+	 * @param context
+	 *            Context to use
+	 * @param attrs
+	 *            XML attributes to load
+	 */
 	public SliderPreference(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
@@ -35,29 +45,32 @@ public class SliderPreference extends DialogPreference implements
 		this.maxValue = attrs.getAttributeIntValue(LOCAL_NS, "maxValue", 0);
 	}
 
+	/**
+	 * Set up the preference display.
+	 */
 	@Override
 	protected View onCreateDialogView()
 	{
 		this.value = getPersistedInt(this.defaultValue);
 
 		// load the layout
-		LayoutInflater inflater = (LayoutInflater) getContext()
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.view = inflater.inflate(R.layout.slider_preference_dialog, null);
 
 		// setup the slider
-		this.seekBar = (SeekBar) view
-				.findViewById(R.id.slider_preference_seekbar);
+		this.seekBar = (SeekBar) view.findViewById(R.id.slider_preference_seekbar);
 		this.seekBar.setMax(this.maxValue - this.minValue);
 		this.seekBar.setProgress(this.value - this.minValue);
-		this.valueDisplay = (TextView) this.view
-				.findViewById(R.id.slider_preference_value);
+		this.valueDisplay = (TextView) this.view.findViewById(R.id.slider_preference_value);
 		this.valueDisplay.setText(Integer.toString(this.value));
 		this.seekBar.setOnSeekBarChangeListener(this);
 
 		return this.view;
 	}
 
+	/**
+	 * Save on dialog close.
+	 */
 	@Override
 	protected void onDialogClosed(boolean positiveResult)
 	{
@@ -76,9 +89,11 @@ public class SliderPreference extends DialogPreference implements
 		this.notifyChanged();
 	}
 
+	/**
+	 * Updated the displayed value on change.
+	 */
 	public void onProgressChanged(SeekBar seekBar, int value, boolean fromTouch)
 	{
-		// update the display on change
 		this.value = value + this.minValue;
 		this.valueDisplay.setText(Integer.toString(this.value));
 	}

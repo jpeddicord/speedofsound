@@ -3,9 +3,15 @@ package edu.osu.speedofsound;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
+/**
+ * Speed and volume preferences screen.
+ */
 public class PreferencesActivity extends PreferenceActivity
 {
 
+	/**
+	 * Load preferences.
+	 */
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState)

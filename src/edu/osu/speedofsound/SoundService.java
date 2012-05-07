@@ -18,6 +18,12 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+/**
+ * The main sound control service.
+ * 
+ * Responsible for adjusting the volume based on the current speed. Can be
+ * started and stopped externally, but is largely independent.
+ */
 public class SoundService extends Service
 {
 	private static final String TAG = "SoundService";
@@ -32,6 +38,9 @@ public class SoundService extends Service
 	private LocalBinder binder = new LocalBinder();
 	public boolean tracking = false;
 
+	/**
+	 * Start up the service and initialize some values. Does not start tracking.
+	 */
 	@Override
 	public void onCreate()
 	{
@@ -47,6 +56,9 @@ public class SoundService extends Service
 		this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 	}
 
+	/**
+	 * Return sticky mode to tell Android to keep the service active.
+	 */
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
@@ -55,12 +67,19 @@ public class SoundService extends Service
 		return START_STICKY;
 	}
 
+	/**
+	 * Service shut-down log.
+	 */
 	@Override
 	public void onDestroy()
 	{
 		Log.d(TAG, "Service shutting down");
 	}
 
+	/**
+	 * Start tracking. Find the best location provider (likely GPS), create an
+	 * ongoing notification, and request location updates.
+	 */
 	public void startTracking()
 	{
 		// request updates
@@ -72,18 +91,21 @@ public class SoundService extends Service
 		// force foreground with an ongoing notification
 		Intent notificationIntent = new Intent(this, SpeedActivity.class);
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-		builder.setContentTitle("Speed of Sound");
-		builder.setContentText("Tracking your speed");
+		builder.setContentTitle(getString(R.string.app_name));
+		builder.setContentText(getString(R.string.notification_text));
 		builder.setContentIntent(PendingIntent.getActivity(this, 0, notificationIntent, 0));
-		builder.setTicker("Speed of Sound is running");
+		builder.setTicker(getString(R.string.ticker_text));
 		builder.setSmallIcon(R.drawable.ic_launcher);
 		builder.setWhen(System.currentTimeMillis());
-		startForeground(9001, builder.getNotification());
+		startForeground(R.string.notification_text, builder.getNotification());
 
 		this.tracking = true;
 		Log.d(TAG, "Tracking started with location provider " + provider);
 	}
 
+	/**
+	 * Stop tracking. Remove the location updates and notification.
+	 */
 	public void stopTracking()
 	{
 		this.tracking = false;
@@ -96,11 +118,29 @@ public class SoundService extends Service
 		stopForeground(true);
 	}
 
+	/**
+	 * Convert m/s to MPH.
+	 * 
+	 * @param metersPerSecond
+	 *            Meters per second to convert
+	 * @return Speed in MPH.
+	 */
 	private float convertMPH(float metersPerSecond)
 	{
 		return (float) (2.237 * metersPerSecond);
 	}
 
+	/**
+	 * Update the system volume based on the given speed. Reads preferences
+	 * on-the-fly for low and high speeds and volumes. If below the minimum
+	 * speed, uses the minimum volume. If above the maximum speed, uses the max
+	 * volume. If somewhere in between, use a log scaling function to smoothly
+	 * scale the volume.
+	 * 
+	 * @param mphSpeed
+	 *            Reference speed to base volume on
+	 * @return Set volume (0-100).
+	 */
 	private int updateVolume(float mphSpeed)
 	{
 		/*
@@ -131,10 +171,8 @@ public class SoundService extends Service
 		{
 			// log scaling
 			float volumeRange = (highVolume - lowVolume) / 100.0f;
-			float speedRangeFrac = (mphSpeed - lowSpeed)
-					/ (highSpeed - lowSpeed);
-			float volumeRangeFrac = (float) (Math.log1p(speedRangeFrac) / Math
-					.log1p(1));
+			float speedRangeFrac = (mphSpeed - lowSpeed) / (highSpeed - lowSpeed);
+			float volumeRangeFrac = (float) (Math.log1p(speedRangeFrac) / Math.log1p(1));
 			volume = lowVolume / 100.0f + volumeRange * volumeRangeFrac;
 			Log.d(TAG, "Log scale triggered, using volume " + volume);
 		}
@@ -145,10 +183,20 @@ public class SoundService extends Service
 		return (int) (volume * 100);
 	}
 
+	/**
+	 * Custom location listener. Triggers volume changes based on the current
+	 * average speed.
+	 */
 	private class LocationUpdater implements LocationListener
 	{
 		private Location previousLocation = null;
 
+		/**
+		 * Change the volume based on the current average speed. If speed is not
+		 * available from the current location provider, calculate it from the
+		 * previous location. After updating the average and updating the
+		 * volume, send out a broadcast notifying of the changes.
+		 */
 		public void onLocationChanged(Location location)
 		{
 			// grab the speed
@@ -216,14 +264,23 @@ public class SoundService extends Service
 		}
 	}
 
+	/**
+	 * Service-level access for external classes and activities.
+	 */
 	public class LocalBinder extends Binder
 	{
+		/**
+		 * Return the service associated with this binder.
+		 */
 		public SoundService getService()
 		{
 			return SoundService.this;
 		}
 	}
 
+	/**
+	 * Return the binder associated with this service.
+	 */
 	@Override
 	public IBinder onBind(Intent intent)
 	{

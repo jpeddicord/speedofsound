@@ -27,7 +27,7 @@
         <activity android:name=".PreferencesActivity" >
         </activity>
 
-        <service android:name=".SoundService" >
+        <service android:name=".SoundService" android:label="Speed Tracking Service">
         </service>
 
         <receiver android:name=".SoundServiceManager" android:enabled="true" android:exported="true">

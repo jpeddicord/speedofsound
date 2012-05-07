@@ -21,6 +21,11 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 import edu.osu.speedofsound.SoundService.LocalBinder;
 
+/**
+ * Main status activity. Displays the current speed and set volume.
+ * Does not actually track the volume itself; that is handled in
+ * SoundService.
+ */
 public class SpeedActivity extends Activity implements OnCheckedChangeListener
 {
 	private static final String TAG = "SpeedActivity";
@@ -29,6 +34,9 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 	private boolean bound = false;
 	private SoundService service;
 
+	/**
+	 * Load the view and attach a checkbox listener.
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -39,6 +47,9 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 		this.enabledCheckBox.setOnCheckedChangeListener(this);
 	}
 
+	/**
+	 * Start the service with the view, if it wasn't already running.
+	 */
 	@Override
 	public void onStart()
 	{
@@ -51,6 +62,9 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 		bindService(intent, this.serviceConnection, 0);
 	}
 
+	/**
+	 * Stop the view and unbind from the service (but don't stop that).
+	 */
 	@Override
 	public void onStop()
 	{
@@ -65,6 +79,9 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 		}
 	}
 
+	/**
+	 * Pause the view and stop listening to broadcasts.
+	 */
 	@Override
 	public void onPause()
 	{
@@ -74,6 +91,9 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(this.messageReceiver);
 	}
 
+	/**
+	 * Resume the view and subscribe to broadcasts.
+	 */
 	@Override
 	public void onResume()
 	{
@@ -84,6 +104,9 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 				new IntentFilter("speed-sound-changed"));
 	}
 
+	/**
+	 * Start or stop tracking in the service on checked/unchecked.
+	 */
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
 	{
 		Log.d(TAG, "Checkbox changed to " + isChecked);
@@ -104,8 +127,14 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 		}
 	}
 
+	/**
+	 * Handle incoming broadcasts from the service.
+	 */
 	private BroadcastReceiver messageReceiver = new BroadcastReceiver()
 	{
+		/**
+		 * Receive a speed/sound status update.
+		 */
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
@@ -119,8 +148,14 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 		}
 	};
 
+	/**
+	 * Attach to the sound service.
+	 */
 	private ServiceConnection serviceConnection = new ServiceConnection()
 	{
+		/**
+		 * Update the UI "Enabled" checkbox based on the tracking state.
+		 */
 		public void onServiceConnected(ComponentName className, IBinder service)
 		{
 			Log.v(TAG, "ServiceConnection connected");
@@ -133,6 +168,9 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 			SpeedActivity.this.enabledCheckBox.setChecked(SpeedActivity.this.service.tracking);
 		}
 
+		/**
+		 * Mark the service as unbound on disconnect.
+		 */
 		public void onServiceDisconnected(ComponentName arg)
 		{
 			Log.v(TAG, "ServiceConnection disconnected");
@@ -140,6 +178,10 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 		}
 	};
 
+	/**
+	 * Show a menu on menu button press.
+	 * Where supported, show an action item instead.
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
@@ -149,6 +191,9 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 		return true;
 	}
 
+	/**
+	 * Show preferences when the item is selected.
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
