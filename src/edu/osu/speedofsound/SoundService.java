@@ -2,8 +2,10 @@ package edu.osu.speedofsound;
 
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.Criteria;
 import android.location.Location;
@@ -29,10 +31,9 @@ public class SoundService extends Service
 	private static final String TAG = "SoundService";
 
 	private SharedPreferences settings;
-	private LocalBroadcastManager broadcastManager;
+	private LocalBroadcastManager localBroadcastManager;
 	private AudioManager audioManager;
 	private int maxVolume;
-	private LocationUpdater locationUpdater;
 	private LocationManager locationManager;
 	private AverageSpeed averager = new AverageSpeed(6);
 	private LocalBinder binder = new LocalBinder();
@@ -49,11 +50,18 @@ public class SoundService extends Service
 		// register handlers & audio
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
-		this.broadcastManager = LocalBroadcastManager.getInstance(this);
+		this.localBroadcastManager = LocalBroadcastManager.getInstance(this);
 		this.audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		this.maxVolume = this.audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-		this.locationUpdater = new LocationUpdater();
 		this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+		// listen to certain broadcasts
+		IntentFilter filter = new IntentFilter();
+		filter.addAction("android.intent.action.ACTION_POWER_CONNECTED");
+		filter.addAction("android.intent.action.ACTION_POWER_DISCONNECTED");
+		filter.addAction("android.intent.action.ENTER_CAR_MODE");
+		filter.addAction("android.intent.action.HEADSET_PLUG");
+		this.registerReceiver(this.broadcastReceiver, filter);
 	}
 
 	/**
@@ -187,7 +195,7 @@ public class SoundService extends Service
 	 * Custom location listener. Triggers volume changes based on the current
 	 * average speed.
 	 */
-	private class LocationUpdater implements LocationListener
+	private LocationListener locationUpdater = new LocationListener()
 	{
 		private Location previousLocation = null;
 
@@ -248,7 +256,7 @@ public class SoundService extends Service
 			Intent intent = new Intent("speed-sound-changed");
 			intent.putExtra("speed", mph);
 			intent.putExtra("volume", volume);
-			SoundService.this.broadcastManager.sendBroadcast(intent);
+			SoundService.this.localBroadcastManager.sendBroadcast(intent);
 		}
 
 		public void onProviderDisabled(String provider)
@@ -262,7 +270,45 @@ public class SoundService extends Service
 		public void onStatusChanged(String provider, int status, Bundle extras)
 		{
 		}
-	}
+	};
+
+	/**
+	 * Start or stop tracking on certain broadcasts.
+	 */
+	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver()
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			String action = intent.getAction();
+			Log.d(TAG, "Received intent " + action);
+
+			// resume tracking if we're also in a satisfactory mode
+			if (action == "android.intent.action.ACTION_POWER_CONNECTED")
+			{
+				Log.v(TAG, "Power connected");
+				SoundService.this.startTracking();
+			}
+			// stop tracking if desired for only when charging
+			else if (action == "android.intent.action.ACTION_POWER_DISCONNECTED")
+			{
+				Log.v(TAG, "Power disconnected");
+				SoundService.this.stopTracking();
+			}
+			// start tracking if desired for car mode
+			else if (action == "android.intent.action.ENTER_CAR_MODE")
+			{
+				Log.v(TAG, "Entered car mode");
+				SoundService.this.startTracking();
+			}
+			// start or stop tracking for headset events
+			else if (action == "android.intent.action.HEADSET_PLUG")
+			{
+				Log.v(TAG, "Headset event");
+				SoundService.this.startTracking();
+			}
+		}
+	};
 
 	/**
 	 * Service-level access for external classes and activities.
