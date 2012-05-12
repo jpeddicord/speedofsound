@@ -34,27 +34,22 @@
             osu:maxValue="100"
             osu:minValue="0" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="Activation (IN DEVELOPMENT)" >
+    <PreferenceCategory android:title="Activation" >
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="enable_only_charged"
+            android:key="enable_only_charging"
             android:summary="Only automatically track when charging"
             android:title="Only when Charging" />
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="enable_carmode"
-            android:summary="Start tracking when you put your phone in car mode"
+            android:summary="Track when your phone is in car mode"
             android:title="Enable on Car Mode" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="enable_headphones"
-            android:summary="Start tracking when headphoens are plugged in"
+            android:summary="Track when headphones are plugged in"
             android:title="Enable on Headphones" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="disable_unplug"
-            android:summary="Stop tracking your speed when you unplug your headphones and/or exit car mode"
-            android:title="Disable when unplugged" />
     </PreferenceCategory>
 
 </PreferenceScreen>
