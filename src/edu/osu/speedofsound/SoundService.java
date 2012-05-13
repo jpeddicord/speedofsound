@@ -144,8 +144,11 @@ public class SoundService extends Service
 	public void stopTracking()
 	{
 		// shut off the volume thread
-		this.volumeThread.interrupt();
-		this.volumeThread = null;
+		if (this.volumeThread != null)
+		{
+			this.volumeThread.interrupt();
+			this.volumeThread = null;
+		}
 
 		// disable location updates
 		this.locationManager.removeUpdates(this.locationUpdater);
