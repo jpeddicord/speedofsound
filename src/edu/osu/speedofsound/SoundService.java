@@ -35,6 +35,7 @@ public class SoundService extends Service
 	private LocalBroadcastManager localBroadcastManager;
 	private AudioManager audioManager;
 	private int maxVolume;
+	private VolumeThread volumeThread;
 	private LocationManager locationManager;
 	private AverageSpeed averager = new AverageSpeed(6);
 	private LocalBinder binder = new LocalBinder();
@@ -84,6 +85,9 @@ public class SoundService extends Service
 	public void onDestroy()
 	{
 		Log.d(TAG, "Service shutting down");
+
+		// unregister receiver
+		this.unregisterReceiver(this.broadcastReceiver);
 	}
 
 	/**
@@ -97,6 +101,10 @@ public class SoundService extends Service
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
 		String provider = this.locationManager.getBestProvider(criteria, true);
 		this.locationManager.requestLocationUpdates(provider, 0, 0, this.locationUpdater);
+
+		// start up the volume thread
+		this.volumeThread = new VolumeThread(this);
+		this.volumeThread.start();
 
 		// force foreground with an ongoing notification
 		Intent notificationIntent = new Intent(this, SpeedActivity.class);
@@ -118,14 +126,18 @@ public class SoundService extends Service
 	 */
 	public void stopTracking()
 	{
-		this.tracking = false;
-		Log.d(TAG, "Tracking stopped");
+		// shut off the volume thread
+		this.volumeThread.interrupt();
+		this.volumeThread = null;
 
 		// disable location updates
 		this.locationManager.removeUpdates(this.locationUpdater);
 
 		// remove notification and go to background
 		stopForeground(true);
+
+		this.tracking = false;
+		Log.d(TAG, "Tracking stopped");
 	}
 
 	/**
@@ -188,7 +200,7 @@ public class SoundService extends Service
 		}
 
 		// apply the volume
-		this.audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) (this.maxVolume * volume), 0);
+		this.volumeThread.setTargetVolume((int) (this.maxVolume * volume));
 		return (int) (volume * 100);
 	}
 
@@ -311,7 +323,7 @@ public class SoundService extends Service
 
 				// enable if car mode / headphones requested and active
 				if ((carmodePreference && this.carMode) ||
-				    (headphonePreference && this.headphonesPlugged))
+						(headphonePreference && this.headphonesPlugged))
 				{
 					SoundService.this.startTracking();
 				}
