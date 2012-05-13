@@ -89,6 +89,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 		Log.d(TAG, "Paused, unsubscribing from updates");
 
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(this.messageReceiver);
+		
 	}
 
 	/**

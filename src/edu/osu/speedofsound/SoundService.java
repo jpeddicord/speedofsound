@@ -40,7 +40,11 @@ public class SoundService extends Service
 	private AverageSpeed averager = new AverageSpeed(6);
 	private LocalBinder binder = new LocalBinder();
 	public boolean tracking = false;
-
+	
+	private DatabaseManager db;
+	private String song = "Unknown";
+	private ColorCreator cc = new ColorCreator();
+	
 	/**
 	 * Start up the service and initialize some values. Does not start tracking.
 	 */
@@ -56,6 +60,8 @@ public class SoundService extends Service
 		this.audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		this.maxVolume = this.audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 		this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		
+		db = new DatabaseManager(this);
 
 		// listen to certain broadcasts
 		IntentFilter filter = new IntentFilter();
@@ -65,6 +71,13 @@ public class SoundService extends Service
 		filter.addAction("android.intent.action.EXIT_CAR_MODE");
 		filter.addAction("android.intent.action.HEADSET_PLUG");
 		this.registerReceiver(this.broadcastReceiver, filter);
+		
+		IntentFilter iF = new IntentFilter();
+		iF.addAction("com.android.music.metachanged");
+		iF.addAction("com.android.music.playstatechanged");
+		iF.addAction("com.android.music.playbackcomplete");
+		iF.addAction("com.android.music.queuechanged");
+		registerReceiver(mReceiver, iF);
 	}
 
 	/**
@@ -86,8 +99,12 @@ public class SoundService extends Service
 	{
 		Log.d(TAG, "Service shutting down");
 
-		// unregister receiver
+		// unregister receivers
 		this.unregisterReceiver(this.broadcastReceiver);
+		this.unregisterReceiver(this.mReceiver);
+		
+		// Clear database
+		db.resetDB();
 	}
 
 	/**
@@ -203,7 +220,53 @@ public class SoundService extends Service
 		this.volumeThread.setTargetVolume((int) (this.maxVolume * volume));
 		return (int) (volume * 100);
 	}
+	
+	// TODO: document
+	private void addPoint(Location location)
+	{
+		long songid = this.db.getSongId(this.song);
+		double longitude = location.getLongitude();
+		double latitude = location.getLatitude();
+		
+		if (songid < 0)
+		{
+			
+			Log.d(TAG, "Song did not exist in db. Adding. Song id: " + songid);
+			
+			int pathcolor = cc.getColor();
+			
+			this.db.addSong(this.song, pathcolor);
+			
+			songid = this.db.getSongId(this.song);
+			
+			Log.d(TAG, "Song added. Song id: " + songid);
+		}
+		
+		int longitudeE6 = (int) (longitude * 1000000);
+		int latitudeE6 = (int) (latitude * 1000000);
+		
+		this.db.addPoint(songid, latitudeE6, longitudeE6);
+	}
 
+	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			String action = intent.getAction();
+			String cmd = intent.getStringExtra("command");
+			String artist = intent.getStringExtra("artist");
+			String album = intent.getStringExtra("album");
+			String track = intent.getStringExtra("track");
+			
+			Log.d("Music-",artist+":"+album+":"+track);
+			
+			SoundService.this.song = track + " - " + artist;
+			
+			//TextView songView = (TextView) findViewById(R.id.song);
+			//songView.setText(track);
+		}
+	};
+	
 	/**
 	 * Custom location listener. Triggers volume changes based on the current
 	 * average speed.
@@ -211,6 +274,14 @@ public class SoundService extends Service
 	private LocationListener locationUpdater = new LocationListener()
 	{
 		private Location previousLocation = null;
+		private long previousTime = 0;
+		
+		/**
+		 * How often the location is stored in the database in milliseconds.
+		 * Saving more often will result in a smoother path but a larger
+		 * database.
+		 */
+		private static final int POINT_FREQ = 1000;
 
 		/**
 		 * Change the volume based on the current average speed. If speed is not
@@ -222,6 +293,21 @@ public class SoundService extends Service
 		{
 			// grab the speed
 			float speed;
+			
+			// get the time
+			long time;
+			
+			time = location.getTime();
+			
+			if (time - this.previousTime >= this.POINT_FREQ){
+				
+				// update previous time since we are saving a point now
+				this.previousTime = time;
+				
+				Log.v(TAG, "Adding new point to database");
+				SoundService.this.addPoint(location);
+
+			}
 
 			// use the GPS-provided speed if available
 			if (location.hasSpeed())
