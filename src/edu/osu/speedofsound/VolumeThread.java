@@ -33,6 +33,10 @@ public class VolumeThread extends Thread
 	{
 		Log.d(TAG, "Thread starting");
 
+		// get the current system volume
+		int currentVolume = this.audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+		Log.d(TAG, "Current volume is " + currentVolume);
+
 		while (!this.isInterrupted())
 		{
 			// sleep for a while
@@ -53,10 +57,6 @@ public class VolumeThread extends Thread
 			}
 
 			Log.v(TAG, "Thread-read target is " + targetVolume);
-
-			// get the current system volume
-			int currentVolume = this.audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-			Log.v(TAG, "Current volume is " + currentVolume);
 
 			// don't do anything if the target is already matched
 			if (currentVolume == targetVolume)
@@ -83,6 +83,7 @@ public class VolumeThread extends Thread
 
 			// set the volume
 			this.audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0);
+			currentVolume = newVolume;
 		}
 
 		Log.d(TAG, "Thread exiting");
