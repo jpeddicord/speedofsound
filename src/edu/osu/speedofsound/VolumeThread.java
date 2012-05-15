@@ -35,6 +35,7 @@ public class VolumeThread extends Thread
 
 		// get the current system volume
 		int currentVolume = this.audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+		this.setTargetVolume(currentVolume);
 		Log.d(TAG, "Current volume is " + currentVolume);
 
 		while (!this.isInterrupted())
