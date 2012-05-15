@@ -19,6 +19,7 @@ public class VolumeThread extends Thread
 	public VolumeThread(Context context)
 	{
 		this.audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+		this.setName(TAG);
 	}
 
 	public void setTargetVolume(int volume)
