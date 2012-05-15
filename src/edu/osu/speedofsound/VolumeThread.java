@@ -72,7 +72,6 @@ public class VolumeThread extends Thread
 			int newVolume = 0;
 			if (Math.abs(currentVolume - targetVolume) < VOLUME_THRESHOLD)
 			{
-				Log.v(TAG, "Close enough");
 				newVolume = targetVolume;
 			}
 
