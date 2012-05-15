@@ -70,14 +70,11 @@ public class SoundService extends Service
 		filter.addAction("android.intent.action.ENTER_CAR_MODE");
 		filter.addAction("android.intent.action.EXIT_CAR_MODE");
 		filter.addAction("android.intent.action.HEADSET_PLUG");
+		filter.addAction("com.android.music.metachanged");
+		filter.addAction("com.android.music.playstatechanged");
+		filter.addAction("com.android.music.playbackcomplete");
+		filter.addAction("com.android.music.queuechanged");
 		this.registerReceiver(this.broadcastReceiver, filter);
-
-		IntentFilter iF = new IntentFilter();
-		iF.addAction("com.android.music.metachanged");
-		iF.addAction("com.android.music.playstatechanged");
-		iF.addAction("com.android.music.playbackcomplete");
-		iF.addAction("com.android.music.queuechanged");
-		registerReceiver(mReceiver, iF);
 	}
 
 	/**
@@ -101,7 +98,6 @@ public class SoundService extends Service
 
 		// unregister receivers
 		this.unregisterReceiver(this.broadcastReceiver);
-		this.unregisterReceiver(this.mReceiver);
 
 		// Clear database
 		db.resetDB();
@@ -266,26 +262,6 @@ public class SoundService extends Service
 		this.db.addPoint(songid, latitudeE6, longitudeE6);
 	}
 
-	private BroadcastReceiver mReceiver = new BroadcastReceiver()
-	{
-		@Override
-		public void onReceive(Context context, Intent intent)
-		{
-			String action = intent.getAction();
-			String cmd = intent.getStringExtra("command");
-			String artist = intent.getStringExtra("artist");
-			String album = intent.getStringExtra("album");
-			String track = intent.getStringExtra("track");
-
-			Log.d("Music-", artist + ":" + album + ":" + track);
-
-			SoundService.this.song = track + " - " + artist;
-
-			// TextView songView = (TextView) findViewById(R.id.song);
-			// songView.setText(track);
-		}
-	};
-
 	/**
 	 * Custom location listener. Triggers volume changes based on the current
 	 * average speed.
@@ -417,7 +393,7 @@ public class SoundService extends Service
 			// resume tracking if we're also in a satisfactory mode
 			if (action.equals("android.intent.action.ACTION_POWER_CONNECTED"))
 			{
-				Log.v(TAG, "Power connected");
+				Log.d(TAG, "Power connected");
 
 				// ignore if preference is inactive
 				if (!powerPreference)
@@ -436,7 +412,7 @@ public class SoundService extends Service
 			// stop tracking if desired for only when charging
 			else if (action.equals("android.intent.action.ACTION_POWER_DISCONNECTED"))
 			{
-				Log.v(TAG, "Power disconnected");
+				Log.d(TAG, "Power disconnected");
 
 				// ignore if preference is inactive
 				if (powerPreference)
@@ -449,7 +425,7 @@ public class SoundService extends Service
 			// start tracking if desired for car mode
 			else if (action.equals("android.intent.action.ENTER_CAR_MODE"))
 			{
-				Log.v(TAG, "Entered car mode");
+				Log.d(TAG, "Entered car mode");
 				this.carMode = true;
 
 				// check the charge state
@@ -469,7 +445,7 @@ public class SoundService extends Service
 			// stop when exiting car mode
 			else if (action.equals("android.intent.action.EXIT_CAR_MODE"))
 			{
-				Log.v(TAG, "Exited car mode");
+				Log.d(TAG, "Exited car mode");
 				this.carMode = false;
 
 				if (carmodePreference)
@@ -482,7 +458,7 @@ public class SoundService extends Service
 			// start or stop tracking for headset events
 			else if (action.equals("android.intent.action.HEADSET_PLUG"))
 			{
-				Log.v(TAG, "Headset event");
+				Log.d(TAG, "Headset event");
 				this.headphonesPlugged = intent.getIntExtra("state", 0) == 1;
 
 				// ignore if preference not active
@@ -509,7 +485,18 @@ public class SoundService extends Service
 				}
 			}
 
-			// TODO: case for both headphones and car mode
+			// music actions
+			else if (action.equals("com.android.music.metachanged") ||
+					action.equals("com.android.music.playstatechanged") ||
+					action.equals("com.android.music.playbackcomplete") ||
+					action.equals("com.android.music.queuechanged"))
+			{
+				String artist = intent.getStringExtra("artist");
+				String track = intent.getStringExtra("track");
+				Log.d(TAG, "Track changed: " + track + " by " + artist);
+
+				SoundService.this.song = track + " - " + artist;
+			}
 		}
 	};
 
