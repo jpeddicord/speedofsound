@@ -35,16 +35,16 @@ public class SoundService extends Service
 	private LocalBroadcastManager localBroadcastManager;
 	private AudioManager audioManager;
 	private int maxVolume;
-	private VolumeThread volumeThread;
+	private VolumeThread volumeThread = null;
 	private LocationManager locationManager;
 	private AverageSpeed averager = new AverageSpeed(6);
 	private LocalBinder binder = new LocalBinder();
 	public boolean tracking = false;
-	
+
 	private DatabaseManager db;
 	private String song = "Unknown";
 	private ColorCreator cc = new ColorCreator();
-	
+
 	/**
 	 * Start up the service and initialize some values. Does not start tracking.
 	 */
@@ -60,7 +60,7 @@ public class SoundService extends Service
 		this.audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		this.maxVolume = this.audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 		this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		
+
 		db = new DatabaseManager(this);
 
 		// listen to certain broadcasts
@@ -71,7 +71,7 @@ public class SoundService extends Service
 		filter.addAction("android.intent.action.EXIT_CAR_MODE");
 		filter.addAction("android.intent.action.HEADSET_PLUG");
 		this.registerReceiver(this.broadcastReceiver, filter);
-		
+
 		IntentFilter iF = new IntentFilter();
 		iF.addAction("com.android.music.metachanged");
 		iF.addAction("com.android.music.playstatechanged");
@@ -102,7 +102,7 @@ public class SoundService extends Service
 		// unregister receivers
 		this.unregisterReceiver(this.broadcastReceiver);
 		this.unregisterReceiver(this.mReceiver);
-		
+
 		// Clear database
 		db.resetDB();
 	}
@@ -113,6 +113,12 @@ public class SoundService extends Service
 	 */
 	public void startTracking()
 	{
+		// ignore requests when we're already tracking
+		if (this.tracking)
+		{
+			return;
+		}
+
 		// request updates
 		Criteria criteria = new Criteria();
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
@@ -120,8 +126,11 @@ public class SoundService extends Service
 		this.locationManager.requestLocationUpdates(provider, 0, 0, this.locationUpdater);
 
 		// start up the volume thread
-		this.volumeThread = new VolumeThread(this);
-		this.volumeThread.start();
+		if (this.volumeThread == null)
+		{
+			this.volumeThread = new VolumeThread(this);
+			this.volumeThread.start();
+		}
 
 		// force foreground with an ongoing notification
 		Intent notificationIntent = new Intent(this, SpeedActivity.class);
@@ -143,6 +152,12 @@ public class SoundService extends Service
 	 */
 	public void stopTracking()
 	{
+		// don't do anything if we're not tracking
+		if (!this.tracking)
+		{
+			return;
+		}
+
 		// shut off the volume thread
 		if (this.volumeThread != null)
 		{
@@ -223,35 +238,36 @@ public class SoundService extends Service
 		this.volumeThread.setTargetVolume((int) (this.maxVolume * volume));
 		return (int) (volume * 100);
 	}
-	
+
 	// TODO: document
 	private void addPoint(Location location)
 	{
 		long songid = this.db.getSongId(this.song);
 		double longitude = location.getLongitude();
 		double latitude = location.getLatitude();
-		
+
 		if (songid < 0)
 		{
-			
+
 			Log.d(TAG, "Song did not exist in db. Adding. Song id: " + songid);
-			
+
 			int pathcolor = cc.getColor();
-			
+
 			this.db.addSong(this.song, pathcolor);
-			
+
 			songid = this.db.getSongId(this.song);
-			
+
 			Log.d(TAG, "Song added. Song id: " + songid);
 		}
-		
+
 		int longitudeE6 = (int) (longitude * 1000000);
 		int latitudeE6 = (int) (latitude * 1000000);
-		
+
 		this.db.addPoint(songid, latitudeE6, longitudeE6);
 	}
 
-	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+	private BroadcastReceiver mReceiver = new BroadcastReceiver()
+	{
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
@@ -260,16 +276,16 @@ public class SoundService extends Service
 			String artist = intent.getStringExtra("artist");
 			String album = intent.getStringExtra("album");
 			String track = intent.getStringExtra("track");
-			
-			Log.d("Music-",artist+":"+album+":"+track);
-			
+
+			Log.d("Music-", artist + ":" + album + ":" + track);
+
 			SoundService.this.song = track + " - " + artist;
-			
-			//TextView songView = (TextView) findViewById(R.id.song);
-			//songView.setText(track);
+
+			// TextView songView = (TextView) findViewById(R.id.song);
+			// songView.setText(track);
 		}
 	};
-	
+
 	/**
 	 * Custom location listener. Triggers volume changes based on the current
 	 * average speed.
@@ -278,7 +294,7 @@ public class SoundService extends Service
 	{
 		private Location previousLocation = null;
 		private long previousTime = 0;
-		
+
 		/**
 		 * How often the location is stored in the database in milliseconds.
 		 * Saving more often will result in a smoother path but a larger
@@ -296,20 +312,19 @@ public class SoundService extends Service
 		{
 			// grab the speed
 			float speed;
-			
+
 			// get the time
 			long time;
-			
+
 			time = location.getTime();
-			
-			if (time - this.previousTime >= this.POINT_FREQ){
-				
+
+			if (time - this.previousTime >= this.POINT_FREQ)
+			{
 				// update previous time since we are saving a point now
 				this.previousTime = time;
-				
+
 				Log.v(TAG, "Adding new point to database");
 				SoundService.this.addPoint(location);
-
 			}
 
 			// use the GPS-provided speed if available
