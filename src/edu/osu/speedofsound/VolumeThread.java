@@ -9,7 +9,8 @@ public class VolumeThread extends Thread
 	private static final String TAG = "VolumeThread";
 	private static final int UPDATE_DELAY = 200; // ms
 	private static final int VOLUME_THRESHOLD = 3;
-	private static final float APPROACH_RATE = 0.5f;
+	private static final float APPROACH_RATE = 0.35f;
+	private static final int MAX_APPROACH = 8;
 
 	private final Object lock = new Object();
 	private AudioManager audioManager;
@@ -68,7 +69,7 @@ public class VolumeThread extends Thread
 
 			// if the target is close enough, just use it
 			int newVolume = 0;
-			if (Math.abs(currentVolume - targetVolume) < 2)
+			if (Math.abs(currentVolume - targetVolume) < VOLUME_THRESHOLD)
 			{
 				Log.v(TAG, "Close enough");
 				newVolume = targetVolume;
@@ -77,7 +78,9 @@ public class VolumeThread extends Thread
 			// otherwise, gently approach the target
 			else
 			{
-				newVolume = currentVolume + (int) ((targetVolume - currentVolume) * APPROACH_RATE);
+				// approach the target, but not more quickly than the max
+				int approach = Math.min((int) ((targetVolume - currentVolume) * APPROACH_RATE), MAX_APPROACH);
+				newVolume = currentVolume + approach;
 			}
 
 			Log.v(TAG, "New volume is " + newVolume);
