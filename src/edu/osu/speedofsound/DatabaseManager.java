@@ -23,7 +23,7 @@ public class DatabaseManager
  
 	// These constants are specific to the database.  They should be 
 	// changed to suit your needs.
-	private final String DB_NAME = "database_name";
+	private final String DB_NAME = "locations";
 	private final int DB_VERSION = 1;
  
 	// These constants are specific to the database table.  They should be
@@ -199,6 +199,46 @@ public class DatabaseManager
 		return color;
 	}
  
+	public ArrayList<Long> getRange()
+	{
+		long lowerIndex = -1;
+		long upperIndex = -1;
+		Cursor cursor;
+		
+		try
+		{
+			cursor = db.query(
+					TABLE2_NAME,
+					new String[] { TABLE2_ROW_ID },
+					null, null, null, null,
+					TABLE2_ROW_ID + " ASC"
+			);
+			
+			cursor.moveToFirst();
+			
+			if (!cursor.isAfterLast())
+			{
+				lowerIndex = cursor.getLong(0);
+				
+				cursor.moveToLast();
+				upperIndex = cursor.getLong(0);
+			}
+			
+			cursor.close();
+		}
+		catch (SQLException e) 
+		{
+			Log.e("DB ERROR", e.toString());
+			e.printStackTrace();
+		}
+		
+		ArrayList<Long> range = new ArrayList<Long>();
+		
+		range.add(lowerIndex);
+		range.add(upperIndex);
+		
+		return range;
+	}
  
 	/**********************************************************************
 	 * DELETING A ROW FROM THE DATABASE TABLE
@@ -255,7 +295,7 @@ public class DatabaseManager
 	 * @param rowID the id of the row to retrieve
 	 * @return an array containing the data from the row
 	 */
-	public ArrayList<Object> getRowAsArray(long rowID)
+	public ArrayList<Object> getPointArray(long rowID)
 	{
 		// create an array list to store data from the database row.
 		// I would recommend creating a JavaBean compliant object 
@@ -271,9 +311,9 @@ public class DatabaseManager
 			// database and is used to iterate through the data.
 			cursor = db.query
 			(
-					TABLE_NAME,
-					new String[] { TABLE_ROW_ID, TABLE_ROW_ONE, TABLE_ROW_TWO },
-					TABLE_ROW_ID + "=" + rowID,
+					TABLE2_NAME,
+					new String[] { TABLE2_ROW_ID, TABLE2_ROW_ONE, TABLE2_ROW_TWO, TABLE2_ROW_THREE },
+					TABLE2_ROW_ID + "=" + rowID,
 					null, null, null, null, null
 			);
  

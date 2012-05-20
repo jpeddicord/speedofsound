@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -26,7 +28,7 @@ import edu.osu.speedofsound.SoundService.LocalBinder;
  * Does not actually track the volume itself; that is handled in
  * SoundService.
  */
-public class SpeedActivity extends Activity implements OnCheckedChangeListener
+public class SpeedActivity extends Activity implements OnCheckedChangeListener, OnClickListener
 {
 	private static final String TAG = "SpeedActivity";
 
@@ -45,6 +47,9 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 
 		this.enabledCheckBox = (CheckBox) findViewById(R.id.checkbox_enabled);
 		this.enabledCheckBox.setOnCheckedChangeListener(this);
+		
+		View btnMap = findViewById(R.id.buttonMap);
+		btnMap.setOnClickListener(this);
 	}
 
 	/**
@@ -206,6 +211,16 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 				break;
 		}
 		return true;
+	}
+
+	public void onClick(View v)
+	{
+		switch(v.getId())
+		{
+			case R.id.buttonMap:
+				startActivity(new Intent(this, DrawMapActivity.class));
+				break;
+		}
 	}
 
 }

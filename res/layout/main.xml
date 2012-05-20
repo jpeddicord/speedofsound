@@ -37,5 +37,12 @@
         android:layout_margin="10dp"
         android:text="@string/waiting"
         android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+    <Button
+		android:id="@+id/buttonMap"
+		android:text="@string/map_bttn"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		/>
 
 </LinearLayout>
