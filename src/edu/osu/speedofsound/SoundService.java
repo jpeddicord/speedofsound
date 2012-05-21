@@ -99,8 +99,7 @@ public class SoundService extends Service
 		// unregister receivers
 		this.unregisterReceiver(this.broadcastReceiver);
 
-		// Clear and close the databse
-		db.resetDB();
+		// Close the database
 		db.close();
 	}
 
@@ -142,6 +141,9 @@ public class SoundService extends Service
 
 		this.tracking = true;
 		Log.d(TAG, "Tracking started with location provider " + provider);
+		
+		// Clear the database for new tracking data
+		db.resetDB();
 	}
 
 	/**
@@ -295,7 +297,7 @@ public class SoundService extends Service
 
 			time = location.getTime();
 
-			if (time - this.previousTime >= this.POINT_FREQ)
+			if (time - this.previousTime >= POINT_FREQ)
 			{
 				// update previous time since we are saving a point now
 				this.previousTime = time;
