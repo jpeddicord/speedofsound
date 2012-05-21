@@ -58,7 +58,7 @@ public class DrawMapActivity extends MapActivity
         projection = mapView.getProjection();
         mapOverlays.add(new MyOverlay());
         
-        db = new DatabaseManager(this);
+        db = DatabaseManager.getDBManager(this);
         
         this.getPath();
         
@@ -68,10 +68,14 @@ public class DrawMapActivity extends MapActivity
         	ArrayList<Object> loc = this.mapContent.get(mapContent.size() - 1);
         	@SuppressWarnings("unchecked")
 			ArrayList<GeoPoint> locpoints = (ArrayList<GeoPoint>) loc.get(2);
-        	GeoPoint lastpoint = locpoints.get(locpoints.size() - 1);
         	
-        	mc.animateTo(lastpoint);
-        	mc.setZoom(17);
+        	if (locpoints.size() > 0)
+        	{
+        		GeoPoint lastpoint = locpoints.get(locpoints.size() - 1);
+        	
+        		mc.animateTo(lastpoint);
+        		mc.setZoom(17);
+        	}
         }
         
         //mapView.invalidate();

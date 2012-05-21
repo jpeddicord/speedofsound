@@ -15,6 +15,8 @@ import android.util.Log;
 
 public class DatabaseManager
 {
+	private static DatabaseManager ref;
+	
 	// the Activity or Application that is creating an object from this class.
 	Context context;
  
@@ -41,7 +43,7 @@ public class DatabaseManager
 
 	
  
-	public DatabaseManager(Context context)
+	private DatabaseManager(Context context)
 	{
 		this.context = context;
  
@@ -50,6 +52,16 @@ public class DatabaseManager
 		this.db = helper.getWritableDatabase();
 	}
  
+	public static DatabaseManager getDBManager(Context context)
+	{
+		if (ref == null)
+		{
+			ref = new DatabaseManager(context);
+		}
+		
+		return ref;
+	}
+	
 	public void resetDB()
 	{
 
@@ -92,6 +104,14 @@ public class DatabaseManager
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public void close()
+	{
+		if (db.isOpen())
+		{
+			db.close();
+		}
 	}
  
 	
@@ -490,6 +510,8 @@ public class DatabaseManager
 				// move the cursor's pointer up one position.
 				while (cursor.moveToNext());
 			}
+			
+			cursor.close();
 		}
 		catch (SQLException e)
 		{

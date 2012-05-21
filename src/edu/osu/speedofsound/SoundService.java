@@ -61,7 +61,7 @@ public class SoundService extends Service
 		this.maxVolume = this.audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 		this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-		db = new DatabaseManager(this);
+		db = DatabaseManager.getDBManager(this);
 
 		// listen to certain broadcasts
 		IntentFilter filter = new IntentFilter();
@@ -99,8 +99,9 @@ public class SoundService extends Service
 		// unregister receivers
 		this.unregisterReceiver(this.broadcastReceiver);
 
-		// Clear database
+		// Clear and close the databse
 		db.resetDB();
+		db.close();
 	}
 
 	/**

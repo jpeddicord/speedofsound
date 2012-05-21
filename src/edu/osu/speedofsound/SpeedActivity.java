@@ -53,7 +53,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 		View btnMap = findViewById(R.id.buttonMap);
 		btnMap.setOnClickListener(this);
 		
-		db = new DatabaseManager(this);
+		db = DatabaseManager.getDBManager(this);
 	}
 
 	/**
@@ -132,7 +132,6 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 			this.service.startTracking();
 			
 			db.resetDB();
-			db = new DatabaseManager(this);
 		}
 		else
 		{
