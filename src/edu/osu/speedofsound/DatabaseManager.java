@@ -52,7 +52,46 @@ public class DatabaseManager
  
 	public void resetDB()
 	{
-		this.context.deleteDatabase(DB_NAME);
+
+		try
+		{
+			String dropQuery = "drop table " + TABLE_NAME;
+			db.execSQL(dropQuery);
+			
+			dropQuery = "drop table " + TABLE2_NAME;
+			db.execSQL(dropQuery);
+			
+			
+			String newTableQueryString = "create table " +
+					TABLE_NAME +
+					" (" +
+					TABLE_ROW_ID + " integer primary key autoincrement not null," +
+					TABLE_ROW_ONE + " text," +
+					TABLE_ROW_TWO + " integer" +
+					");";
+			// execute the query string to the database.
+			db.execSQL(newTableQueryString);
+
+			// This string is used to create the database.  It should
+			// be changed to suit your needs.
+			newTableQueryString =   "create table " +
+				TABLE2_NAME +
+				" (" +
+				TABLE2_ROW_ID + " integer primary key autoincrement not null," +
+				TABLE2_ROW_ONE + " integer," +
+				TABLE2_ROW_TWO + " integer," +
+				TABLE2_ROW_THREE + " integer" +
+				");";
+
+			// execute the query string to the database.
+			db.execSQL(newTableQueryString);
+		}
+		catch (SQLException e)
+		{
+			Log.e("DB ERROR on reset", e.toString());
+			e.printStackTrace();
+		}
+		
 	}
  
 	
@@ -149,6 +188,56 @@ public class DatabaseManager
  
 		// return the ArrayList containing the given row from the database.
 		return rowNum;
+	}
+	
+	public String getSongName(long id)
+	{
+		// create an array list to store data from the database row.
+		// I would recommend creating a JavaBean compliant object 
+		// to store this data instead.  That way you can ensure
+		// data types are correct.
+		String name = "Unknown";
+		Cursor cursor;
+ 
+		try
+		{
+			// this is a database call that creates a "cursor" object.
+			// the cursor object store the information collected from the
+			// database and is used to iterate through the data.
+			cursor = db.query
+			(
+					true,
+					TABLE_NAME,
+					new String[] { TABLE_ROW_ONE },
+					TABLE_ROW_ID + "=" + id,
+					null, null, null, null, null
+			);
+ 
+			// move the pointer to position zero in the cursor.
+			cursor.moveToFirst();
+ 
+			// if there is data available after the cursor's pointer, add
+			// it to the ArrayList that will be returned by the method.
+			if (!cursor.isAfterLast())
+			{
+				name = cursor.getString(0);
+			}
+			else
+			{
+				Log.e("DB ERROR", "Nothing was found!");
+			}
+ 
+			// let java know that you are through with the cursor.
+			cursor.close();
+		}
+		catch (SQLException e) 
+		{
+			Log.e("DB ERROR", e.toString());
+			e.printStackTrace();
+		}
+ 
+		// return the ArrayList containing the given row from the database.
+		return name;
 	}
 	
 	public int getColor(long id)
@@ -473,7 +562,6 @@ public class DatabaseManager
 			// execute the query string to the database.
 			db.execSQL(newTableQueryString);
 		}
- 
  
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)

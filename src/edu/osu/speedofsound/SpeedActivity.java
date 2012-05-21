@@ -35,6 +35,8 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 	private CheckBox enabledCheckBox;
 	private boolean bound = false;
 	private SoundService service;
+	
+	private DatabaseManager db;
 
 	/**
 	 * Load the view and attach a checkbox listener.
@@ -50,6 +52,8 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 		
 		View btnMap = findViewById(R.id.buttonMap);
 		btnMap.setOnClickListener(this);
+		
+		db = new DatabaseManager(this);
 	}
 
 	/**
@@ -126,6 +130,9 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 		if (isChecked)
 		{
 			this.service.startTracking();
+			
+			db.resetDB();
+			db = new DatabaseManager(this);
 		}
 		else
 		{

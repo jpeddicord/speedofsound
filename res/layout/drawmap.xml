@@ -2,15 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent">
- 
-    <com.google.android.maps.MapView 
+ 
+    <com.google.android.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="fill_parent"
-        android:layout_height="250dip"
-        android:enabled="true"
-        android:clickable="true"
+        android:layout_height="match_parent"
         android:apiKey="0c455YW0vCGSHVD3OE-7xKrBW6iIu8L15bYI0aQ"
-        />
+        android:clickable="true"
+        android:enabled="true" />
     
      <LinearLayout android:id="@+id/zoom" 
         android:layout_width="wrap_content" 
