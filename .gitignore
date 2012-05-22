@@ -1,6 +1,7 @@
 bin/
 gen/
 lib/
+proguard/
 .metadata
 local.properties
 lint.xml
