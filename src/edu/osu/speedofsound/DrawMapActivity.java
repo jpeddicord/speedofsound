@@ -35,10 +35,9 @@ public class DrawMapActivity extends MapActivity
 	
 	private DatabaseManager db;
 	
-	private Path path;
-	
 	private ArrayList<ArrayList<Object>> mapContent = new ArrayList<ArrayList<Object>>();
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
