@@ -16,6 +16,15 @@ Ant build targets with respect to Google Maps API keys. You can still
 test with Eclipse, but the map portion of the application may appear
 as an empty grid.
 
+If you still really want to use Eclipse, you must at least run ant
+at least once to generate keys.xml::
+
+    ant debug
+
+Eclipse will then use whatever debug Maps key you have set for future
+builds. You can also use ``ant release`` if you want to use a release
+key.
+
 On that note, be sure to create a local.properties (you can base it off
 of ant.properties) and set maps.debug.key and maps.release.key to the
 Google Maps API keys you want to use.
