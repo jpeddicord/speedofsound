@@ -53,9 +53,12 @@ public class SoundService extends Service
 	{
 		Log.d(TAG, "Service starting up");
 
-		// register handlers & audio
+		// set up preferences
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
+		PreferencesActivity.updateNativeSpeeds(this.settings);
+
+		// register handlers & audio
 		this.localBroadcastManager = LocalBroadcastManager.getInstance(this);
 		this.audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		this.maxVolume = this.audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
@@ -141,7 +144,7 @@ public class SoundService extends Service
 
 		this.tracking = true;
 		Log.d(TAG, "Tracking started with location provider " + provider);
-		
+
 		// Clear the database for new tracking data
 		db.resetDB();
 	}
@@ -175,62 +178,45 @@ public class SoundService extends Service
 	}
 
 	/**
-	 * Convert m/s to MPH.
-	 * 
-	 * @param metersPerSecond
-	 *            Meters per second to convert
-	 * @return Speed in MPH.
-	 */
-	private float convertMPH(float metersPerSecond)
-	{
-		return (float) (2.237 * metersPerSecond);
-	}
-
-	/**
 	 * Update the system volume based on the given speed. Reads preferences
 	 * on-the-fly for low and high speeds and volumes. If below the minimum
 	 * speed, uses the minimum volume. If above the maximum speed, uses the max
 	 * volume. If somewhere in between, use a log scaling function to smoothly
 	 * scale the volume.
 	 * 
-	 * @param mphSpeed
+	 * @param speed
 	 *            Reference speed to base volume on
 	 * @return Set volume (0-100).
 	 */
-	private int updateVolume(float mphSpeed)
+	private int updateVolume(float speed)
 	{
-		/*
-		 * Instead of changing the volume directly, we may want to update a
-		 * "target volume" and have something else process that to slowly
-		 * approach it.
-		 */
 		float volume = 0.0f;
 
-		int lowSpeed = this.settings.getInt("low_speed", 15);
-		int lowVolume = this.settings.getInt("low_volume", 60);
-		int highSpeed = this.settings.getInt("high_speed", 50);
+		float lowSpeed = this.settings.getFloat("low_speed", 0);
+		int lowVolume = this.settings.getInt("low_volume", 0);
+		float highSpeed = this.settings.getFloat("high_speed", 100);
 		int highVolume = this.settings.getInt("high_volume", 100);
 
-		if (mphSpeed < lowSpeed)
+		if (speed < lowSpeed)
 		{
 			// minimum volume
-			Log.d(TAG, "Low speed triggered");
+			Log.d(TAG, "Low speed triggered at " + speed);
 			volume = lowVolume / 100.0f;
 		}
-		else if (mphSpeed > highSpeed)
+		else if (speed > highSpeed)
 		{
 			// high volume
-			Log.d(TAG, "High speed triggered");
+			Log.d(TAG, "High speed triggered at " + speed);
 			volume = highVolume / 100.0f;
 		}
 		else
 		{
 			// log scaling
 			float volumeRange = (highVolume - lowVolume) / 100.0f;
-			float speedRangeFrac = (mphSpeed - lowSpeed) / (highSpeed - lowSpeed);
+			float speedRangeFrac = (speed - lowSpeed) / (highSpeed - lowSpeed);
 			float volumeRangeFrac = (float) (Math.log1p(speedRangeFrac) / Math.log1p(1));
 			volume = lowVolume / 100.0f + volumeRange * volumeRangeFrac;
-			Log.d(TAG, "Log scale triggered, using volume " + volume);
+			Log.d(TAG, "Log scale triggered with " + speed + ", using volume " + volume);
 		}
 
 		// apply the volume
@@ -335,12 +321,9 @@ public class SoundService extends Service
 				this.previousLocation = location;
 			}
 
-			// convert
-			float mph = SoundService.this.convertMPH(Math.abs(speed));
-
 			// push average to filter out spikes
-			Log.v(TAG, "Pushing speed " + mph);
-			SoundService.this.averager.push(mph);
+			Log.v(TAG, "Pushing speed " + speed);
+			SoundService.this.averager.push(speed);
 
 			// update the speed
 			float avg = SoundService.this.averager.getAverage();
@@ -349,7 +332,7 @@ public class SoundService extends Service
 
 			// send out a local broadcast with the details
 			Intent intent = new Intent("speed-sound-changed");
-			intent.putExtra("speed", mph);
+			intent.putExtra("speed", speed);
 			intent.putExtra("volume", volume);
 			SoundService.this.localBroadcastManager.sendBroadcast(intent);
 		}

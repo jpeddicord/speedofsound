@@ -7,8 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
@@ -24,18 +26,17 @@ import android.widget.TextView;
 import edu.osu.speedofsound.SoundService.LocalBinder;
 
 /**
- * Main status activity. Displays the current speed and set volume.
- * Does not actually track the volume itself; that is handled in
- * SoundService.
+ * Main status activity. Displays the current speed and set volume. Does not
+ * actually track the volume itself; that is handled in SoundService.
  */
 public class SpeedActivity extends Activity implements OnCheckedChangeListener, OnClickListener
 {
 	private static final String TAG = "SpeedActivity";
 
+	private SharedPreferences settings;
 	private CheckBox enabledCheckBox;
 	private boolean bound = false;
 	private SoundService service;
-	
 
 	/**
 	 * Load the view and attach a checkbox listener.
@@ -46,12 +47,13 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
 		this.enabledCheckBox = (CheckBox) findViewById(R.id.checkbox_enabled);
 		this.enabledCheckBox.setOnCheckedChangeListener(this);
-		
+
 		View btnMap = findViewById(R.id.buttonMap);
 		btnMap.setOnClickListener(this);
-		
+
 	}
 
 	/**
@@ -96,7 +98,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 		Log.d(TAG, "Paused, unsubscribing from updates");
 
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(this.messageReceiver);
-		
+
 	}
 
 	/**
@@ -128,7 +130,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 		if (isChecked)
 		{
 			this.service.startTracking();
-			
+
 		}
 		else
 		{
@@ -149,9 +151,14 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 		{
 			Log.v(TAG, "Received broadcast");
 
+			// display the speed with appropriate units
 			TextView speedView = (TextView) findViewById(R.id.speed);
-			speedView.setText(String.format("%.1f mph", intent.getFloatExtra("speed", -1.0f)));
+			float speed = intent.getFloatExtra("speed", -1.0f);
+			String units = SpeedActivity.this.settings.getString("speed_units", "");
+			float localizedSpeed = PreferencesActivity.localizedSpeed(units, speed);
+			speedView.setText(String.format("%.1f %s", localizedSpeed, units));
 
+			// display the volume as well
 			TextView volumeView = (TextView) findViewById(R.id.volume);
 			volumeView.setText(String.format("%d%%", intent.getIntExtra("volume", -1)));
 		}
@@ -188,8 +195,8 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 	};
 
 	/**
-	 * Show a menu on menu button press.
-	 * Where supported, show an action item instead.
+	 * Show a menu on menu button press. Where supported, show an action item
+	 * instead.
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
@@ -221,7 +228,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 
 	public void onClick(View v)
 	{
-		switch(v.getId())
+		switch (v.getId())
 		{
 			case R.id.buttonMap:
 				startActivity(new Intent(this, DrawMapActivity.class));

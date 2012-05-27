@@ -2,13 +2,22 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:osu="http://schemas.android.com/apk/res/edu.osu.speedofsound" >
 
+    <PreferenceCategory android:title="General" >
+        <ListPreference
+            android:defaultValue="mi/h"
+            android:entries="@array/speed_units_display"
+            android:entryValues="@array/speed_units"
+            android:key="speed_units"
+            android:summary="Choose the speed units you want to use"
+            android:title="Speed Units" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="Slow Speed" >
         <edu.osu.speedofsound.SliderPreference
             android:defaultValue="15"
-            android:key="low_speed"
+            android:key="low_speed_localized"
             android:summary="Minimum speed to start adjusting volume"
             android:title="Slowest Speed"
-            osu:maxValue="80"
+            osu:maxValue="100"
             osu:minValue="0" />
         <edu.osu.speedofsound.SliderPreference
             android:defaultValue="60"
@@ -20,14 +29,14 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="High Speed" >
         <edu.osu.speedofsound.SliderPreference
-            android:defaultValue="50"
-            android:key="high_speed"
+            android:defaultValue="40"
+            android:key="high_speed_localized"
             android:summary="Speed where maximum volume applies"
             android:title="Fastest Speed"
-            osu:maxValue="80"
+            osu:maxValue="100"
             osu:minValue="0" />
         <edu.osu.speedofsound.SliderPreference
-            android:defaultValue="100"
+            android:defaultValue="95"
             android:key="high_volume"
             android:summary="Volume at the maximum speed"
             android:title="Max Volume"

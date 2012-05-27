@@ -59,12 +59,9 @@ public class VolumeThread extends Thread
 				targetVolume = this.targetVolume;
 			}
 
-			Log.v(TAG, "Thread-read target is " + targetVolume);
-
 			// don't do anything if the target is already matched
 			if (currentVolume == targetVolume)
 			{
-				Log.v(TAG, "Volumes matched, skipping");
 				continue;
 			}
 
