@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/preferences" android:title="Preferences" android:icon="@drawable/ic_menu_preferences"></item>
-    
+
+    <item
+        android:id="@+id/view_map"
+        android:icon="@drawable/ic_map"
+        android:title="View Map">
+    </item>
+    <item
+        android:id="@+id/preferences"
+        android:icon="@drawable/ic_menu_preferences"
+        android:title="Preferences">
+    </item>
 
 </menu>

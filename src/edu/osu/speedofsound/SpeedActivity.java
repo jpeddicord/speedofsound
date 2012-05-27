@@ -196,7 +196,8 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 	{
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.speed_menu, menu);
-		MenuItemCompat.setShowAsAction(menu.findItem(R.id.preferences), 1);
+		MenuItemCompat.setShowAsAction(menu.findItem(R.id.preferences), MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
+		MenuItemCompat.setShowAsAction(menu.findItem(R.id.view_map), MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
 		return true;
 	}
 
@@ -209,8 +210,10 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 		switch (item.getItemId())
 		{
 			case R.id.preferences:
-				Intent intent = new Intent(this, PreferencesActivity.class);
-				startActivity(intent);
+				startActivity(new Intent(this, PreferencesActivity.class));
+				break;
+			case R.id.view_map:
+				startActivity(new Intent(this, DrawMapActivity.class));
 				break;
 		}
 		return true;
