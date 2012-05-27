@@ -1,16 +1,21 @@
 package edu.osu.speedofsound;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
@@ -33,6 +38,10 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 {
 	private static final String TAG = "SpeedActivity";
 
+	private static final int DIALOG_DISCLAIMER = 1;
+	private static final int DIALOG_FIRSTRUN = 2;
+	private static final int DIALOG_GPS = 3;
+
 	private SharedPreferences settings;
 	private CheckBox enabledCheckBox;
 	private boolean bound = false;
@@ -54,6 +63,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 		View btnMap = findViewById(R.id.buttonMap);
 		btnMap.setOnClickListener(this);
 
+		this.startupMessages();
 	}
 
 	/**
@@ -98,7 +108,6 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 		Log.d(TAG, "Paused, unsubscribing from updates");
 
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(this.messageReceiver);
-
 	}
 
 	/**
@@ -112,6 +121,80 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(this.messageReceiver,
 				new IntentFilter("speed-sound-changed"));
+	}
+
+	protected Dialog onCreateDialog(int id)
+	{
+		Dialog dialog;
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		switch (id)
+		{
+			case DIALOG_DISCLAIMER:
+				builder.setMessage(this.getString(R.string.launch_disclaimer))
+						.setTitle(this.getString(R.string.warning))
+						.setCancelable(false)
+						.setPositiveButton(this.getString(R.string.launch_disclaimer_accept),
+								new DialogInterface.OnClickListener()
+								{
+									public void onClick(DialogInterface dialog, int id)
+									{
+										SpeedActivity.this.checkGPS();
+									}
+								});
+				dialog = builder.create();
+				break;
+
+			case DIALOG_GPS:
+				builder.setMessage(this.getString(R.string.gps_warning))
+						.setCancelable(false)
+						.setPositiveButton(this.getString(R.string.location_settings),
+								new DialogInterface.OnClickListener()
+								{
+									public void onClick(DialogInterface dialog, int which)
+									{
+										startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+									}
+								})
+						.setNegativeButton(this.getString(R.string.gps_warning_dismiss), null);
+				dialog = builder.create();
+				break;
+
+			default:
+				dialog = null;
+		}
+		return dialog;
+	}
+
+	@SuppressWarnings("deprecation")
+	private void startupMessages()
+	{
+		// only show disclaimers and the like once
+		boolean runonce = this.settings.getBoolean("runonce", false);
+
+		// firstrun things
+		if (!runonce)
+		{
+			SharedPreferences.Editor editor = this.settings.edit();
+			editor.putBoolean("runonce", true);
+			editor.commit();
+
+			// driving disclaimer (followed by GPS)
+			this.showDialog(DIALOG_DISCLAIMER);
+		}
+		else
+		{
+			// GPS notice
+			this.checkGPS();
+		}
+	}
+
+	private void checkGPS()
+	{
+		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+		{
+			this.showDialog(DIALOG_GPS);
+		}
 	}
 
 	/**
@@ -130,7 +213,6 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 		if (isChecked)
 		{
 			this.service.startTracking();
-
 		}
 		else
 		{
