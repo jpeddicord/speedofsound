@@ -1,5 +1,23 @@
-Speed of Sound, and Android application.
+Speed of Sound
+==============
 
-A project for CSE 694.
+A project for CSE 694 at The Ohio State University.
 By Team 9001: Andrew Buelow, Chris Hofer, Jacob Peddicord.
+
+This project is open-source! See COPYING for license information.
+
+
+Build Notes
+-----------
+
+While an Eclipse project is included, building with Ant instead is
+recommended. Eclipse doesn't use the custom rules we have set up for
+Ant build targets with respect to Google Maps API keys. You can still
+test with Eclipse, but the map portion of the application may appear
+as an empty grid.
+
+On that note, be sure to create a local.properties (you can base it off
+of ant.properties) and set maps.debug.key and maps.release.key to the
+Google Maps API keys you want to use.
+
 

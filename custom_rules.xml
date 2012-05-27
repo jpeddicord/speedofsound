@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="custom">
+	<target name="update-keys">
+
+		<if condition="${build.is.packaging.debug}">
+			<then>
+				<property name="maps.key" value="${maps.debug.key}" />
+			</then>
+			<else>
+				<property name="maps.key" value="${maps.release.key}" />
+			</else>
+		</if>
+
+		<replace file="res/values/strings.xml" token='ANT_MAPS_KEY' value='${maps.key}' />
+	</target>
+
+	<target name="-pre-build">
+		<ant target="update-keys" />
+	</target>
+</project>
+

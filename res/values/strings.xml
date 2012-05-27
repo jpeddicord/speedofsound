@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Speed of Sound</string>
+    <string name="maps_api_key">ANT_MAPS_KEY</string>
     <string name="moving_header">You\'re currently moving at:</string>
     <string name="volume_header_linear">So your volume is set to:</string><string name="volume_header_min">So we have your volume at the minimum:</string>
     <string name="volume_header_max">So we have your volume set to the maximum:</string>
