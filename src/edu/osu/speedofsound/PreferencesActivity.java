@@ -1,5 +1,6 @@
 package edu.osu.speedofsound;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -50,6 +51,26 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 
 	}
 
+	public static void setDefaults(Context context)
+	{
+		PreferenceManager.setDefaultValues(context, R.xml.preferences, false);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences.Editor editor = prefs.edit();
+
+		// if you change these, be sure to update the defaults in
+		// preferences.xml
+		if (!prefs.contains("low_speed_localized"))
+			editor.putInt("low_speed_localized", 15);
+		if (!prefs.contains("low_volume"))
+			editor.putInt("low_volume", 60);
+		if (!prefs.contains("high_speed_localized"))
+			editor.putInt("high_speed_localized", 40);
+		if (!prefs.contains("high_volume"))
+			editor.putInt("high_volume", 95);
+
+		editor.commit();
+	}
+
 	public static float nativeSpeed(String local_units, float localizedSpeed)
 	{
 		if (local_units.equals("m/s"))
@@ -66,6 +87,7 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 		}
 		else
 		{
+			Log.w(TAG, "Not an appropriate unit: " + local_units);
 			return -1;
 		}
 	}
@@ -86,6 +108,7 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 		}
 		else
 		{
+			Log.w(TAG, "Not an appropriate unit: " + local_units);
 			return -1;
 		}
 	}

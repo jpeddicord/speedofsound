@@ -54,7 +54,7 @@ public class SoundService extends Service
 		Log.d(TAG, "Service starting up");
 
 		// set up preferences
-		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+		PreferencesActivity.setDefaults(this);
 		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
 		PreferencesActivity.updateNativeSpeeds(this.settings);
 

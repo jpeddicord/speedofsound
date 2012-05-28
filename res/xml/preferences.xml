@@ -4,13 +4,20 @@
 
     <PreferenceCategory android:title="General" >
         <ListPreference
-            android:defaultValue="mi/h"
+            android:defaultValue="mph"
             android:entries="@array/speed_units_display"
             android:entryValues="@array/speed_units"
             android:key="speed_units"
             android:summary="Choose the speed units you want to use"
             android:title="Speed Units" />
     </PreferenceCategory>
+
+    <!--
+         Because Android won't read custom preferences by default,
+         we have to re-define the default values in PreferencesActivity.
+         Be sure to change them there if you change them here!
+    -->
+
     <PreferenceCategory android:title="Slow Speed" >
         <edu.osu.speedofsound.SliderPreference
             android:defaultValue="15"

@@ -28,7 +28,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
-import edu.osu.speedofsound.SoundService.LocalBinder;
 
 /**
  * Main status activity. Displays the current speed and set volume. Does not
@@ -39,7 +38,6 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 	private static final String TAG = "SpeedActivity";
 
 	private static final int DIALOG_DISCLAIMER = 1;
-	private static final int DIALOG_FIRSTRUN = 2;
 	private static final int DIALOG_GPS = 3;
 
 	private SharedPreferences settings;
@@ -188,6 +186,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void checkGPS()
 	{
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -258,7 +257,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 		{
 			Log.v(TAG, "ServiceConnection connected");
 
-			LocalBinder binder = (LocalBinder) service;
+			SoundService.LocalBinder binder = (SoundService.LocalBinder) service;
 			SpeedActivity.this.service = binder.getService();
 			SpeedActivity.this.bound = true;
 
