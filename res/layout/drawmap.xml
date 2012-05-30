@@ -38,12 +38,10 @@
 
                 <TextView
                     android:gravity="center_horizontal"
-                    android:minWidth="70dp"
-                    android:text="@string/ct_color"
+                    android:minWidth="30dp"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
-                    android:minWidth="125dp"
                     android:text="@string/ct_song"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </TableRow>
