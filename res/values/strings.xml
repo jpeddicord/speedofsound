@@ -3,9 +3,9 @@
 
     <string name="app_name">Speed of Sound</string>
     <string name="moving_header">You\'re currently moving at:</string>
-    <string name="volume_header_linear">So your volume is set to:</string>
-    <string name="volume_header_min">So we have your volume at the minimum:</string>
-    <string name="volume_header_max">So we have your volume set to the maximum:</string>
+    <string name="volume_header_scaled">So your volume is set to:</string>
+    <string name="volume_header_low">So we have your volume at the minimum:</string>
+    <string name="volume_header_high">So we have your volume set to the maximum:</string>
     <string name="enabled">Enabled</string>
     <string name="waiting">(Waiting for GPS signal)</string>
     <string name="notification_text">Tracking your speed</string>

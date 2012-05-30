@@ -64,7 +64,7 @@ public class SoundService extends Service
 		this.maxVolume = this.audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 		this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-		db = DatabaseManager.getDBManager(this);
+		this.db = DatabaseManager.getDBManager(this);
 
 		// listen to certain broadcasts
 		IntentFilter filter = new IntentFilter();
@@ -103,7 +103,7 @@ public class SoundService extends Service
 		this.unregisterReceiver(this.broadcastReceiver);
 
 		// Close the database
-		db.close();
+		this.db.close();
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class SoundService extends Service
 		Log.d(TAG, "Tracking started with location provider " + provider);
 
 		// Clear the database for new tracking data
-		db.resetDB();
+		this.db.resetDB();
 	}
 
 	/**

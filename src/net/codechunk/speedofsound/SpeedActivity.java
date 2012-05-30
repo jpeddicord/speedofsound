@@ -128,10 +128,10 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 		switch (id)
 		{
 			case DIALOG_DISCLAIMER:
-				builder.setMessage(this.getString(R.string.launch_disclaimer))
-						.setTitle(this.getString(R.string.warning))
+				builder.setMessage(getString(R.string.launch_disclaimer))
+						.setTitle(getString(R.string.warning))
 						.setCancelable(false)
-						.setPositiveButton(this.getString(R.string.launch_disclaimer_accept),
+						.setPositiveButton(getString(R.string.launch_disclaimer_accept),
 								new DialogInterface.OnClickListener()
 								{
 									public void onClick(DialogInterface dialog, int id)
@@ -143,9 +143,9 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 				break;
 
 			case DIALOG_GPS:
-				builder.setMessage(this.getString(R.string.gps_warning))
+				builder.setMessage(getString(R.string.gps_warning))
 						.setCancelable(false)
-						.setPositiveButton(this.getString(R.string.location_settings),
+						.setPositiveButton(getString(R.string.location_settings),
 								new DialogInterface.OnClickListener()
 								{
 									public void onClick(DialogInterface dialog, int which)
@@ -153,7 +153,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 										startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 									}
 								})
-						.setNegativeButton(this.getString(R.string.gps_warning_dismiss), null);
+						.setNegativeButton(getString(R.string.gps_warning_dismiss), null);
 				dialog = builder.create();
 				break;
 
@@ -212,11 +212,31 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 		if (isChecked)
 		{
 			this.service.startTracking();
+
+			// update the UI
+			this.updateStatusState(true);
+
+			// reset speed/volume to waiting state.
+			// we don't do this in updateStatusState as that would happen too
+			// frequently.
+			TextView speed = (TextView) findViewById(R.id.speed_value);
+			TextView volume = (TextView) findViewById(R.id.volume_value);
+			speed.setText(getString(R.string.waiting));
+			volume.setText(getString(R.string.waiting));
 		}
 		else
 		{
 			this.service.stopTracking();
+
+			// update the UI
+			this.updateStatusState(false);
 		}
+	}
+
+	private void updateStatusState(boolean tracking)
+	{
+		View statusDetails = findViewById(R.id.status_details);
+		statusDetails.setVisibility(tracking ? View.VISIBLE : View.GONE);
 	}
 
 	/**
@@ -232,16 +252,39 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 		{
 			Log.v(TAG, "Received broadcast");
 
-			// display the speed with appropriate units
-			TextView speedView = (TextView) findViewById(R.id.speed);
+			// unpack the speed/volume
 			float speed = intent.getFloatExtra("speed", -1.0f);
+			int volume = intent.getIntExtra("volume", -1);
+
+			// convert the speed to the appropriate units
 			String units = SpeedActivity.this.settings.getString("speed_units", "");
 			float localizedSpeed = PreferencesActivity.localizedSpeed(units, speed);
+
+			// display the speed
+			TextView speedView = (TextView) findViewById(R.id.speed_value);
 			speedView.setText(String.format("%.1f %s", localizedSpeed, units));
 
 			// display the volume as well
-			TextView volumeView = (TextView) findViewById(R.id.volume);
-			volumeView.setText(String.format("%d%%", intent.getIntExtra("volume", -1)));
+			TextView volumeView = (TextView) findViewById(R.id.volume_value);
+			volumeView.setText(String.format("%d%%", volume));
+
+			// ui goodies
+			TextView volumeDesc = (TextView) findViewById(R.id.volume_description);
+			int lowVolume = SpeedActivity.this.settings.getInt("low_volume", 0);
+			int highVolume = SpeedActivity.this.settings.getInt("high_volume", 100);
+
+			if (volume <= lowVolume)
+			{
+				volumeDesc.setText(getString(R.string.volume_header_low));
+			}
+			else if (volume >= highVolume)
+			{
+				volumeDesc.setText(getText(R.string.volume_header_high));
+			}
+			else
+			{
+				volumeDesc.setText(getText(R.string.volume_header_scaled));
+			}
 		}
 	};
 
@@ -263,6 +306,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 
 			// update the enabled check box
 			SpeedActivity.this.enabledCheckBox.setChecked(SpeedActivity.this.service.tracking);
+			SpeedActivity.this.updateStatusState(SpeedActivity.this.service.tracking);
 		}
 
 		/**
@@ -290,7 +334,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 	}
 
 	/**
-	 * Show preferences when the item is selected.
+	 * Handle actions from the menu/action bar.
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
@@ -307,6 +351,9 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 		return true;
 	}
 
+	/**
+	 * Handle button click actions.
+	 */
 	public void onClick(View v)
 	{
 		switch (v.getId())

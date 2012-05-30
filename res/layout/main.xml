@@ -12,37 +12,44 @@
         android:layout_marginBottom="10dp"
         android:text="@string/enabled" />
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/status_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/moving_header" />
+        android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/speed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="@string/waiting"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/moving_header" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/volume_header_linear" />
+        <TextView
+            android:id="@+id/speed_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/waiting"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <TextView
-        android:id="@+id/volume"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="@string/waiting"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-    
+        <TextView
+            android:id="@+id/volume_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/volume_header_scaled" />
+
+        <TextView
+            android:id="@+id/volume_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/waiting"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </LinearLayout>
+
     <Button
-		android:id="@+id/buttonMap"
-		android:text="@string/map_bttn"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		/>
+        android:id="@+id/buttonMap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/map_bttn" />
 
 </LinearLayout>
