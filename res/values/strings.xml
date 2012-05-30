@@ -14,7 +14,7 @@
     <string name="warning">Warning</string>
     <string name="launch_disclaimer">Speed of Sound is designed to keep your eyes on the road, not your phone. As such, don\'t attempt to change settings or use your phone while driving.</string>
     <string name="launch_disclaimer_accept">I\'ll be careful</string>
-    <string name="gps_warning">You should turn on GPS in Location Settings or this app won\'t work very well.</string>
+    <string name="gps_warning">You should turn GPS on in Location Settings or this app won\'t work very well.</string>
     <string name="location_settings">Location Settings</string>
     <string name="gps_warning_dismiss">Deal with it</string>
 
