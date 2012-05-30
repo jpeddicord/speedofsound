@@ -118,6 +118,12 @@ public class DrawMapActivity extends MapActivity
         	
         	long songid = (Long) point.get(1);
         	
+        	if (i == lower)
+        	{
+        		color = db.getColor(songid);
+        		songname = db.getSongName(songid); 
+        	}
+        	
         	if (songid != oldsongid)
         	{
         		ArrayList<Object> loc = new ArrayList<Object>();
