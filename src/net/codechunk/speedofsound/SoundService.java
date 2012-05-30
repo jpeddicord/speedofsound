@@ -1,4 +1,4 @@
-package edu.osu.speedofsound;
+package net.codechunk.speedofsound;
 
 import android.app.PendingIntent;
 import android.app.Service;

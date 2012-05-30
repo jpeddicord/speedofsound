@@ -1,4 +1,4 @@
-package edu.osu.speedofsound;
+package net.codechunk.speedofsound;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

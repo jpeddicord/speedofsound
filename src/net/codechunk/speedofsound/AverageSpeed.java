@@ -1,4 +1,4 @@
-package edu.osu.speedofsound;
+package net.codechunk.speedofsound;
 
 import java.util.ArrayList;
 import java.util.Collections;

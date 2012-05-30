@@ -1,4 +1,4 @@
-package edu.osu.speedofsound;
+package net.codechunk.speedofsound;
 
 import android.app.Activity;
 import android.app.AlertDialog;

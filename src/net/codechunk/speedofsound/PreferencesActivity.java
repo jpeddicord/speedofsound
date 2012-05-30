@@ -1,4 +1,4 @@
-package edu.osu.speedofsound;
+package net.codechunk.speedofsound;
 
 import android.content.Context;
 import android.content.SharedPreferences;

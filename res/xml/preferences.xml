@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:osu="http://schemas.android.com/apk/res/edu.osu.speedofsound" >
+    xmlns:osu="http://schemas.android.com/apk/res/net.codechunk.speedofsound" >
 
     <PreferenceCategory android:title="General" >
         <ListPreference
@@ -19,14 +19,14 @@
     -->
 
     <PreferenceCategory android:title="Slow Speed" >
-        <edu.osu.speedofsound.SliderPreference
+        <net.codechunk.speedofsound.SliderPreference
             android:defaultValue="15"
             android:key="low_speed_localized"
             android:summary="Minimum speed to start adjusting volume"
             android:title="Slowest Speed"
             osu:maxValue="100"
             osu:minValue="0" />
-        <edu.osu.speedofsound.SliderPreference
+        <net.codechunk.speedofsound.SliderPreference
             android:defaultValue="60"
             android:key="low_volume"
             android:summary="Volume at the minimum speed"
@@ -35,14 +35,14 @@
             osu:minValue="0" />
     </PreferenceCategory>
     <PreferenceCategory android:title="High Speed" >
-        <edu.osu.speedofsound.SliderPreference
+        <net.codechunk.speedofsound.SliderPreference
             android:defaultValue="40"
             android:key="high_speed_localized"
             android:summary="Speed where maximum volume applies"
             android:title="Fastest Speed"
             osu:maxValue="100"
             osu:minValue="0" />
-        <edu.osu.speedofsound.SliderPreference
+        <net.codechunk.speedofsound.SliderPreference
             android:defaultValue="95"
             android:key="high_volume"
             android:summary="Volume at the maximum speed"

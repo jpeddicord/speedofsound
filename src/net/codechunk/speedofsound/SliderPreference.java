@@ -1,4 +1,4 @@
-package edu.osu.speedofsound;
+package net.codechunk.speedofsound;
 
 import android.content.Context;
 import android.preference.DialogPreference;
@@ -16,7 +16,7 @@ public class SliderPreference extends DialogPreference implements
 		OnSeekBarChangeListener
 {
 	private static final String ANDROID_NS = "http://schemas.android.com/apk/res/android";
-	private static final String LOCAL_NS = "http://schemas.android.com/apk/res/edu.osu.speedofsound";
+	private static final String LOCAL_NS = "http://schemas.android.com/apk/res/net.codechunk.speedofsound";
 
 	private SeekBar seekBar;
 	private TextView valueDisplay;
