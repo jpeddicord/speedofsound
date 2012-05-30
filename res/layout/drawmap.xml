@@ -7,7 +7,7 @@
     <com.google.android.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="fill_parent"
-        android:layout_height="350dp"
+        android:layout_height="275dp"
         android:apiKey="@string/maps_api_key"
         android:clickable="true"
         android:state_enabled="true" />
@@ -16,33 +16,38 @@
         android:id="@+id/zoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_alignBottom="@+id/mapView"
-        />
-    
-    <TableLayout
-		android:id="@+id/song_table"
-		android:layout_below="@+id/mapView"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:paddingTop="10dp"
-		android:paddingLeft="5dp"
-		android:paddingRight="5dp"
-		android:shrinkColumns="1"
-		>
-		<TableRow>
-			<TextView 
-				android:text="@string/ct_color"
-				android:minWidth="70dp"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:gravity="center_horizontal"
-				/>
-			<TextView
-				android:text="@string/ct_song"
-				android:minWidth="125dp"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				/>
-		</TableRow>
-	</TableLayout>
+        android:layout_centerHorizontal="true" />
+
+    <ScrollView
+        android:id="@+id/scroll_table"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mapView" >
+
+        <TableLayout
+            android:id="@+id/song_table"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="10dp"
+            android:shrinkColumns="1" >
+
+            <TableRow>
+
+                <TextView
+                    android:gravity="center_horizontal"
+                    android:minWidth="70dp"
+                    android:text="@string/ct_color"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:minWidth="125dp"
+                    android:text="@string/ct_song"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </TableRow>
+        </TableLayout>
+    </ScrollView>
 
 </RelativeLayout>
