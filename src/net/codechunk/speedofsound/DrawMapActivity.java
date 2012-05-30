@@ -1,6 +1,7 @@
 package net.codechunk.speedofsound;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import android.graphics.Canvas;
@@ -10,8 +11,12 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -37,6 +42,9 @@ public class DrawMapActivity extends MapActivity
 	
 	private ArrayList<ArrayList<Object>> mapContent = new ArrayList<ArrayList<Object>>();
 	
+	// the table that displays the data
+	private TableLayout songTable;
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +52,8 @@ public class DrawMapActivity extends MapActivity
 		setContentView(R.layout.drawmap);
 		
         mapView = (MapView) findViewById(R.id.mapView);
-        LinearLayout zoomLayout = (LinearLayout)findViewById(R.id.zoom);  
+        LinearLayout zoomLayout = (LinearLayout)findViewById(R.id.zoom);
+        songTable = (TableLayout)findViewById(R.id.song_table);
 		View zoomView = mapView.getZoomControls(); 
  
         zoomLayout.addView(zoomView, 
@@ -77,8 +86,11 @@ public class DrawMapActivity extends MapActivity
         	}
         }
         
+        this.displayTable(this.mapContent);
+        
         //mapView.invalidate();
 	}
+
 
 	@Override
 	public void onResume()
@@ -148,6 +160,44 @@ public class DrawMapActivity extends MapActivity
 		
 		Log.d(TAG, "Adding points with color: " + color + ", song: " + songname);
         
+	}
+    
+	private void displayTable(ArrayList<ArrayList<Object>> paths)
+	{
+		HashSet<String> songs = new HashSet<String>();
+		
+		for (int i = 0; i < paths.size(); i++)
+    	{
+			
+    		TableRow tableRow= new TableRow(this);
+ 
+    		ArrayList<Object> path = paths.get(i);
+    		
+    		int color = (Integer) path.get(0);
+    		String song = (String) path.get(1);
+ 
+    		if (! songs.contains(song)) {
+    			
+	    		TextView colorTV = new TextView(this);
+	    		colorTV.setText("\u25A0");
+	    		colorTV.setTextColor(color);
+	    		colorTV.setGravity(Gravity.CENTER);
+	    		colorTV.setTextSize(20f);
+	    		tableRow.addView(colorTV);
+
+	 
+	    		TextView songTV = new TextView(this);
+	    		songTV.setText(song);
+	    		songTV.setTextSize(18f);
+	    		tableRow.addView(songTV);
+	    		
+	 
+	    		songTable.addView(tableRow);
+	    		
+	    		songs.add(song);
+    		}
+    	}
+		
 	}
 
 	@Override

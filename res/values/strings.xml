@@ -17,5 +17,7 @@
     <string name="gps_warning">You should turn GPS on in Location Settings or this app won\'t work very well.</string>
     <string name="location_settings">Location Settings</string>
     <string name="gps_warning_dismiss">Deal with it</string>
+    <string name="ct_color">Color</string>
+    <string name="ct_song">Song</string>
 
 </resources>
