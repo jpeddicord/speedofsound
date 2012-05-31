@@ -40,7 +40,12 @@ public class DatabaseManager
 	private final String TABLE2_ROW_ONE = "songid";
 	private final String TABLE2_ROW_TWO = "latitude";
 	private final String TABLE2_ROW_THREE = "longitude";
+	
+	private long numPoints = 0;
+	private long lowestPoint = 0;
 
+	private final int LIMIT = 7200;
+	private final int REMOVE_SIZE = 300;
 	
  
 	private DatabaseManager(Context context)
@@ -50,6 +55,10 @@ public class DatabaseManager
 		// create or open the database
 		CustomSQLiteOpenHelper helper = new CustomSQLiteOpenHelper(context);
 		this.db = helper.getWritableDatabase();
+		
+		// Make sure our count is reset
+		this.numPoints = 0;
+		this.lowestPoint = 0;
 	}
  
 	public static DatabaseManager getDBManager(Context context)
@@ -97,6 +106,10 @@ public class DatabaseManager
 
 			// execute the query string to the database.
 			db.execSQL(newTableQueryString);
+			
+			// Make sure our count is reset
+			this.numPoints = 0;
+			this.lowestPoint = 0;
 		}
 		catch (SQLException e)
 		{
@@ -151,7 +164,17 @@ public class DatabaseManager
 		values.put(TABLE2_ROW_THREE, longitude);
 
 		// ask the database object to insert the new data 
-		try{db.insert(TABLE2_NAME, null, values);}
+		try
+		{
+			db.insert(TABLE2_NAME, null, values);
+			
+			this.numPoints++;
+			
+			if (this.numPoints > this.LIMIT)
+			{
+				this.prunedb();
+			}
+		}
 		catch(Exception e)
 		{
 			Log.e("DB ERROR", e.toString());
@@ -159,6 +182,21 @@ public class DatabaseManager
 		}		
 	}
  
+	private void prunedb()
+	{
+		
+		long upper = this.lowestPoint + this.REMOVE_SIZE;
+		
+		for (long i = this.lowestPoint; i < upper; i++)
+		{
+			this.deletePoint(i);
+		}
+		
+		this.lowestPoint = upper;
+		this.numPoints -= this.REMOVE_SIZE;
+		
+	}
+
 	public long getSongId(String name)
 	{
 		// create an array list to store data from the database row.
@@ -358,10 +396,10 @@ public class DatabaseManager
 	 * 
 	 * @param rowID the SQLite database identifier for the row to delete.
 	 */
-	public void deleteRow(long rowID)
+	public void deletePoint(long rowID)
 	{
 		// ask the database manager to delete the row of given id
-		try {db.delete(TABLE_NAME, TABLE_ROW_ID + "=" + rowID, null);}
+		try {db.delete(TABLE2_NAME, TABLE2_ROW_ID + "=" + rowID, null);}
 		catch (Exception e)
 		{
 			Log.e("DB ERROR", e.toString());
