@@ -2,7 +2,7 @@ bin/
 gen/
 lib/
 proguard/
-res/values/keys.xml
+speedofsound/res/values/keys.xml
 .metadata
 local.properties
 lint.xml
