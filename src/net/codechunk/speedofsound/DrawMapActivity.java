@@ -220,6 +220,8 @@ public class DrawMapActivity extends MapActivity
         public void draw(Canvas canvas, MapView mapv, boolean shadow){
             super.draw(canvas, mapv, shadow);
             
+            GeoPoint previous = null;
+            GeoPoint next = null;
             
             for (ArrayList<Object> loc : DrawMapActivity.this.mapContent)
 	        {
@@ -232,9 +234,7 @@ public class DrawMapActivity extends MapActivity
                 mPaint.setStrokeJoin(Paint.Join.ROUND);
                 mPaint.setStrokeCap(Paint.Cap.ROUND);
                 mPaint.setStrokeWidth(4);
-               
-                GeoPoint previous = null;
-                GeoPoint next = null;
+            
             	
             	int color = (Integer) loc.get(0);
             	mPaint.setColor(color);
