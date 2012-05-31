@@ -237,6 +237,9 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 	{
 		View statusDetails = findViewById(R.id.status_details);
 		statusDetails.setVisibility(tracking ? View.VISIBLE : View.GONE);
+
+		View disabledMessage = findViewById(R.id.disabled_message);
+		disabledMessage.setVisibility(tracking ? View.GONE : View.VISIBLE);
 	}
 
 	/**
