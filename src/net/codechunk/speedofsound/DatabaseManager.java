@@ -10,44 +10,84 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.util.Log;
- 
-// TODO: Clean up the documentation in this file
 
+
+/**
+ * Allows for easy use of the database. This is a singleton class.
+ * 
+ * This class is based on the work of Randall Mitchell in his Android
+ * Database Tutorial located at the following:
+ * 
+ * http://www.anotherandroidblog.com/2010/08/04/android-database-tutorial/
+ * 
+ * @author Andrew
+ *
+ */
 public class DatabaseManager
 {
+	/**
+	 * A reference to the database manager.
+	 */
 	private static DatabaseManager ref;
 	
-	// the Activity or Application that is creating an object from this class.
+	/**
+	 * The Activity or Application that is creating an object from this class.
+	 */
 	Context context;
  
-	// a reference to the database used by this application/object
+	/**
+	 * A reference to the database used by this application/object
+	 */
 	private SQLiteDatabase db;
  
-	// These constants are specific to the database.  They should be 
-	// changed to suit your needs.
+	/**
+	 * Name of the database.
+	 */
 	private final String DB_NAME = "locations";
+	
+	/**
+	 * Version number.
+	 */
 	private final int DB_VERSION = 1;
  
-	// These constants are specific to the database table.  They should be
-	// changed to suit your needs.
-	private final String TABLE_NAME = "songs";
-	private final String TABLE_ROW_ID = "id";
-	private final String TABLE_ROW_ONE = "name";
-	private final String TABLE_ROW_TWO = "color";
+	/**
+	 * Fields for the table that will hold songs.
+	 */
+	private final String SONG_TABLE = "songs";
+	private final String SONG_TABLE_ID = "id";
+	private final String SONG_TABLE_TRACK = "name";
+	private final String SONG_TABLE_COLOR = "color";
 	
-	private final String TABLE2_NAME = "points";
-	private final String TABLE2_ROW_ID = "pointid";
-	private final String TABLE2_ROW_ONE = "songid";
-	private final String TABLE2_ROW_TWO = "latitude";
-	private final String TABLE2_ROW_THREE = "longitude";
+	/**
+	 * Fields for the table that will hold location points.
+	 */
+	private final String POINT_TABLE = "points";
+	private final String POINT_TABLE_ID = "pointid";
+	private final String POINT_TABLE_SONG_ID = "songid";
+	private final String POINT_TABLE_LAT = "latitude";
+	private final String POINT_TABLE_LONG = "longitude";
 	
+	/**
+	 * The total number of points being stored.
+	 */
 	private long numPoints = 0;
-	private long lowestPoint = 0;
 
-	private final int LIMIT = 7200;
-	private final int REMOVE_SIZE = 300;
+	/**
+	 * The limit on number of points before earlier points are removed.
+	 */
+	private final int LIMIT = 100;
+	
+	/**
+	 * The number of points to be removed.
+	 */
+	private final int REMOVE_SIZE = 25;
 	
  
+	/**
+	 * Creates or opens the database if it has not been created or opened.
+	 * 
+	 * @param context The Activity or Application that is creating an object from this class.
+	 */
 	private DatabaseManager(Context context)
 	{
 		this.context = context;
@@ -55,14 +95,19 @@ public class DatabaseManager
 		// create or open the database
 		CustomSQLiteOpenHelper helper = new CustomSQLiteOpenHelper(context);
 		this.db = helper.getWritableDatabase();
-		
-		// Make sure our count is reset
-		this.numPoints = 0;
-		this.lowestPoint = 0;
 	}
  
+	/**
+	 * Calls the constructor if a DBManager does not already exist. Returns the newly opened
+	 * or previously opened DBManager.
+	 * 
+	 * @param context The Activity or Application that is creating an object from this class.
+	 * 
+	 * @return A reference to this DatabaseManager
+	 */
 	public static DatabaseManager getDBManager(Context context)
 	{
+		// One does not currently exist
 		if (ref == null)
 		{
 			ref = new DatabaseManager(context);
@@ -71,54 +116,59 @@ public class DatabaseManager
 		return ref;
 	}
 	
+	/**
+	 * Clears all values from the songs and points tables.
+	 */
 	public void resetDB()
 	{
 
 		try
 		{
-			String dropQuery = "drop table " + TABLE_NAME;
+			
+			// Drop the song table
+			String dropQuery = "drop table " + SONG_TABLE;
 			db.execSQL(dropQuery);
 			
-			dropQuery = "drop table " + TABLE2_NAME;
+			// Drop the point table
+			dropQuery = "drop table " + POINT_TABLE;
 			db.execSQL(dropQuery);
 			
-			
+			// Recreate them
 			String newTableQueryString = "create table " +
-					TABLE_NAME +
+					SONG_TABLE +
 					" (" +
-					TABLE_ROW_ID + " integer primary key autoincrement not null," +
-					TABLE_ROW_ONE + " text," +
-					TABLE_ROW_TWO + " integer" +
+					SONG_TABLE_ID + " integer primary key autoincrement not null," +
+					SONG_TABLE_TRACK + " text," +
+					SONG_TABLE_COLOR + " integer" +
 					");";
-			// execute the query string to the database.
 			db.execSQL(newTableQueryString);
 
-			// This string is used to create the database.  It should
-			// be changed to suit your needs.
+			
 			newTableQueryString =   "create table " +
-				TABLE2_NAME +
+				POINT_TABLE +
 				" (" +
-				TABLE2_ROW_ID + " integer primary key autoincrement not null," +
-				TABLE2_ROW_ONE + " integer," +
-				TABLE2_ROW_TWO + " integer," +
-				TABLE2_ROW_THREE + " integer" +
+				POINT_TABLE_ID + " integer primary key autoincrement not null," +
+				POINT_TABLE_SONG_ID + " integer," +
+				POINT_TABLE_LAT + " integer," +
+				POINT_TABLE_LONG + " integer" +
 				");";
 
-			// execute the query string to the database.
 			db.execSQL(newTableQueryString);
 			
 			// Make sure our count is reset
 			this.numPoints = 0;
-			this.lowestPoint = 0;
 		}
 		catch (SQLException e)
 		{
-			Log.e("DB ERROR on reset", e.toString());
+			Log.e("DB ERROR", "Error when attempting to reset the DB");
 			e.printStackTrace();
 		}
 		
 	}
 	
+	/**
+	 * Close the database if it is currently open.
+	 */
 	public void close()
 	{
 		if (db.isOpen())
@@ -128,95 +178,120 @@ public class DatabaseManager
 	}
  
 	
-	/**********************************************************************
-	 * ADDING A ROW TO THE DATABASE TABLE
-	 * 
-	 * This is an example of how to add a row to a database table
-	 * using this class.  You should edit this method to suit your
-	 * needs.
+	/**
+	 * Add a song to the database.
 	 * 
 	 * the key is automatically assigned by the database
-	 * @param rowStringOne the value for the row's first column
-	 * @param rowStringTwo the value for the row's second column 
+	 * @param name The name of the song
+	 * @param color The color of the path associated with this song.
 	 */
 	public void addSong(String name, int color)
 	{
 		// this is a key value pair holder used by android's SQLite functions
 		ContentValues values = new ContentValues();
-		values.put(TABLE_ROW_ONE, name);
-		values.put(TABLE_ROW_TWO, color);
+		values.put(SONG_TABLE_TRACK, name);
+		values.put(SONG_TABLE_COLOR, color);
  
 		// ask the database object to insert the new data 
-		try{db.insert(TABLE_NAME, null, values);}
+		try{db.insert(SONG_TABLE, null, values);}
 		catch(Exception e)
 		{
-			Log.e("DB ERROR", e.toString());
+			Log.e("DB ERROR", "Error when attempting to add a song");
 			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Add a point to the database.
+	 * 
+	 * the key is automatically assigned by the database
+	 * @param songid The id of the song being played at this point
+	 * @param latitude The latitude in microdegrees (degrees * 1E6)
+	 * @param longitude The longitude in microdegrees (degrees * 1E6)
+	 * 
+	 */
 	public void addPoint(long songid, int latitude, int longitude)
 	{
-		// this is a key value pair holder used by android's SQLite functions
+		// Store value in a ContentValues
 		ContentValues values = new ContentValues();
-		values.put(TABLE2_ROW_ONE, songid);
-		values.put(TABLE2_ROW_TWO, latitude);
-		values.put(TABLE2_ROW_THREE, longitude);
+		values.put(POINT_TABLE_SONG_ID, songid);
+		values.put(POINT_TABLE_LAT, latitude);
+		values.put(POINT_TABLE_LONG, longitude);
 
 		// ask the database object to insert the new data 
 		try
 		{
-			db.insert(TABLE2_NAME, null, values);
+			db.insert(POINT_TABLE, null, values);
 			
+			// Update our counter for number of points
 			this.numPoints++;
 			
+			// If the limit has be exceeded, prune the database
 			if (this.numPoints > this.LIMIT)
 			{
+				Log.v("Database", "Limit exceeded. Pruning database.");
 				this.prunedb();
 			}
 		}
 		catch(Exception e)
 		{
-			Log.e("DB ERROR", e.toString());
+			Log.e("DB ERROR", "Error when attempting to add a point.");
 			e.printStackTrace();
 		}		
 	}
  
+	/**
+	 * Removes older entries from the database. Used to keep the database
+	 * from becoming too large.
+	 */
 	private void prunedb()
 	{
 		
-		long upper = this.lowestPoint + this.REMOVE_SIZE;
-		
-		for (long i = this.lowestPoint; i < upper; i++)
+		// remove the REMOVE_SIZE oldest points from the database
+		try
 		{
-			this.deletePoint(i);
+			String deleteQuery = "DELETE FROM " + POINT_TABLE +
+					" WHERE " + POINT_TABLE_ID + " NOT IN (" +
+					" SELECT " + POINT_TABLE_ID + 
+					" FROM ( SELECT " + POINT_TABLE_ID +
+					" FROM " + POINT_TABLE +
+					" ORDER BY " + POINT_TABLE_ID + " DESC " +
+					" LIMIT " + (this.LIMIT - this.REMOVE_SIZE) + "));";
+			db.execSQL(deleteQuery);	
+			
+			this.numPoints -= this.REMOVE_SIZE;
 		}
-		
-		this.lowestPoint = upper;
-		this.numPoints -= this.REMOVE_SIZE;
+		catch(Exception e)
+		{
+			Log.e("DB ERROR", "Error when attempting prune db.");
+			e.printStackTrace();
+		}
 		
 	}
 
+	/**
+	 * Find the index of the song provided. Songs should not be added more than once
+	 * but if they are this will return the first record. Returns -1 if the song
+	 * was not found.
+	 * 
+	 * @param name Name of the song
+	 * @return The id of the song in the song table
+	 */
 	public long getSongId(String name)
 	{
-		// create an array list to store data from the database row.
-		// I would recommend creating a JavaBean compliant object 
-		// to store this data instead.  That way you can ensure
-		// data types are correct.
+
 		long rowNum = -1;
 		Cursor cursor;
  
 		try
 		{
-			// this is a database call that creates a "cursor" object.
-			// the cursor object store the information collected from the
-			// database and is used to iterate through the data.
+			// Query the database for the song
 			cursor = db.query
 			(
 					true,
-					TABLE_NAME,
-					new String[] { TABLE_ROW_ID },
-					TABLE_ROW_ONE + "=?",
+					SONG_TABLE,
+					new String[] { SONG_TABLE_ID },
+					SONG_TABLE_TRACK + "=?",
 					new String[] { name },
 					null, null, null, null
 			);
@@ -224,15 +299,15 @@ public class DatabaseManager
 			// move the pointer to position zero in the cursor.
 			cursor.moveToFirst();
  
-			// if there is data available after the cursor's pointer, add
-			// it to the ArrayList that will be returned by the method.
+			// if there is data available after the cursor's pointer,
+			// get the value as a long.
 			if (!cursor.isAfterLast())
 			{
 				rowNum = cursor.getLong(0);
 			}
 			else
 			{
-				Log.e("DB ERROR", "Nothing was found!");
+				Log.e("DB ERROR", "The song could not be found.");
 			}
  
 			// let java know that you are through with the cursor.
@@ -240,49 +315,50 @@ public class DatabaseManager
 		}
 		catch (SQLException e) 
 		{
-			Log.e("DB ERROR", e.toString());
+			Log.e("DB ERROR", "Error when attempting to find a song");
 			e.printStackTrace();
 		}
  
-		// return the ArrayList containing the given row from the database.
+		// return the index of the song
 		return rowNum;
 	}
 	
+	/**
+	 * Find the name of the song with the given index. If the index does not exist
+	 * this will return a song name of "Unknown".
+	 * 
+	 * @param id The id of the song.
+	 * @return The name of the song.
+	 */
 	public String getSongName(long id)
 	{
-		// create an array list to store data from the database row.
-		// I would recommend creating a JavaBean compliant object 
-		// to store this data instead.  That way you can ensure
-		// data types are correct.
 		String name = "Unknown";
 		Cursor cursor;
  
 		try
 		{
-			// this is a database call that creates a "cursor" object.
-			// the cursor object store the information collected from the
-			// database and is used to iterate through the data.
+			// query the database for the songid
 			cursor = db.query
 			(
 					true,
-					TABLE_NAME,
-					new String[] { TABLE_ROW_ONE },
-					TABLE_ROW_ID + "=" + id,
+					SONG_TABLE,
+					new String[] { SONG_TABLE_TRACK },
+					SONG_TABLE_ID + "=" + id,
 					null, null, null, null, null
 			);
  
 			// move the pointer to position zero in the cursor.
 			cursor.moveToFirst();
  
-			// if there is data available after the cursor's pointer, add
-			// it to the ArrayList that will be returned by the method.
+			// if there is data available after the cursor's pointer,
+			// get the value as a string
 			if (!cursor.isAfterLast())
 			{
 				name = cursor.getString(0);
 			}
 			else
 			{
-				Log.e("DB ERROR", "Nothing was found!");
+				Log.e("DB ERROR", "Song id was not found.");
 			}
  
 			// let java know that you are through with the cursor.
@@ -290,47 +366,52 @@ public class DatabaseManager
 		}
 		catch (SQLException e) 
 		{
-			Log.e("DB ERROR", e.toString());
+			Log.e("DB ERROR", "Error when attempting to find songid");
 			e.printStackTrace();
 		}
  
-		// return the ArrayList containing the given row from the database.
+		// return the name of the song
 		return name;
 	}
 	
+	/**
+	 * Get the color-int of the path associated with the song id. If no song
+	 * can be found then this will return the color-int for Color.WHITE.
+	 * 
+	 * @param id id for the song
+	 * @return color-int associated with that song
+	 */
 	public int getColor(long id)
-	{
-		// create an array list to store data from the database row.
-		// I would recommend creating a JavaBean compliant object 
-		// to store this data instead.  That way you can ensure
-		// data types are correct.
-		
-		int color = Color.WHITE;
+	{	
+		int color = Color.RED;
 		
 		Cursor cursor;
  
 		try
 		{
-			// this is a database call that creates a "cursor" object.
-			// the cursor object store the information collected from the
-			// database and is used to iterate through the data.
+
+			// query the database for the color
 			cursor = db.query
 			(
-					TABLE_NAME,
-					new String[] { TABLE_ROW_TWO },
-					TABLE_ROW_ID + "=" + id,
+					SONG_TABLE,
+					new String[] { SONG_TABLE_COLOR },
+					SONG_TABLE_ID + "=" + id,
 					null, null, null, null, null
 			);
  
 			// move the pointer to position zero in the cursor.
 			cursor.moveToFirst();
  
-			// if there is data available after the cursor's pointer, add
-			// it to the ArrayList that will be returned by the method.
+			// if there is data available after the cursor's pointer, 
+			// get the value as an int (color-int)
 			if (!cursor.isAfterLast())
 			{
 				color = cursor.getInt(0);
 
+			}
+			else
+			{
+				Log.e("DB ERROR", "Song id was not found.");
 			}
  
 			// let java know that you are through with the cursor.
@@ -338,14 +419,19 @@ public class DatabaseManager
 		}
 		catch (SQLException e) 
 		{
-			Log.e("DB ERROR", e.toString());
+			Log.e("DB ERROR", "Error when attempting to find color");
 			e.printStackTrace();
 		}
 		
-		// return the ArrayList containing the given row from the database.
+		// return the color
 		return color;
 	}
  
+	/**
+	 * Determine the range of the points table (lowest and highest indexes).
+	 * 
+	 * @return An array where the first item is the lowest index and second is highest
+	 */
 	public ArrayList<Long> getRange()
 	{
 		long lowerIndex = -1;
@@ -355,27 +441,32 @@ public class DatabaseManager
 		try
 		{
 			cursor = db.query(
-					TABLE2_NAME,
-					new String[] { TABLE2_ROW_ID },
+					POINT_TABLE,
+					new String[] { POINT_TABLE_ID },
 					null, null, null, null,
-					TABLE2_ROW_ID + " ASC"
+					POINT_TABLE_ID + " ASC"
 			);
 			
+			// move the pointer to position zero in the cursor.
 			cursor.moveToFirst();
 			
+			// if there is data available after the cursor's pointer,
+			// get the value as a long.
 			if (!cursor.isAfterLast())
 			{
 				lowerIndex = cursor.getLong(0);
 				
+				// now move the cursor to the very end and get the largest index
 				cursor.moveToLast();
 				upperIndex = cursor.getLong(0);
 			}
 			
+			// Finished with the cursor
 			cursor.close();
 		}
 		catch (SQLException e) 
 		{
-			Log.e("DB ERROR", e.toString());
+			Log.e("DB ERROR", "Error when attempting to find range of indexes");
 			e.printStackTrace();
 		}
 		
@@ -387,80 +478,26 @@ public class DatabaseManager
 		return range;
 	}
  
-	/**********************************************************************
-	 * DELETING A ROW FROM THE DATABASE TABLE
+	/**
+	 * Retrieve the values for a single point (one record) from the database.
 	 * 
-	 * This is an example of how to delete a row from a database table
-	 * using this class. In most cases, this method probably does
-	 * not need to be rewritten.
-	 * 
-	 * @param rowID the SQLite database identifier for the row to delete.
-	 */
-	public void deletePoint(long rowID)
-	{
-		// ask the database manager to delete the row of given id
-		try {db.delete(TABLE2_NAME, TABLE2_ROW_ID + "=" + rowID, null);}
-		catch (Exception e)
-		{
-			Log.e("DB ERROR", e.toString());
-			e.printStackTrace();
-		}
-	}
- 
-	/**********************************************************************
-	 * UPDATING A ROW IN THE DATABASE TABLE
-	 * 
-	 * This is an example of how to update a row in the database table
-	 * using this class.  You should edit this method to suit your needs.
-	 * 
-	 * @param rowID the SQLite database identifier for the row to update.
-	 * @param rowStringOne the new value for the row's first column
-	 * @param rowStringTwo the new value for the row's second column 
-	 */ 
-	public void updateRow(long rowID, String rowStringOne, String rowStringTwo)
-	{
-		// this is a key value pair holder used by android's SQLite functions
-		ContentValues values = new ContentValues();
-		values.put(TABLE_ROW_ONE, rowStringOne);
-		values.put(TABLE_ROW_TWO, rowStringTwo);
- 
-		// ask the database object to update the database row of given rowID
-		try {db.update(TABLE_NAME, values, TABLE_ROW_ID + "=" + rowID, null);}
-		catch (Exception e)
-		{
-			Log.e("DB Error", e.toString());
-			e.printStackTrace();
-		}
-	}
- 
-	/**********************************************************************
-	 * RETRIEVING A ROW FROM THE DATABASE TABLE
-	 * 
-	 * This is an example of how to retrieve a row from a database table
-	 * using this class.  You should edit this method to suit your needs.
-	 * 
-	 * @param rowID the id of the row to retrieve
+	 * @param rowID the id of the point to retrieve
 	 * @return an array containing the data from the row
 	 */
 	public ArrayList<Object> getPointArray(long rowID)
 	{
 		// create an array list to store data from the database row.
-		// I would recommend creating a JavaBean compliant object 
-		// to store this data instead.  That way you can ensure
-		// data types are correct.
 		ArrayList<Object> rowArray = new ArrayList<Object>();
 		Cursor cursor;
  
 		try
 		{
-			// this is a database call that creates a "cursor" object.
-			// the cursor object store the information collected from the
-			// database and is used to iterate through the data.
+			// query for the point record
 			cursor = db.query
 			(
-					TABLE2_NAME,
-					new String[] { TABLE2_ROW_ID, TABLE2_ROW_ONE, TABLE2_ROW_TWO, TABLE2_ROW_THREE },
-					TABLE2_ROW_ID + "=" + rowID,
+					POINT_TABLE,
+					new String[] { POINT_TABLE_ID, POINT_TABLE_SONG_ID, POINT_TABLE_LAT, POINT_TABLE_LONG },
+					POINT_TABLE_ID + "=" + rowID,
 					null, null, null, null, null
 			);
  
@@ -486,7 +523,7 @@ public class DatabaseManager
 		}
 		catch (SQLException e) 
 		{
-			Log.e("DB ERROR", e.toString());
+			Log.e("DB ERROR", "Error when attempting to retrieve a point array");
 			e.printStackTrace();
 		}
  
@@ -497,14 +534,10 @@ public class DatabaseManager
  
  
  
-	/**********************************************************************
-	 * RETRIEVING ALL ROWS FROM THE DATABASE TABLE
+	/**
+	 * Retrieve all points from the database.
 	 * 
-	 * This is an example of how to retrieve all data from a database
-	 * table using this class.  You should edit this method to suit your
-	 * needs.
-	 * 
-	 * the key is automatically assigned by the database
+	 * return an array of arrays containing values for each point.
 	 */
  
 	public ArrayList<ArrayList<Object>> getAllPoints()
@@ -512,18 +545,14 @@ public class DatabaseManager
 		// create an ArrayList that will hold all of the data collected from
 		// the database.
 		ArrayList<ArrayList<Object>> dataArrays = new ArrayList<ArrayList<Object>>();
- 
-		// this is a database call that creates a "cursor" object.
-		// the cursor object store the information collected from the
-		// database and is used to iterate through the data.
 		Cursor cursor;
  
 		try
 		{
 			// ask the database object to create the cursor.
 			cursor = db.query(
-					TABLE2_NAME,
-					new String[]{TABLE2_ROW_ID, TABLE2_ROW_ONE, TABLE2_ROW_TWO, TABLE2_ROW_THREE },
+					POINT_TABLE,
+					new String[]{POINT_TABLE_ID, POINT_TABLE_SONG_ID, POINT_TABLE_LAT, POINT_TABLE_LONG },
 					null, null, null, null, null
 			);
  
@@ -553,7 +582,7 @@ public class DatabaseManager
 		}
 		catch (SQLException e)
 		{
-			Log.e("DB Error", e.toString());
+			Log.e("DB Error", "Error when attempting to retrieve all points");
 			e.printStackTrace();
 		}
  
@@ -561,19 +590,6 @@ public class DatabaseManager
 		// the database.
 		return dataArrays;
 	}
- 
- 
- 
- 
-	/**********************************************************************
-	 * THIS IS THE BEGINNING OF THE INTERNAL SQLiteOpenHelper SUBCLASS.
-	 * 
-	 * I MADE THIS CLASS INTERNAL SO I CAN COPY A SINGLE FILE TO NEW APPS 
-	 * AND MODIFYING IT - ACHIEVING DATABASE FUNCTIONALITY.  ALSO, THIS WAY 
-	 * I DO NOT HAVE TO SHARE CONSTANTS BETWEEN TWO FILES AND CAN
-	 * INSTEAD MAKE THEM PRIVATE AND/OR NON-STATIC.  HOWEVER, I THINK THE
-	 * INDUSTRY STANDARD IS TO KEEP THIS CLASS IN A SEPARATE FILE.
-	 *********************************************************************/
  
 	/**
 	 * This class is designed to check if there is a database that currently
@@ -596,27 +612,25 @@ public class DatabaseManager
 		@Override
 		public void onCreate(SQLiteDatabase db)
 		{
-			// This string is used to create the database.  It should
-			// be changed to suit your needs.
+			// String to create the song table
 			String newTableQueryString = "create table " +
-										TABLE_NAME +
+										SONG_TABLE +
 										" (" +
-										TABLE_ROW_ID + " integer primary key autoincrement not null," +
-										TABLE_ROW_ONE + " text," +
-										TABLE_ROW_TWO + " integer" +
+										SONG_TABLE_ID + " integer primary key autoincrement not null," +
+										SONG_TABLE_TRACK + " text," +
+										SONG_TABLE_COLOR + " integer" +
 										");";
 			// execute the query string to the database.
 			db.execSQL(newTableQueryString);
 			
-			// This string is used to create the database.  It should
-			// be changed to suit your needs.
+			// String to create the point table
 			newTableQueryString =   "create table " +
-									TABLE2_NAME +
+									POINT_TABLE +
 									" (" +
-									TABLE2_ROW_ID + " integer primary key autoincrement not null," +
-									TABLE2_ROW_ONE + " integer," +
-									TABLE2_ROW_TWO + " integer," +
-									TABLE2_ROW_THREE + " integer" +
+									POINT_TABLE_ID + " integer primary key autoincrement not null," +
+									POINT_TABLE_SONG_ID + " integer," +
+									POINT_TABLE_LAT + " integer," +
+									POINT_TABLE_LONG + " integer" +
 									");";
 			
 			// execute the query string to the database.
@@ -627,7 +641,6 @@ public class DatabaseManager
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
 		{
 			// NOTHING TO DO HERE. THIS IS THE ORIGINAL DATABASE VERSION.
-			// OTHERWISE, YOU WOULD SPECIFIY HOW TO UPGRADE THE DATABASE.
 		}
 	}
 }
