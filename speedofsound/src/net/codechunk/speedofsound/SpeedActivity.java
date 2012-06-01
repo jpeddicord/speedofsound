@@ -18,7 +18,6 @@ import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -33,7 +32,7 @@ import com.actionbarsherlock.view.MenuItem;
  * Main status activity. Displays the current speed and set volume. Does not
  * actually track the volume itself; that is handled in SoundService.
  */
-public class SpeedActivity extends SherlockActivity implements OnCheckedChangeListener, OnClickListener
+public class SpeedActivity extends SherlockActivity implements OnCheckedChangeListener
 {
 	private static final String TAG = "SpeedActivity";
 
@@ -57,9 +56,6 @@ public class SpeedActivity extends SherlockActivity implements OnCheckedChangeLi
 		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
 		this.enabledCheckBox = (CheckBox) findViewById(R.id.checkbox_enabled);
 		this.enabledCheckBox.setOnCheckedChangeListener(this);
-
-		View btnMap = findViewById(R.id.buttonMap);
-		btnMap.setOnClickListener(this);
 
 		this.startupMessages();
 	}
@@ -353,18 +349,4 @@ public class SpeedActivity extends SherlockActivity implements OnCheckedChangeLi
 		}
 		return true;
 	}
-
-	/**
-	 * Handle button click actions.
-	 */
-	public void onClick(View v)
-	{
-		switch (v.getId())
-		{
-			case R.id.buttonMap:
-				startActivity(new Intent(this, DrawMapActivity.class));
-				break;
-		}
-	}
-
 }

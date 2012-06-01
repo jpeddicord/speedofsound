@@ -7,7 +7,7 @@
     <string name="volume_header_low">So we have your volume at the minimum:</string>
     <string name="volume_header_high">So we have your volume set to the maximum:</string>
     <string name="enabled">Enable Speed of Sound</string>
-    <string name="disabled_text">Speed of Sound is currently <i>disabled</i>. Tap the box above to start, or go to <b>Settings</b> from the menu to customize your speed and volume settings.</string>
+    <string name="disabled_text">Speed of Sound is currently <i>disabled</i>. Tap the box above to start, or go to <b>Settings</b> from the wrench above to customize your speed and volume. You can also tap the map to look at your last drive and the songs that were played.</string>
     <string name="waiting">(Waiting for GPS signal)</string>
     <string name="notification_text">Matching your volume to your speed</string>
     <string name="ticker_text">Speed of Sound is running</string>
