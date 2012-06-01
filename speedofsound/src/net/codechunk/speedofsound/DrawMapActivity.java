@@ -386,7 +386,9 @@ public class DrawMapActivity extends SherlockMapActivity
 		switch (item.getItemId())
 		{
 			case android.R.id.home:
-				startActivity(new Intent(this, SpeedActivity.class));
+				Intent intent = new Intent(this, SpeedActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(intent);
 				break;
 		}
 		return true;
