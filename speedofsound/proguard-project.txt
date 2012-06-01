@@ -15,6 +15,13 @@
     public static *** v(...);
 }
 
+# ActionBarSherlock
+-keep class android.support.v4.app.** { *; }
+-keep interface android.support.v4.app.** { *; }
+-keep class com.actionbarsherlock.** { *; }
+-keep interface com.actionbarsherlock.** { *; }
+-keepattributes *Annotation*
+
 # android stuff
 -keepattributes *Annotation*
 -keep public class * extends android.app.Activity
