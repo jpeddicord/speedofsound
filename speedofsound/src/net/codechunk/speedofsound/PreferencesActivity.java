@@ -1,17 +1,21 @@
 package net.codechunk.speedofsound;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.MenuItem;
 
 /**
  * Speed and volume preferences screen.
  */
-public class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener
+public class PreferencesActivity extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener
 {
 	private static final String TAG = "PreferencesActivity";
 
@@ -23,6 +27,11 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+
+		// activate the up functionality on the action bar
+		ActionBar ab = this.getSupportActionBar();
+		ab.setHomeButtonEnabled(true);
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		// sadly, the newer fragment preference API is
 		// not yet in the support library.
@@ -145,4 +154,17 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 		editor.commit();
 	}
 
+	/**
+	 * Handle the home button press on the action bar.
+	 */
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case android.R.id.home:
+				startActivity(new Intent(this, SpeedActivity.class));
+				break;
+		}
+		return true;
+	}
 }

@@ -1,6 +1,5 @@
 package net.codechunk.speedofsound;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -17,11 +16,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
@@ -29,11 +24,16 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+
 /**
  * Main status activity. Displays the current speed and set volume. Does not
  * actually track the volume itself; that is handled in SoundService.
  */
-public class SpeedActivity extends Activity implements OnCheckedChangeListener, OnClickListener
+public class SpeedActivity extends SherlockActivity implements OnCheckedChangeListener, OnClickListener
 {
 	private static final String TAG = "SpeedActivity";
 
@@ -329,10 +329,10 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener, 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		MenuInflater inflater = getMenuInflater();
+		MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.speed_menu, menu);
-		MenuItemCompat.setShowAsAction(menu.findItem(R.id.preferences), MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
-		MenuItemCompat.setShowAsAction(menu.findItem(R.id.view_map), MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
+		menu.findItem(R.id.preferences).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		menu.findItem(R.id.view_map).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		return true;
 	}
 

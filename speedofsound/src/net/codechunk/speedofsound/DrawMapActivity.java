@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -18,8 +19,10 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockMapActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MapView.LayoutParams;
@@ -33,7 +36,7 @@ import com.google.android.maps.Projection;
  * @author Andrew
  * 
  */
-public class DrawMapActivity extends MapActivity
+public class DrawMapActivity extends SherlockMapActivity
 {
 	/**
 	 * Used for the logger.
@@ -81,6 +84,11 @@ public class DrawMapActivity extends MapActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.drawmap);
+
+		// activate the up functionality on the action bar
+		ActionBar ab = this.getSupportActionBar();
+		ab.setHomeButtonEnabled(true);
+		ab.setDisplayHomeAsUpEnabled(true);
 
 		mapView = (MapView) findViewById(R.id.mapView);
 		LinearLayout zoomLayout = (LinearLayout) findViewById(R.id.zoom);
@@ -369,4 +377,19 @@ public class DrawMapActivity extends MapActivity
 			}
 		}
 	}
+
+	/**
+	 * Handle the home button press on the action bar.
+	 */
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case android.R.id.home:
+				startActivity(new Intent(this, SpeedActivity.class));
+				break;
+		}
+		return true;
+	}
+
 }
