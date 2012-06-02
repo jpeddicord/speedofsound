@@ -159,7 +159,7 @@ public class SoundService extends Service
 		{
 			return;
 		}
-		
+
 		// shut off the volume thread
 		if (this.volumeThread != null)
 		{
