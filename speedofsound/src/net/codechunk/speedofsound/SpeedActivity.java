@@ -34,14 +34,40 @@ import com.actionbarsherlock.view.MenuItem;
  */
 public class SpeedActivity extends SherlockActivity implements OnCheckedChangeListener
 {
+	/**
+	 * Logging tag.
+	 */
 	private static final String TAG = "SpeedActivity";
 
+	/**
+	 * Disclaimer dialog unique ID.
+	 */
 	private static final int DIALOG_DISCLAIMER = 1;
-	private static final int DIALOG_GPS = 3;
 
+	/**
+	 * GPS nag dialog unique ID.
+	 */
+	private static final int DIALOG_GPS = 2;
+
+	/**
+	 * Application's shared preferences.
+	 */
 	private SharedPreferences settings;
+
+	/**
+	 * The main "Enable Speed of Sound" checkbox.
+	 */
 	private CheckBox enabledCheckBox;
+
+	/**
+	 * Whether we're bound to the background service or not. If everything is
+	 * working, this should be true.
+	 */
 	private boolean bound = false;
+
+	/**
+	 * The background service.
+	 */
 	private SoundService service;
 
 	/**
@@ -53,10 +79,12 @@ public class SpeedActivity extends SherlockActivity implements OnCheckedChangeLi
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+		// hook up the checkbox
 		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
 		this.enabledCheckBox = (CheckBox) findViewById(R.id.checkbox_enabled);
 		this.enabledCheckBox.setOnCheckedChangeListener(this);
 
+		// show disclaimer and/or GPS nag
 		this.startupMessages();
 	}
 
@@ -117,6 +145,9 @@ public class SpeedActivity extends SherlockActivity implements OnCheckedChangeLi
 				new IntentFilter("speed-sound-changed"));
 	}
 
+	/**
+	 * Create disclaimer/gps dialogs to show.
+	 */
 	protected Dialog onCreateDialog(int id)
 	{
 		Dialog dialog;
@@ -159,6 +190,11 @@ public class SpeedActivity extends SherlockActivity implements OnCheckedChangeLi
 		return dialog;
 	}
 
+	/**
+	 * Show some startup messages. Will show the disclaimer dialog if this is
+	 * the first run. If GPS is disabled, will show another dialog to ask to
+	 * enable it.
+	 */
 	@SuppressWarnings("deprecation")
 	private void startupMessages()
 	{
@@ -182,6 +218,9 @@ public class SpeedActivity extends SherlockActivity implements OnCheckedChangeLi
 		}
 	}
 
+	/**
+	 * Check if GPS is enabled. If it isn't, bug the user to turn it on.
+	 */
 	@SuppressWarnings("deprecation")
 	private void checkGPS()
 	{
@@ -199,12 +238,14 @@ public class SpeedActivity extends SherlockActivity implements OnCheckedChangeLi
 	{
 		Log.d(TAG, "Checkbox changed to " + isChecked);
 
+		// uh-oh
 		if (!this.bound)
 		{
 			Log.e(TAG, "Service is unavailable");
 			return;
 		}
 
+		// start up the service
 		if (isChecked)
 		{
 			this.service.startTracking();
@@ -220,6 +261,7 @@ public class SpeedActivity extends SherlockActivity implements OnCheckedChangeLi
 			speed.setText(getString(R.string.waiting));
 			volume.setText(getString(R.string.waiting));
 		}
+		// stop the service
 		else
 		{
 			this.service.stopTracking();
@@ -229,6 +271,12 @@ public class SpeedActivity extends SherlockActivity implements OnCheckedChangeLi
 		}
 	}
 
+	/**
+	 * Switch between the intro message and the speed details.
+	 * 
+	 * @param tracking
+	 *            The current tracking state
+	 */
 	private void updateStatusState(boolean tracking)
 	{
 		View statusDetails = findViewById(R.id.status_details);
@@ -272,6 +320,7 @@ public class SpeedActivity extends SherlockActivity implements OnCheckedChangeLi
 			int lowVolume = SpeedActivity.this.settings.getInt("low_volume", 0);
 			int highVolume = SpeedActivity.this.settings.getInt("high_volume", 100);
 
+			// show different text values depending on the limits hit
 			if (volume <= lowVolume)
 			{
 				volumeDesc.setText(getString(R.string.volume_header_low));

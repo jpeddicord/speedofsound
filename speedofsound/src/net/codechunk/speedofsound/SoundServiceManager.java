@@ -6,7 +6,8 @@ import android.content.Intent;
 import android.util.Log;
 
 /**
- * Sound service activation manager.
+ * Sound service activation manager. Used to start the service at boot;
+ * referenced in the manifest.
  */
 public class SoundServiceManager extends BroadcastReceiver
 {

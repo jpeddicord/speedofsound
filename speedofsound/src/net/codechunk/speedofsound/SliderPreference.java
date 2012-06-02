@@ -15,16 +15,49 @@ import android.widget.TextView;
 public class SliderPreference extends DialogPreference implements
 		OnSeekBarChangeListener
 {
+	/**
+	 * Stock Android XML namespace.
+	 */
 	private static final String ANDROID_NS = "http://schemas.android.com/apk/res/android";
+
+	/**
+	 * Our custom namespace for this preference.
+	 */
 	private static final String LOCAL_NS = "http://schemas.android.com/apk/res/net.codechunk.speedofsound";
 
+	/**
+	 * Seek bar widget to control preference value.
+	 */
 	private SeekBar seekBar;
+
+	/**
+	 * Text view displaying the value of the seek bar.
+	 */
 	private TextView valueDisplay;
+
+	/**
+	 * Dialog view.
+	 */
 	private View view;
 
+	/**
+	 * Default preference value.
+	 */
 	private int defaultValue;
+
+	/**
+	 * Minimum value.
+	 */
 	private int minValue;
+
+	/**
+	 * Maximum value.
+	 */
 	private int maxValue;
+
+	/**
+	 * Current value.
+	 */
 	private int value;
 
 	/**

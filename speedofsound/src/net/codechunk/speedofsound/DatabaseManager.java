@@ -20,7 +20,6 @@ import android.util.Log;
  * http://www.anotherandroidblog.com/2010/08/04/android-database-tutorial/
  * 
  * @author Andrew
- * 
  */
 public class DatabaseManager
 {
@@ -123,10 +122,8 @@ public class DatabaseManager
 	 */
 	public void resetDB()
 	{
-
 		try
 		{
-
 			// Drop the song table
 			String dropQuery = "drop table " + SONG_TABLE;
 			db.execSQL(dropQuery);
@@ -164,7 +161,6 @@ public class DatabaseManager
 			Log.e("DB ERROR", "Error when attempting to reset the DB");
 			e.printStackTrace();
 		}
-
 	}
 
 	/**
@@ -611,7 +607,6 @@ public class DatabaseManager
 	 * to tell the class how to create (or update) the database.
 	 * 
 	 * @author Randall Mitchell
-	 * 
 	 */
 	private class CustomSQLiteOpenHelper extends SQLiteOpenHelper
 	{

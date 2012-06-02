@@ -34,7 +34,6 @@ import com.google.android.maps.Projection;
  * the song that was being listened to at that point.
  * 
  * @author Andrew
- * 
  */
 public class DrawMapActivity extends SherlockMapActivity
 {
@@ -90,11 +89,13 @@ public class DrawMapActivity extends SherlockMapActivity
 		ab.setHomeButtonEnabled(true);
 		ab.setDisplayHomeAsUpEnabled(true);
 
+		// load the map view
 		mapView = (MapView) findViewById(R.id.mapView);
 		LinearLayout zoomLayout = (LinearLayout) findViewById(R.id.zoom);
 		songTable = (TableLayout) findViewById(R.id.song_table);
 		View zoomView = mapView.getZoomControls();
 
+		// add zoom controls
 		zoomLayout.addView(zoomView,
 				new LinearLayout.LayoutParams(
 						LayoutParams.WRAP_CONTENT,
@@ -103,7 +104,7 @@ public class DrawMapActivity extends SherlockMapActivity
 
 		mapOverlays = mapView.getOverlays();
 		projection = mapView.getProjection();
-		mapOverlays.add(new MyOverlay());
+		mapOverlays.add(new SongOverlay());
 
 		// Get access to the database
 		db = DatabaseManager.getDBManager(this);
@@ -281,14 +282,18 @@ public class DrawMapActivity extends SherlockMapActivity
 		return false;
 	}
 
-	class MyOverlay extends Overlay
+	/**
+	 * A map overlay to draw songs listened to as colored lines on the map.
+	 */
+	class SongOverlay extends Overlay
 	{
+		/**
+		 * Maximum distance to draw a line between points.
+		 */
+		private static final int MAX_DIST = 4000;
 
-		private final int MAX_DIST = 4000;
-
-		public MyOverlay()
+		public SongOverlay()
 		{
-
 		}
 
 		/**
@@ -339,7 +344,7 @@ public class DrawMapActivity extends SherlockMapActivity
 						// points.
 						double dist = Math.sqrt(Math.pow((oldlong - newlong), 2) + Math.pow((oldlat - newlat), 2));
 
-						if (dist >= this.MAX_DIST)
+						if (dist >= SongOverlay.MAX_DIST)
 						{
 							previous = null;
 							next = null;

@@ -9,7 +9,6 @@ import android.graphics.Color;
  * similar to the previously chosen color.
  * 
  * @author Andrew
- * 
  */
 public class ColorCreator
 {
@@ -23,11 +22,10 @@ public class ColorCreator
 	 * Uses a random generator to determine the rgb components and returns the
 	 * values as a color-int.
 	 * 
-	 * @return
+	 * @return A new random color
 	 */
 	public int getColor()
 	{
-
 		Random generator = new Random();
 
 		// rgb values range from 0 to 255.
@@ -45,10 +43,8 @@ public class ColorCreator
 				(Math.abs(b - Color.blue(this.previous)) <= 50) &&
 				(Math.abs(g - Color.green(this.previous)) <= 50))
 		{
-
 			// generate a different color
 			color = this.getColor();
-
 		}
 
 		this.previous = color;

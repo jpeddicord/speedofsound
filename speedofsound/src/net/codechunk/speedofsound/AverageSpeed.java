@@ -10,7 +10,14 @@ import java.util.List;
  */
 public class AverageSpeed
 {
+	/**
+	 * Size limit of the averager.
+	 */
 	private int size;
+
+	/**
+	 * Cycling list of speeds to average.
+	 */
 	private List<Float> speeds = new ArrayList<Float>();
 
 	/**

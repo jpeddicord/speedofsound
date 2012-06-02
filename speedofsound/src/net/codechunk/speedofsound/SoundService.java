@@ -29,20 +29,70 @@ import android.util.Log;
  */
 public class SoundService extends Service
 {
+	/**
+	 * Logging tag.
+	 */
 	private static final String TAG = "SoundService";
 
+	/**
+	 * Application shared preferences. Used to load speed/volume settings.
+	 */
 	private SharedPreferences settings;
+
+	/**
+	 * Broadcast manager to send speed/volume updates to the UI.
+	 */
 	private LocalBroadcastManager localBroadcastManager;
+
+	/**
+	 * Audio manager to control the system media volume.
+	 */
 	private AudioManager audioManager;
+
+	/**
+	 * System maximum volume. Typically 255, but might be different on some
+	 * platforms.
+	 */
 	private int maxVolume;
+
+	/**
+	 * Volume changing thread.
+	 */
 	private VolumeThread volumeThread = null;
+
+	/**
+	 * Location manager to receive and process new GPS speeds/values.
+	 */
 	private LocationManager locationManager;
+
+	/**
+	 * Speed averager/smoother.
+	 */
 	private AverageSpeed averager = new AverageSpeed(6);
+
+	/**
+	 * Service binder for activities to communicate with this service.
+	 */
 	private LocalBinder binder = new LocalBinder();
+
+	/**
+	 * The current tracking state.
+	 */
 	public boolean tracking = false;
 
+	/**
+	 * Our local database for storing song/location info.
+	 */
 	private DatabaseManager db;
+
+	/**
+	 * The current song being played.
+	 */
 	private String song = "Unknown";
+
+	/**
+	 * A random color generator.
+	 */
 	private ColorCreator cc = new ColorCreator();
 
 	/**
@@ -224,7 +274,12 @@ public class SoundService extends Service
 		return (int) (volume * 100);
 	}
 
-	// TODO: document
+	/**
+	 * Add a location to the song database.
+	 * 
+	 * @param location
+	 *            Location/point to store.
+	 */
 	private void addPoint(Location location)
 	{
 		long songid = this.db.getSongId(this.song);
@@ -233,7 +288,6 @@ public class SoundService extends Service
 
 		if (songid < 0)
 		{
-
 			Log.d(TAG, "Song did not exist in db. Adding. Song id: " + songid);
 
 			int pathcolor = cc.getColor();
@@ -355,7 +409,14 @@ public class SoundService extends Service
 	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver()
 	{
+		/**
+		 * Whether or not we might be in car mode.
+		 */
 		private boolean carMode = false;
+
+		/**
+		 * Whether or not headphones are plugged in
+		 */
 		private boolean headphonesPlugged = false;
 
 		@Override

@@ -17,10 +17,13 @@ import com.actionbarsherlock.view.MenuItem;
  */
 public class PreferencesActivity extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener
 {
+	/**
+	 * Logging tag.
+	 */
 	private static final String TAG = "PreferencesActivity";
 
 	/**
-	 * Load preferences.
+	 * Load preferences and prepare conversions.
 	 */
 	@SuppressWarnings("deprecation")
 	@Override
@@ -42,6 +45,9 @@ public class PreferencesActivity extends SherlockPreferenceActivity implements O
 		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
+	/**
+	 * Convert stored preferences when the speed units change.
+	 */
 	public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
 	{
 		Log.v(TAG, "Preferences " + key);
@@ -60,6 +66,14 @@ public class PreferencesActivity extends SherlockPreferenceActivity implements O
 
 	}
 
+	/**
+	 * Set defaults for preferences if not already stored. Needed to supplement
+	 * missing functionality in setDefaultValues: it doesn't properly handle
+	 * custom preferences.
+	 * 
+	 * @param context
+	 *            Application context
+	 */
 	public static void setDefaults(Context context)
 	{
 		PreferenceManager.setDefaultValues(context, R.xml.preferences, false);
@@ -80,6 +94,15 @@ public class PreferencesActivity extends SherlockPreferenceActivity implements O
 		editor.commit();
 	}
 
+	/**
+	 * Convert a speed into meters per second.
+	 * 
+	 * @param local_units
+	 *            Units to convert from
+	 * @param localizedSpeed
+	 *            Speed to convert
+	 * @return Converted speed in m/s
+	 */
 	public static float nativeSpeed(String local_units, float localizedSpeed)
 	{
 		if (local_units.equals("m/s"))
@@ -101,6 +124,15 @@ public class PreferencesActivity extends SherlockPreferenceActivity implements O
 		}
 	}
 
+	/**
+	 * Convert a speed into a localized unit from m/s.
+	 * 
+	 * @param local_units
+	 *            Unit to convert to.
+	 * @param nativeSpeed
+	 *            Speed in m/s converting from.
+	 * @return Localized speed.
+	 */
 	public static float localizedSpeed(String local_units, float nativeSpeed)
 	{
 		if (local_units.equals("m/s"))
@@ -122,6 +154,13 @@ public class PreferencesActivity extends SherlockPreferenceActivity implements O
 		}
 	}
 
+	/**
+	 * Update internal speeds in native units. Calculated from user-facing
+	 * localized speeds.
+	 * 
+	 * @param prefs
+	 *            Shared Preferences to update.
+	 */
 	public static void updateNativeSpeeds(SharedPreferences prefs)
 	{
 		Log.v(TAG, "Converting preferences to m/s internally");
@@ -138,6 +177,13 @@ public class PreferencesActivity extends SherlockPreferenceActivity implements O
 		editor.commit();
 	}
 
+	/**
+	 * Update user-facing localized speeds from internal values. Useful if
+	 * changing between units.
+	 * 
+	 * @param prefs
+	 *            Shared Preferences to update.
+	 */
 	private static void updateLocalizedSpeeds(SharedPreferences prefs)
 	{
 		Log.v(TAG, "Converting native speeds to localized values");

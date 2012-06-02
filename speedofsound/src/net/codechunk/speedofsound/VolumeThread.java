@@ -4,24 +4,73 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.util.Log;
 
+/**
+ * Smooth volume thread. Does its best to approach a set volume rather than
+ * jumping to it directly. Has a few tunable constants to tweak for better
+ * performance.
+ */
 public class VolumeThread extends Thread
 {
+	/**
+	 * Logging tag.
+	 */
 	private static final String TAG = "VolumeThread";
-	private static final int UPDATE_DELAY = 200; // ms
+
+	/**
+	 * Rate in milliseconds at which to update the volume.
+	 */
+	private static final int UPDATE_DELAY = 200;
+
+	/**
+	 * Threshold where we're "close enough" to the target volume to jump
+	 * straight to it.
+	 */
 	private static final int VOLUME_THRESHOLD = 3;
+
+	/**
+	 * Approach rate. Heavily related to the update delay.
+	 */
 	private static final float APPROACH_RATE = 0.35f;
+
+	/**
+	 * Maximum speed to approach the target volume. This shouldn't be too high
+	 * or a jump in volume may be noticed.
+	 */
 	private static final int MAX_APPROACH = 8;
 
+	/**
+	 * Thread mutex.
+	 */
 	private final Object lock = new Object();
+
+	/**
+	 * Audio manager to change the media volume.
+	 */
 	private AudioManager audioManager;
+
+	/**
+	 * Current target volume.
+	 */
 	private int targetVolume;
 
+	/**
+	 * Start up the thread and set the thread name.
+	 * 
+	 * @param context
+	 *            Application context
+	 */
 	public VolumeThread(Context context)
 	{
 		this.audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 		this.setName(TAG);
 	}
 
+	/**
+	 * Set a new target volume.
+	 * 
+	 * @param volume
+	 *            New target
+	 */
 	public void setTargetVolume(int volume)
 	{
 		Log.v(TAG, "Setting target volume to " + volume);
@@ -31,6 +80,9 @@ public class VolumeThread extends Thread
 		}
 	}
 
+	/**
+	 * Thread runner. Smoothly adjusts the volume until interrupted.
+	 */
 	public void run()
 	{
 		Log.d(TAG, "Thread starting");
