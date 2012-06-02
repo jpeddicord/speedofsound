@@ -8,7 +8,7 @@
     </item>
     <item
         android:id="@+id/preferences"
-        android:icon="@drawable/ic_menu_preferences"
+        android:icon="@drawable/ic_preferences"
         android:title="Preferences">
     </item>
 
