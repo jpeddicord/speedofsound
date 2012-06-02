@@ -75,12 +75,12 @@ public class DatabaseManager
 	/**
 	 * The limit on number of points before earlier points are removed.
 	 */
-	private final int LIMIT = 100;
+	private final int LIMIT = 7200;
 	
 	/**
 	 * The number of points to be removed.
 	 */
-	private final int REMOVE_SIZE = 25;
+	private final int REMOVE_SIZE = 500;
 	
  
 	/**
