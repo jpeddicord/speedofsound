@@ -20,5 +20,9 @@
     <string name="gps_warning_dismiss">Deal with it</string>
     <string name="ct_color">Color</string>
     <string name="ct_song">Song</string>
+    <string name="intro_enable_speedofsound">Enable Speed of Sound or customize in settings</string>
+    <string name="intro_open_music">Open your music player and start playing</string>
+    <string name="intro_plug_phone">Plug your phone into your car\'s stereo system</string>
+    <string name="intro_start_driving">Start driving and enjoy automatic volumes</string>
 
 </resources>

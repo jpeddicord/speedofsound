@@ -67,7 +67,7 @@
             android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/imageView3"
             android:layout_toRightOf="@+id/imageView1"
-            android:text="Plug your phone into your car&apos;s stereo system"
+            android:text="@string/intro_plug_phone"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <ImageView
@@ -86,7 +86,7 @@
             android:layout_alignLeft="@+id/textView2"
             android:layout_alignTop="@+id/imageView3"
             android:layout_toLeftOf="@+id/imageView3"
-            android:text="Enable Speed of Sound or customize in settings"
+            android:text="@string/intro_enable_speedofsound"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <ImageView
@@ -105,7 +105,7 @@
             android:layout_alignLeft="@+id/textView3"
             android:layout_alignTop="@+id/imageView2"
             android:layout_toLeftOf="@+id/imageView3"
-            android:text="Open your music player and start playing"
+            android:text="@string/intro_open_music"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <ImageView
@@ -123,7 +123,7 @@
             android:layout_alignTop="@+id/imageView4"
             android:layout_toLeftOf="@+id/imageView4"
             android:layout_toRightOf="@+id/imageView2"
-            android:text="Start driving and enjoy automatic volumes"
+            android:text="@string/intro_start_driving"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
     </RelativeLayout>
