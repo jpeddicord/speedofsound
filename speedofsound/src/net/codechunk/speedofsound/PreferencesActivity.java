@@ -83,13 +83,13 @@ public class PreferencesActivity extends SherlockPreferenceActivity implements O
 		// if you change these, be sure to update the defaults in
 		// preferences.xml
 		if (!prefs.contains("low_speed_localized"))
-			editor.putInt("low_speed_localized", 15);
+			editor.putInt("low_speed_localized", 10);
 		if (!prefs.contains("low_volume"))
 			editor.putInt("low_volume", 60);
 		if (!prefs.contains("high_speed_localized"))
-			editor.putInt("high_speed_localized", 40);
+			editor.putInt("high_speed_localized", 25);
 		if (!prefs.contains("high_volume"))
-			editor.putInt("high_volume", 95);
+			editor.putInt("high_volume", 90);
 
 		editor.commit();
 	}

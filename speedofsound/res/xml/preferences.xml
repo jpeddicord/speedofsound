@@ -20,7 +20,7 @@
 
     <PreferenceCategory android:title="Slow Speed" >
         <net.codechunk.speedofsound.SliderPreference
-            android:defaultValue="15"
+            android:defaultValue="10"
             android:key="low_speed_localized"
             android:summary="Minimum speed to start adjusting volume"
             android:title="Slowest Speed"
@@ -36,14 +36,14 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="High Speed" >
         <net.codechunk.speedofsound.SliderPreference
-            android:defaultValue="40"
+            android:defaultValue="25"
             android:key="high_speed_localized"
             android:summary="Speed where maximum volume applies"
             android:title="Fastest Speed"
             osu:maxValue="100"
             osu:minValue="0" />
         <net.codechunk.speedofsound.SliderPreference
-            android:defaultValue="95"
+            android:defaultValue="90"
             android:key="high_volume"
             android:summary="Volume at the maximum speed"
             android:title="Max Volume"
