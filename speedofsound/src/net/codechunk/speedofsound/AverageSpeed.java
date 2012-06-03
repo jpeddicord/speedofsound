@@ -120,6 +120,6 @@ public class AverageSpeed
 			total += speedsorted.get(i);
 			num++;
 		}
-		return total / size;
+		return total / num;
 	}
 }
