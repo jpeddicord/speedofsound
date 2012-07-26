@@ -120,8 +120,6 @@ public class SoundService extends Service
 		IntentFilter filter = new IntentFilter();
 		filter.addAction("android.intent.action.ACTION_POWER_CONNECTED");
 		filter.addAction("android.intent.action.ACTION_POWER_DISCONNECTED");
-		filter.addAction("android.intent.action.ENTER_CAR_MODE");
-		filter.addAction("android.intent.action.EXIT_CAR_MODE");
 		filter.addAction("android.intent.action.HEADSET_PLUG");
 		filter.addAction("com.android.music.metachanged");
 		filter.addAction("com.android.music.playstatechanged");
@@ -410,11 +408,6 @@ public class SoundService extends Service
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver()
 	{
 		/**
-		 * Whether or not we might be in car mode.
-		 */
-		private boolean carMode = false;
-
-		/**
 		 * Whether or not headphones are plugged in
 		 */
 		private boolean headphonesPlugged = false;
@@ -434,7 +427,6 @@ public class SoundService extends Service
 
 			// get power preference
 			boolean powerPreference = SoundService.this.settings.getBoolean("enable_only_charging", false);
-			boolean carmodePreference = SoundService.this.settings.getBoolean("enable_carmode", false);
 			boolean headphonePreference = SoundService.this.settings.getBoolean("enable_headphones", false);
 
 			// resume tracking if we're also in a satisfactory mode
@@ -447,13 +439,6 @@ public class SoundService extends Service
 				{
 					return;
 				}
-
-				// enable if car mode / headphones requested and active
-				if ((carmodePreference && this.carMode) ||
-						(headphonePreference && this.headphonesPlugged))
-				{
-					SoundService.this.startTracking();
-				}
 			}
 
 			// stop tracking if desired for only when charging
@@ -465,39 +450,6 @@ public class SoundService extends Service
 				if (powerPreference)
 				{
 					Log.v(TAG, "Preference active, stopping tracking");
-					SoundService.this.stopTracking();
-				}
-			}
-
-			// start tracking if desired for car mode
-			else if (action.equals("android.intent.action.ENTER_CAR_MODE"))
-			{
-				Log.d(TAG, "Entered car mode");
-				this.carMode = true;
-
-				// check the charge state
-				if (powerPreference && !powerConnected)
-				{
-					return;
-				}
-
-				// only do anything if the preference is active
-				if (carmodePreference)
-				{
-					Log.v(TAG, "Preference activated, starting");
-					SoundService.this.startTracking();
-				}
-			}
-
-			// stop when exiting car mode
-			else if (action.equals("android.intent.action.EXIT_CAR_MODE"))
-			{
-				Log.d(TAG, "Exited car mode");
-				this.carMode = false;
-
-				if (carmodePreference)
-				{
-					Log.v(TAG, "Preference activated, stopping");
 					SoundService.this.stopTracking();
 				}
 			}
