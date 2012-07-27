@@ -39,6 +39,16 @@ public class SoundService extends Service
 	public static final String SET_TRACKING_STATE = "set-tracking-state";
 
 	/**
+	 * Broadcast to notify that tracking has started or stopped.
+	 */
+	public static final String TRACKING_STATE_BROADCAST = "tracking-state-changed";
+
+	/**
+	 * Location, speed, and sound update broadcast.
+	 */
+	public static final String LOCATION_UPDATE_BROADCAST = "location-update";
+
+	/**
 	 * Application shared preferences. Used to load speed/volume settings.
 	 */
 	private SharedPreferences settings;
@@ -217,6 +227,11 @@ public class SoundService extends Service
 		builder.setWhen(System.currentTimeMillis());
 		startForeground(R.string.notification_text, builder.getNotification());
 
+		// let everyone know
+		Intent intent = new Intent(SoundService.TRACKING_STATE_BROADCAST);
+		intent.putExtra("tracking", true);
+		SoundService.this.localBroadcastManager.sendBroadcast(intent);
+
 		this.tracking = true;
 		Log.d(TAG, "Tracking started with location provider " + provider);
 
@@ -247,6 +262,11 @@ public class SoundService extends Service
 
 		// remove notification and go to background
 		stopForeground(true);
+
+		// let everyone know
+		Intent intent = new Intent(SoundService.TRACKING_STATE_BROADCAST);
+		intent.putExtra("tracking", false);
+		SoundService.this.localBroadcastManager.sendBroadcast(intent);
 
 		this.tracking = false;
 		Log.d(TAG, "Tracking stopped");
@@ -410,7 +430,8 @@ public class SoundService extends Service
 			int volume = SoundService.this.updateVolume(avg);
 
 			// send out a local broadcast with the details
-			Intent intent = new Intent("speed-sound-changed");
+			Intent intent = new Intent(SoundService.LOCATION_UPDATE_BROADCAST);
+			intent.putExtra("location", location);
 			intent.putExtra("speed", speed);
 			intent.putExtra("volume", volume);
 			SoundService.this.localBroadcastManager.sendBroadcast(intent);

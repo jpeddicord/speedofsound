@@ -141,8 +141,9 @@ public class SpeedActivity extends SherlockActivity implements OnCheckedChangeLi
 		super.onResume();
 		Log.d(TAG, "Resumed, subscribing to service updates");
 
-		LocalBroadcastManager.getInstance(this).registerReceiver(this.messageReceiver,
-				new IntentFilter("speed-sound-changed"));
+		LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(this);
+		lbm.registerReceiver(this.messageReceiver, new IntentFilter(SoundService.LOCATION_UPDATE_BROADCAST));
+		lbm.registerReceiver(this.messageReceiver, new IntentFilter(SoundService.TRACKING_STATE_BROADCAST));
 	}
 
 	/**
@@ -297,41 +298,53 @@ public class SpeedActivity extends SherlockActivity implements OnCheckedChangeLi
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
-			Log.v(TAG, "Received broadcast");
+			String action = intent.getAction();
+			Log.v(TAG, "Received broadcast " + action);
 
-			// unpack the speed/volume
-			float speed = intent.getFloatExtra("speed", -1.0f);
-			int volume = intent.getIntExtra("volume", -1);
-
-			// convert the speed to the appropriate units
-			String units = SpeedActivity.this.settings.getString("speed_units", "");
-			float localizedSpeed = PreferencesActivity.localizedSpeed(units, speed);
-
-			// display the speed
-			TextView speedView = (TextView) findViewById(R.id.speed_value);
-			speedView.setText(String.format("%.1f %s", localizedSpeed, units));
-
-			// display the volume as well
-			TextView volumeView = (TextView) findViewById(R.id.volume_value);
-			volumeView.setText(String.format("%d%%", volume));
-
-			// ui goodies
-			TextView volumeDesc = (TextView) findViewById(R.id.volume_description);
-			int lowVolume = SpeedActivity.this.settings.getInt("low_volume", 0);
-			int highVolume = SpeedActivity.this.settings.getInt("high_volume", 100);
-
-			// show different text values depending on the limits hit
-			if (volume <= lowVolume)
+			if (action.equals(SoundService.TRACKING_STATE_BROADCAST))
 			{
-				volumeDesc.setText(getString(R.string.volume_header_low));
+				boolean state = intent.getBooleanExtra("tracking", false);
+				SpeedActivity.this.enabledCheckBox.setChecked(state);
+				SpeedActivity.this.updateStatusState(state);
 			}
-			else if (volume >= highVolume)
+
+			// new location data
+			else if (action.equals(SoundService.LOCATION_UPDATE_BROADCAST))
 			{
-				volumeDesc.setText(getText(R.string.volume_header_high));
-			}
-			else
-			{
-				volumeDesc.setText(getText(R.string.volume_header_scaled));
+				// unpack the speed/volume
+				float speed = intent.getFloatExtra("speed", -1.0f);
+				int volume = intent.getIntExtra("volume", -1);
+
+				// convert the speed to the appropriate units
+				String units = SpeedActivity.this.settings.getString("speed_units", "");
+				float localizedSpeed = PreferencesActivity.localizedSpeed(units, speed);
+
+				// display the speed
+				TextView speedView = (TextView) findViewById(R.id.speed_value);
+				speedView.setText(String.format("%.1f %s", localizedSpeed, units));
+
+				// display the volume as well
+				TextView volumeView = (TextView) findViewById(R.id.volume_value);
+				volumeView.setText(String.format("%d%%", volume));
+
+				// ui goodies
+				TextView volumeDesc = (TextView) findViewById(R.id.volume_description);
+				int lowVolume = SpeedActivity.this.settings.getInt("low_volume", 0);
+				int highVolume = SpeedActivity.this.settings.getInt("high_volume", 100);
+
+				// show different text values depending on the limits hit
+				if (volume <= lowVolume)
+				{
+					volumeDesc.setText(getString(R.string.volume_header_low));
+				}
+				else if (volume >= highVolume)
+				{
+					volumeDesc.setText(getText(R.string.volume_header_high));
+				}
+				else
+				{
+					volumeDesc.setText(getText(R.string.volume_header_scaled));
+				}
 			}
 		}
 	};

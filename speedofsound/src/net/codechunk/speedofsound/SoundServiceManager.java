@@ -43,7 +43,6 @@ public class SoundServiceManager extends BroadcastReceiver
 		// start the service on boot
 		if (action.equals("android.intent.action.BOOT_COMPLETED"))
 		{
-			// TODO: always try to start the service on every intent?
 			Intent startIntent = new Intent(context, SoundService.class);
 			context.startService(startIntent);
 			return;
