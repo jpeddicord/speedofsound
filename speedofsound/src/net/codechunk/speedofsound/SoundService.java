@@ -12,7 +12,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
-import android.os.BatteryManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -35,6 +34,11 @@ public class SoundService extends Service
 	private static final String TAG = "SoundService";
 
 	/**
+	 * Intent extra to set the tracking state.
+	 */
+	public static final String SET_TRACKING_STATE = "set-tracking-state";
+
+	/**
 	 * Application shared preferences. Used to load speed/volume settings.
 	 */
 	private SharedPreferences settings;
@@ -43,6 +47,11 @@ public class SoundService extends Service
 	 * Broadcast manager to send speed/volume updates to the UI.
 	 */
 	private LocalBroadcastManager localBroadcastManager;
+
+	/**
+	 * Sound service manager instance.
+	 */
+	private SoundServiceManager soundServiceManager = new SoundServiceManager();
 
 	/**
 	 * Audio manager to control the system media volume.
@@ -118,23 +127,41 @@ public class SoundService extends Service
 
 		// listen to certain broadcasts
 		IntentFilter filter = new IntentFilter();
-		filter.addAction("android.intent.action.ACTION_POWER_CONNECTED");
-		filter.addAction("android.intent.action.ACTION_POWER_DISCONNECTED");
-		filter.addAction("android.intent.action.HEADSET_PLUG");
 		filter.addAction("com.android.music.metachanged");
 		filter.addAction("com.android.music.playstatechanged");
 		filter.addAction("com.android.music.playbackcomplete");
 		filter.addAction("com.android.music.queuechanged");
 		this.registerReceiver(this.broadcastReceiver, filter);
+
+		// activation broadcasts
+		IntentFilter activationFilter = this.soundServiceManager.activationIntents();
+		this.registerReceiver(this.soundServiceManager, activationFilter);
 	}
 
 	/**
+	 * Handle a start command.
+	 * 
 	 * Return sticky mode to tell Android to keep the service active.
 	 */
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
 		Log.d(TAG, "Start command received");
+
+		// check if we've been commanded to start or stop tracking
+		Bundle extras = intent.getExtras();
+		if (extras != null && extras.containsKey(SoundService.SET_TRACKING_STATE))
+		{
+			Log.v(TAG, "Commanded to change state");
+			if (extras.getBoolean(SoundService.SET_TRACKING_STATE))
+			{
+				this.startTracking();
+			}
+			else
+			{
+				this.stopTracking();
+			}
+		}
 
 		return START_STICKY;
 	}
@@ -407,85 +434,14 @@ public class SoundService extends Service
 	 */
 	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver()
 	{
-		/**
-		 * Whether or not headphones are plugged in
-		 */
-		private boolean headphonesPlugged = false;
-
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
 			String action = intent.getAction();
 			Log.d(TAG, "Received intent " + action);
 
-			// get power status
-			IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-			Intent powerStatus = context.registerReceiver(null, filter);
-			int plugState = powerStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-			boolean powerConnected = (plugState == BatteryManager.BATTERY_PLUGGED_AC ||
-					plugState == BatteryManager.BATTERY_PLUGGED_USB);
-
-			// get power preference
-			boolean powerPreference = SoundService.this.settings.getBoolean("enable_only_charging", false);
-			boolean headphonePreference = SoundService.this.settings.getBoolean("enable_headphones", false);
-
-			// resume tracking if we're also in a satisfactory mode
-			if (action.equals("android.intent.action.ACTION_POWER_CONNECTED"))
-			{
-				Log.d(TAG, "Power connected");
-
-				// ignore if preference is inactive
-				if (!powerPreference)
-				{
-					return;
-				}
-			}
-
-			// stop tracking if desired for only when charging
-			else if (action.equals("android.intent.action.ACTION_POWER_DISCONNECTED"))
-			{
-				Log.d(TAG, "Power disconnected");
-
-				// ignore if preference is inactive
-				if (powerPreference)
-				{
-					Log.v(TAG, "Preference active, stopping tracking");
-					SoundService.this.stopTracking();
-				}
-			}
-
-			// start or stop tracking for headset events
-			else if (action.equals("android.intent.action.HEADSET_PLUG"))
-			{
-				Log.d(TAG, "Headset event");
-				this.headphonesPlugged = intent.getIntExtra("state", 0) == 1;
-
-				// ignore if preference not active
-				if (!headphonePreference)
-				{
-					return;
-				}
-
-				if (this.headphonesPlugged)
-				{
-					// ignore if charge preference is set and unplugged
-					if (powerPreference && !powerConnected)
-					{
-						return;
-					}
-
-					Log.v(TAG, "Plugged in, starting tracking");
-					SoundService.this.startTracking();
-				}
-				else
-				{
-					Log.v(TAG, "Unplugged, stopping tracking");
-					SoundService.this.stopTracking();
-				}
-			}
-
 			// music actions
-			else if (action.equals("com.android.music.metachanged") ||
+			if (action.equals("com.android.music.metachanged") ||
 					action.equals("com.android.music.playstatechanged") ||
 					action.equals("com.android.music.playbackcomplete") ||
 					action.equals("com.android.music.queuechanged"))
