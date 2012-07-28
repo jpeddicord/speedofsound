@@ -1,5 +1,6 @@
 package net.codechunk.speedofsound;
 
+import net.codechunk.speedofsound.util.AppPreferences;
 import net.codechunk.speedofsound.util.AverageSpeed;
 import net.codechunk.speedofsound.util.ColorCreator;
 import android.app.PendingIntent;
@@ -125,10 +126,10 @@ public class SoundService extends Service
 		Log.d(TAG, "Service starting up");
 
 		// set up preferences
-		PreferencesActivity.setDefaults(this);
-		PreferencesActivity.runUpgrade(this);
+		AppPreferences.setDefaults(this);
+		AppPreferences.runUpgrade(this);
 		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
-		PreferencesActivity.updateNativeSpeeds(this.settings);
+		AppPreferences.updateNativeSpeeds(this.settings);
 
 		// register handlers & audio
 		this.localBroadcastManager = LocalBroadcastManager.getInstance(this);
@@ -147,6 +148,7 @@ public class SoundService extends Service
 		this.registerReceiver(this.broadcastReceiver, filter);
 
 		// activation broadcasts
+		// XXX: these won't be necessary when the intents are launched via manifest
 		IntentFilter activationFilter = this.soundServiceManager.activationIntents();
 		this.registerReceiver(this.soundServiceManager, activationFilter);
 	}
