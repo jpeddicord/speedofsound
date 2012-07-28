@@ -143,8 +143,10 @@ public class SpeedActivity extends SherlockActivity implements OnCheckedChangeLi
 		Log.d(TAG, "Resumed, subscribing to service updates");
 
 		LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(this);
-		lbm.registerReceiver(this.messageReceiver, new IntentFilter(SoundService.LOCATION_UPDATE_BROADCAST));
-		lbm.registerReceiver(this.messageReceiver, new IntentFilter(SoundService.TRACKING_STATE_BROADCAST));
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(SoundService.LOCATION_UPDATE_BROADCAST);
+		filter.addAction(SoundService.TRACKING_STATE_BROADCAST);
+		lbm.registerReceiver(this.messageReceiver, filter);
 	}
 
 	/**
