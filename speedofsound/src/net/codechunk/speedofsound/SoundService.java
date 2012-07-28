@@ -124,6 +124,7 @@ public class SoundService extends Service
 
 		// set up preferences
 		PreferencesActivity.setDefaults(this);
+		PreferencesActivity.runUpgrade(this);
 		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
 		PreferencesActivity.updateNativeSpeeds(this.settings);
 

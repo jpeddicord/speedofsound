@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -92,6 +94,67 @@ public class PreferencesActivity extends SherlockPreferenceActivity implements O
 			editor.putInt("high_volume", 90);
 
 		editor.commit();
+	}
+
+	/**
+	 * Run an upgrade from one app version to another.
+	 * 
+	 * Stores the current version as a shared preference so we can detect future
+	 * upgrades and act on them.
+	 * 
+	 * @param context
+	 *            Application context
+	 */
+	public static void runUpgrade(Context context)
+	{
+		Log.d(TAG, "Running upgrade check");
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+		// get the current version
+		int versionCode;
+		try
+		{
+			PackageInfo packageInfo = context.getPackageManager().getPackageInfo("net.codechunk.speedofsound", 0);
+			versionCode = packageInfo.versionCode;
+		}
+		catch (NameNotFoundException e)
+		{
+			Log.e(TAG, "Upgrade failed; name not found");
+			return;
+		}
+
+		// first-time install has no upgrade
+		if (!prefs.contains("app_version_code"))
+		{
+			Log.v(TAG, "First-time install; no upgrade required");
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putInt("app_version_code", versionCode);
+			editor.commit();
+		}
+		else
+		{
+			int prevVersion = prefs.getInt("app_version_code", 0);
+
+			PreferencesActivity.processUpgrade(context, prevVersion, versionCode);
+		}
+	}
+
+	private static void processUpgrade(Context context, int from, int to)
+	{
+		// no action to take if versions are equal
+		if (from == to)
+			return;
+
+		int processing = from + 1;
+
+		/*
+		 * For future upgrade use // upgrading TO version 7 if (processing == 7)
+		 * { // do something with preferences }
+		 */
+
+		// process the next upgrade
+		PreferencesActivity.processUpgrade(context, processing, to);
 	}
 
 	/**
