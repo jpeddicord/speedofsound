@@ -1,4 +1,4 @@
-package net.codechunk.speedofsound;
+package net.codechunk.speedofsound.util;
 
 import java.util.ArrayList;
 import java.util.Collections;

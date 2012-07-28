@@ -1,5 +1,7 @@
 package net.codechunk.speedofsound;
 
+import net.codechunk.speedofsound.util.AverageSpeed;
+import net.codechunk.speedofsound.util.ColorCreator;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;

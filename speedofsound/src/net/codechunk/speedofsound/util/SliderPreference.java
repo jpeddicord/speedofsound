@@ -1,5 +1,6 @@
-package net.codechunk.speedofsound;
+package net.codechunk.speedofsound.util;
 
+import net.codechunk.speedofsound.R;
 import android.content.Context;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;

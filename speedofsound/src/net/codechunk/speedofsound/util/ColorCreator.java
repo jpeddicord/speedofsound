@@ -1,4 +1,4 @@
-package net.codechunk.speedofsound;
+package net.codechunk.speedofsound.util;
 
 import java.util.Random;
 
@@ -12,7 +12,6 @@ import android.graphics.Color;
  */
 public class ColorCreator
 {
-
 	/**
 	 * Holds the previous color that was chosen by this color creator.
 	 */
