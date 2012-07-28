@@ -1,5 +1,6 @@
 package net.codechunk.speedofsound;
 
+import net.codechunk.speedofsound.util.SpeedConversions;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -317,7 +318,7 @@ public class SpeedActivity extends SherlockActivity implements OnCheckedChangeLi
 
 				// convert the speed to the appropriate units
 				String units = SpeedActivity.this.settings.getString("speed_units", "");
-				float localizedSpeed = PreferencesActivity.localizedSpeed(units, speed);
+				float localizedSpeed = SpeedConversions.localizedSpeed(units, speed);
 
 				// display the speed
 				TextView speedView = (TextView) findViewById(R.id.speed_value);

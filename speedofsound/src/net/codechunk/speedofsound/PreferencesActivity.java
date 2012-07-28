@@ -1,5 +1,6 @@
 package net.codechunk.speedofsound;
 
+import net.codechunk.speedofsound.util.SpeedConversions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -158,66 +159,6 @@ public class PreferencesActivity extends SherlockPreferenceActivity implements O
 	}
 
 	/**
-	 * Convert a speed into meters per second.
-	 * 
-	 * @param local_units
-	 *            Units to convert from
-	 * @param localizedSpeed
-	 *            Speed to convert
-	 * @return Converted speed in m/s
-	 */
-	public static float nativeSpeed(String local_units, float localizedSpeed)
-	{
-		if (local_units.equals("m/s"))
-		{
-			return localizedSpeed;
-		}
-		else if (local_units.equals("km/h"))
-		{
-			return localizedSpeed * 0.27778f;
-		}
-		else if (local_units.equals("mph"))
-		{
-			return localizedSpeed * 0.44704f;
-		}
-		else
-		{
-			Log.w(TAG, "Not an appropriate unit: " + local_units);
-			return -1;
-		}
-	}
-
-	/**
-	 * Convert a speed into a localized unit from m/s.
-	 * 
-	 * @param local_units
-	 *            Unit to convert to.
-	 * @param nativeSpeed
-	 *            Speed in m/s converting from.
-	 * @return Localized speed.
-	 */
-	public static float localizedSpeed(String local_units, float nativeSpeed)
-	{
-		if (local_units.equals("m/s"))
-		{
-			return nativeSpeed;
-		}
-		else if (local_units.equals("km/h"))
-		{
-			return nativeSpeed * 3.6f;
-		}
-		else if (local_units.equals("mph"))
-		{
-			return nativeSpeed * 2.23693f;
-		}
-		else
-		{
-			Log.w(TAG, "Not an appropriate unit: " + local_units);
-			return -1;
-		}
-	}
-
-	/**
 	 * Update internal speeds in native units. Calculated from user-facing
 	 * localized speeds.
 	 * 
@@ -235,8 +176,8 @@ public class PreferencesActivity extends SherlockPreferenceActivity implements O
 		SharedPreferences.Editor editor = prefs.edit();
 		int low_speed_localized = prefs.getInt("low_speed_localized", 0);
 		int high_speed_localized = prefs.getInt("high_speed_localized", 0);
-		editor.putFloat("low_speed", PreferencesActivity.nativeSpeed(units, low_speed_localized));
-		editor.putFloat("high_speed", PreferencesActivity.nativeSpeed(units, high_speed_localized));
+		editor.putFloat("low_speed", SpeedConversions.nativeSpeed(units, low_speed_localized));
+		editor.putFloat("high_speed", SpeedConversions.nativeSpeed(units, high_speed_localized));
 		editor.commit();
 	}
 
@@ -258,8 +199,8 @@ public class PreferencesActivity extends SherlockPreferenceActivity implements O
 		SharedPreferences.Editor editor = prefs.edit();
 		float low_speed = prefs.getFloat("low_speed", 0);
 		float high_speed = prefs.getFloat("high_speed", 0);
-		editor.putInt("low_speed_localized", (int) PreferencesActivity.localizedSpeed(units, low_speed));
-		editor.putInt("high_speed_localized", (int) PreferencesActivity.localizedSpeed(units, high_speed));
+		editor.putInt("low_speed_localized", (int) SpeedConversions.localizedSpeed(units, low_speed));
+		editor.putInt("high_speed_localized", (int) SpeedConversions.localizedSpeed(units, high_speed));
 		editor.commit();
 	}
 
