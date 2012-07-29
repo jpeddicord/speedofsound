@@ -1,12 +1,17 @@
 package net.codechunk.speedofsound;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
+import net.codechunk.speedofsound.util.ColorCreator;
+import net.codechunk.speedofsound.util.SongInfo;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
@@ -37,41 +42,25 @@ import com.google.android.maps.Projection;
  */
 public class DrawMapActivity extends SherlockMapActivity
 {
-	/**
-	 * Used for the logger.
-	 */
 	private static final String TAG = "DrawMapActivity";
 
-	/**
-	 * Displays the map
-	 */
 	private MapView mapView;
-
-	/**
-	 * Allows for manipulation of the map
-	 */
 	private MapController mc;
-
-	/**
-	 * Holds overlay on which the path is drawn
-	 */
 	private List<Overlay> mapOverlays;
 	private Projection projection;
 
-	/**
-	 * A reference to the database manager.
-	 */
-	private DatabaseManager db;
+	private SongTracker songTracker;
+	private ColorCreator colorCreator = new ColorCreator();
+	private Map<Long, Integer> songColors = new HashMap<Long, Integer>();
 
-	/**
-	 * An array that holds records containing the latitude and longitude of the
-	 * points
-	 */
-	private ArrayList<ArrayList<Object>> mapContent = new ArrayList<ArrayList<Object>>();
+	private class SongSet
+	{
+		SongInfo song;
+		ArrayList<GeoPoint> points;
+	}
 
-	/**
-	 * The table that displays the songs and path colors
-	 */
+	private ArrayList<SongSet> mapContent = new ArrayList<SongSet>();
+
 	private TableLayout songTable;
 
 	/**
@@ -83,6 +72,8 @@ public class DrawMapActivity extends SherlockMapActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.drawmap);
+
+		this.songTracker = SongTracker.getInstance(this);
 
 		// activate the up functionality on the action bar
 		ActionBar ab = this.getSupportActionBar();
@@ -106,32 +97,6 @@ public class DrawMapActivity extends SherlockMapActivity
 		projection = mapView.getProjection();
 		mapOverlays.add(new SongOverlay());
 
-		// Get access to the database
-		db = DatabaseManager.getDBManager(this);
-
-		// Retrieve the points from the database
-		this.getPath();
-
-		// Zoom the map in to an appropriate spot if there are points
-		if (this.mapContent.size() > 0)
-		{
-			mc = mapView.getController();
-
-			ArrayList<Object> loc = this.mapContent.get(mapContent.size() - 1);
-			@SuppressWarnings("unchecked")
-			ArrayList<GeoPoint> locpoints = (ArrayList<GeoPoint>) loc.get(2);
-
-			if (locpoints.size() > 0)
-			{
-				GeoPoint lastpoint = locpoints.get(locpoints.size() - 1);
-
-				mc.animateTo(lastpoint);
-				mc.setZoom(17);
-			}
-		}
-
-		// Display the table of songs and colors
-		this.displayTable(this.mapContent);
 	}
 
 	/**
@@ -141,89 +106,90 @@ public class DrawMapActivity extends SherlockMapActivity
 	public void onResume()
 	{
 		super.onResume();
-		this.getPath();
+
+		// update the path & table
+		this.mapContent = this.getPath();
+		this.displayTable(this.mapContent);
+
+		// zoom the map in to an appropriate spot if there are points
+		if (this.mapContent.size() > 0)
+		{
+			mc = mapView.getController();
+
+			SongSet loc = this.mapContent.get(mapContent.size() - 1);
+
+			if (loc.points.size() > 0)
+			{
+				GeoPoint lastpoint = loc.points.get(loc.points.size() - 1);
+
+				mc.animateTo(lastpoint);
+				mc.setZoom(17);
+			}
+		}
 	}
 
-	/**
-	 * Retrieves the point records from the database and stores it in an array
-	 * along with the song name and the path color.
-	 */
-	private void getPath()
+	private ArrayList<SongSet> getPath()
 	{
-		// Find the lower and upper indexes
-		ArrayList<Long> range = db.getRange();
+		ArrayList<SongSet> data = new ArrayList<SongSet>();
 
-		long lower = range.get(0);
-		long upper = range.get(1);
+		// XXX: 0.8 hack to get the only route
+		SQLiteDatabase db = this.songTracker.getReadableDatabase();
+		Cursor routeCursor = db.query("routes", new String[] { "id" },
+				null, null, null, null, "id DESC", "1");
+		routeCursor.moveToFirst();
+		if (routeCursor.isAfterLast())
+		{
+			Log.w(TAG, "No routes found");
+			return data;
+		}
+		long routeId = routeCursor.getLong(0);
+		routeCursor.close();
 
-		long oldsongid = -1;
-		int color = Color.RED;
-		String songname = "Unknown";
+		// get the points from the route
+		Log.v(TAG, "Fetching path of route " + routeId);
+		Cursor cursor = this.songTracker.getRoutePoints(routeId);
+
+		long prevSongId = -1;
 		ArrayList<GeoPoint> points = new ArrayList<GeoPoint>();
 
-		// Retrieve each record one at a time
-		// This might be more efficient if all records are retrieved at once
-		for (long i = lower; (i <= upper) && (i != -1); i++)
+		// iterate the cursor building up a structure
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast())
 		{
+			// unpack row data
+			long songId = cursor.getLong(1);
+			int latitudeE6 = cursor.getInt(2);
+			int longitudeE6 = cursor.getInt(3);
 
-			ArrayList<Object> point = db.getPointArray(i);
-
-			long songid = (Long) point.get(1);
-
-			// Set the initial color and song name for the very first point
-			if (i == lower)
+			// new song => new meta
+			if (songId != prevSongId)
 			{
-				color = db.getColor(songid);
-				songname = db.getSongName(songid);
-				oldsongid = songid;
-			}
+				prevSongId = songId;
 
-			// If the songid changes we want to start a new path and will create
-			// a new array in the arraylist
-			if (songid != oldsongid)
-			{
-				ArrayList<Object> loc = new ArrayList<Object>();
-				ArrayList<GeoPoint> pointsforloc = new ArrayList<GeoPoint>();
+				// store song data
+				SongSet loc = new SongSet();
+				loc.song = this.songTracker.getSongInfo(songId);
 
-				pointsforloc.addAll(points);
+				// set a color if we don't have one
+				if (!this.songColors.containsKey(songId))
+				{
+					this.songColors.put(songId, this.colorCreator.getColor());
+				}
 
-				loc.add(color);
-				loc.add(songname);
-				loc.add(points);
-
-				this.mapContent.add(loc);
-
-				Log.d(TAG, "Adding points with color: " + color + ", song: " + songname);
-
-				// Start creating new list
-				oldsongid = songid;
-
-				color = db.getColor(songid);
-				songname = db.getSongName(songid);
-
+				// reference a new list in the location structure
 				points = new ArrayList<GeoPoint>();
-
+				loc.points = points;
+				data.add(loc);
 			}
 
-			// Add the point from this record to the arraylist as a geopoint
-			int latitude = (Integer) point.get(2);
-			int longitude = (Integer) point.get(3);
+			// add the point to the active point list
+			points.add(new GeoPoint(latitudeE6, longitudeE6));
 
-			points.add(new GeoPoint(latitude, longitude));
-
+			cursor.moveToNext();
 		}
 
-		// Add the last path
-		ArrayList<Object> loc = new ArrayList<Object>();
-
-		loc.add(color);
-		loc.add(songname);
-		loc.add(points);
-
-		this.mapContent.add(loc);
-
-		Log.d(TAG, "Adding points with color: " + color + ", song: " + songname);
-
+		cursor.close();
+		return data;
 	}
 
 	/**
@@ -232,48 +198,51 @@ public class DrawMapActivity extends SherlockMapActivity
 	 * @param paths
 	 *            List of current paths along with their color and song name.
 	 */
-	private void displayTable(ArrayList<ArrayList<Object>> paths)
+	private void displayTable(ArrayList<SongSet> paths)
 	{
 		// Disallows duplicate songs to be added to the table even if two paths
 		// have the same song and color
-		HashSet<String> songs = new HashSet<String>();
+		// XXX: investigate this a little more
+		HashSet<Long> songs = new HashSet<Long>();
 
 		// for each path
-		for (int i = 0; i < paths.size(); i++)
+		for (SongSet loc : paths)
 		{
+			// ensure the song isn't listed yet
+			if (songs.contains(loc.song.id))
+				continue;
 
 			TableRow tableRow = new TableRow(this);
 
-			ArrayList<Object> path = paths.get(i);
+			// make a colored block
+			TextView colorTV = new TextView(this);
+			colorTV.setText("\u25A0");
+			colorTV.setTextColor(this.songColors.get(loc.song.id));
+			colorTV.setGravity(Gravity.CENTER);
+			colorTV.setTextSize(20f);
+			tableRow.addView(colorTV);
 
-			int color = (Integer) path.get(0);
-			String song = (String) path.get(1);
-
-			// ensure the song isn't listed yet
-			if (!songs.contains(song))
+			// get the song name
+			String song;
+			if (loc.song == null)
 			{
-
-				// create a text view for a black that is colored to the path
-				// color
-				TextView colorTV = new TextView(this);
-				colorTV.setText("\u25A0");
-				colorTV.setTextColor(color);
-				colorTV.setGravity(Gravity.CENTER);
-				colorTV.setTextSize(20f);
-				tableRow.addView(colorTV);
-
-				// create a text view for the song name
-				TextView songTV = new TextView(this);
-				songTV.setText(song);
-				songTV.setTextSize(18f);
-				tableRow.addView(songTV);
-
-				songTable.addView(tableRow);
-
-				songs.add(song);
+				song = "Unknown";
 			}
-		}
+			else
+			{
+				song = loc.song.track;
+			}
 
+			// create a text view for the song name
+			TextView songTV = new TextView(this);
+			songTV.setText(song);
+			songTV.setTextSize(18f);
+			tableRow.addView(songTV);
+
+			songTable.addView(tableRow);
+
+			songs.add(loc.song.id);
+		}
 	}
 
 	@Override
@@ -312,21 +281,16 @@ public class DrawMapActivity extends SherlockMapActivity
 				Path path = new Path();
 
 				Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-				paint.setColor(Color.RED);
 				paint.setStyle(Paint.Style.FILL_AND_STROKE);
 				paint.setStrokeJoin(Paint.Join.ROUND);
 				paint.setStrokeCap(Paint.Cap.ROUND);
 				paint.setStrokeWidth(6);
 
 				// Get the color for this path
-				int color = (Integer) loc.get(0);
-
-				@SuppressWarnings("unchecked")
-				ArrayList<GeoPoint> pointsforloc = (ArrayList<GeoPoint>) loc.get(2);
-				paint.setColor(color);
+				paint.setColor(DrawMapActivity.this.songColors.get(loc.song.id));
 
 				// for each geopoint on this path
-				for (GeoPoint point : pointsforloc)
+				for (GeoPoint point : loc.points)
 				{
 					// ensure a previous exists to look for distance
 					if (previous != null)
