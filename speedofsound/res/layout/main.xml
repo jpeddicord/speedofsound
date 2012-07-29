@@ -125,7 +125,6 @@
             android:layout_toRightOf="@+id/imageView2"
             android:text="@string/intro_start_driving"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-
     </RelativeLayout>
 
 </LinearLayout>

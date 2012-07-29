@@ -96,7 +96,6 @@ public class MapperActivity extends SherlockMapActivity
 		mapOverlays = mapView.getOverlays();
 		projection = mapView.getProjection();
 		mapOverlays.add(new SongOverlay());
-
 	}
 
 	/**

@@ -5,8 +5,8 @@
 
     <com.google.android.maps.MapView
         android:id="@+id/mapView"
-        android:layout_width="fill_parent"
-        android:layout_height="275dp"
+        android:layout_width="300dp"
+        android:layout_height="fill_parent"
         android:apiKey="@string/maps_api_key"
         android:clickable="true"
         android:state_enabled="true" />
@@ -22,11 +22,11 @@
         android:id="@+id/scroll_table"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/mapView" >
+        android:layout_toRightOf="@id/mapView" >
 
         <TableLayout
             android:id="@+id/song_table"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
