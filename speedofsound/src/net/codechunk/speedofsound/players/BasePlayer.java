@@ -1,5 +1,6 @@
 package net.codechunk.speedofsound.players;
 
+import net.codechunk.speedofsound.util.SongInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,13 +14,6 @@ public abstract class BasePlayer extends BroadcastReceiver
 	public static final String PLAYBACK_CHANGED_BROADCAST = "playback-changed";
 
 	public static final String PLAYBACK_STOPPED_BROADCAST = "playback-stopped";
-
-	protected class SongInfo
-	{
-		String track;
-		String artist;
-		String album;
-	}
 
 	protected enum PlaybackAction
 	{

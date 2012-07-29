@@ -1,5 +1,6 @@
 package net.codechunk.speedofsound.players;
 
+import net.codechunk.speedofsound.util.SongInfo;
 import android.content.Context;
 import android.content.Intent;
 
