@@ -1,5 +1,7 @@
 package net.codechunk.speedofsound.util;
 
+import java.io.File;
+
 import net.codechunk.speedofsound.R;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -82,6 +84,16 @@ public class AppPreferences
 
 			processUpgrade(context, prevVersion, versionCode);
 		}
+
+		// safe upgrade hack: delete old locations db
+		// this was in use before we stored version info
+		// XXX: this is safe to remove after a few versions.
+		// check the google play listing for % on v7 and up.
+		File oldDatabase = context.getDatabasePath("locations");
+		if (oldDatabase.exists())
+		{
+			context.deleteDatabase("locations");
+		}
 	}
 
 	/**
@@ -108,7 +120,6 @@ public class AppPreferences
 		// do something with preferences
 		// }
 
-
 		// process the next upgrade
 		AppPreferences.processUpgrade(context, processing, to);
 	}
@@ -123,10 +134,10 @@ public class AppPreferences
 	public static void updateNativeSpeeds(SharedPreferences prefs)
 	{
 		Log.v(TAG, "Converting preferences to m/s internally");
-	
+
 		// get the stored units
 		String units = prefs.getString("speed_units", "");
-	
+
 		// convert speed units into m/s for low-level stuff
 		SharedPreferences.Editor editor = prefs.edit();
 		int low_speed_localized = prefs.getInt("low_speed_localized", 0);
@@ -146,10 +157,10 @@ public class AppPreferences
 	public static void updateLocalizedSpeeds(SharedPreferences prefs)
 	{
 		Log.v(TAG, "Converting native speeds to localized values");
-	
+
 		// get the stored units
 		String units = prefs.getString("speed_units", "");
-	
+
 		// convert speed units into m/s for low-level stuff
 		SharedPreferences.Editor editor = prefs.edit();
 		float low_speed = prefs.getFloat("low_speed", 0);
