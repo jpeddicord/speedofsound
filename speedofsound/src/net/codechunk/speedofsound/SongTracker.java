@@ -119,7 +119,7 @@ public class SongTracker
 	 */
 	public void deleteRoute(long routeId)
 	{
-		String[] deleteArgs = new String[] {Long.toString(routeId)};
+		String[] deleteArgs = new String[] { Long.toString(routeId) };
 		this.db.delete("points", "route_id = ?", deleteArgs);
 		this.db.delete("songs", "route_id = ?", deleteArgs);
 		this.db.delete("routes", "id = ?", deleteArgs);
@@ -138,8 +138,39 @@ public class SongTracker
 				new String[] { "id", "song_id", "latitude", "longitude" },
 				"route_id = ?", new String[] { Long.toString(routeId) },
 				null, null, "id ASC");
-		cursor.moveToFirst();
 		return cursor;
+	}
+
+	/**
+	 * Get the info/meta associated with a given song ID.
+	 * 
+	 * @param songId
+	 *            ID of the song
+	 * @return song meta
+	 */
+	public SongInfo getSongInfo(long songId)
+	{
+		Cursor cursor = this.db.query("songs",
+				new String[] { "track", "artist", "album" },
+				"id = ?", new String[] { Long.toString(songId) },
+				null, null, null);
+		cursor.moveToFirst();
+
+		if (cursor.isAfterLast())
+		{
+			Log.w(TAG, "Song with ID " + songId + " doesn't exist");
+			cursor.close();
+			return null;
+		}
+
+		SongInfo info = new SongInfo();
+		info.id = songId;
+		info.track = cursor.getString(0);
+		info.artist = cursor.getString(1);
+		info.album = cursor.getString(2);
+		cursor.close();
+
+		return info;
 	}
 
 	/**
@@ -157,9 +188,9 @@ public class SongTracker
 	 */
 	private long findSong(long routeId, String track, String artist, String album)
 	{
-		Cursor cursor = this.db.query("songs", new String[] {"id"},
+		Cursor cursor = this.db.query("songs", new String[] { "id" },
 				"track = ? AND artist = ? AND album = ?",
-				new String[] {track, artist, album},
+				new String[] { track, artist, album },
 				null, null, null);
 		cursor.moveToFirst();
 

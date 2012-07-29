@@ -4,6 +4,6 @@ public class SongInfo
 {
 	public long id;
 	public String track;
-	public String artist; 
-	public String album; 
+	public String artist;
+	public String album;
 }
