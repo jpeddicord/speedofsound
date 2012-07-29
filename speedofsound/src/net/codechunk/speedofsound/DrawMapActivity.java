@@ -307,24 +307,23 @@ public class DrawMapActivity extends SherlockMapActivity
 			GeoPoint next = null;
 
 			// For each path
-			for (ArrayList<Object> loc : DrawMapActivity.this.mapContent)
+			for (SongSet loc : DrawMapActivity.this.mapContent)
 			{
 				Path path = new Path();
 
-				Paint mPaint = new Paint();
-				mPaint.setDither(true);
-				mPaint.setColor(Color.RED);
-				mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-				mPaint.setStrokeJoin(Paint.Join.ROUND);
-				mPaint.setStrokeCap(Paint.Cap.ROUND);
-				mPaint.setStrokeWidth(4);
+				Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+				paint.setColor(Color.RED);
+				paint.setStyle(Paint.Style.FILL_AND_STROKE);
+				paint.setStrokeJoin(Paint.Join.ROUND);
+				paint.setStrokeCap(Paint.Cap.ROUND);
+				paint.setStrokeWidth(6);
 
 				// Get the color for this path
 				int color = (Integer) loc.get(0);
-				mPaint.setColor(color);
 
 				@SuppressWarnings("unchecked")
 				ArrayList<GeoPoint> pointsforloc = (ArrayList<GeoPoint>) loc.get(2);
+				paint.setColor(color);
 
 				// for each geopoint on this path
 				for (GeoPoint point : pointsforloc)
@@ -378,7 +377,7 @@ public class DrawMapActivity extends SherlockMapActivity
 				}
 
 				// draw it
-				canvas.drawPath(path, mPaint);
+				canvas.drawPath(path, paint);
 			}
 		}
 	}
