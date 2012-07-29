@@ -108,17 +108,20 @@ public class SoundService extends Service
 		Log.d(TAG, "Start command received");
 
 		// check if we've been commanded to start or stop tracking
-		Bundle extras = intent.getExtras();
-		if (extras != null && extras.containsKey(SoundService.SET_TRACKING_STATE))
+		if (intent != null)
 		{
-			Log.v(TAG, "Commanded to change state");
-			if (extras.getBoolean(SoundService.SET_TRACKING_STATE))
+			Bundle extras = intent.getExtras();
+			if (extras != null && extras.containsKey(SoundService.SET_TRACKING_STATE))
 			{
-				this.startTracking();
-			}
-			else
-			{
-				this.stopTracking();
+				Log.v(TAG, "Commanded to change state");
+				if (extras.getBoolean(SoundService.SET_TRACKING_STATE))
+				{
+					this.startTracking();
+				}
+				else
+				{
+					this.stopTracking();
+				}
 			}
 		}
 
