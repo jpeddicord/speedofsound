@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import net.codechunk.speedofsound.players.BasePlayer;
+import net.codechunk.speedofsound.util.SongInfo;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -20,6 +21,7 @@ import android.util.Log;
 public class SongTracker
 {
 	private static final String TAG = "SongTracker";
+	private static SongTracker inst = null;
 
 	private Context context;
 
@@ -34,11 +36,22 @@ public class SongTracker
 	private Location previousLocation;
 	private long routeId;
 
+	// TODO: replace with SongInfo
 	private String songTrack;
 	private String songArtist;
 	private String songAlbum;
 
-	SongTracker(Context context)
+	public static SongTracker getInstance(Context context)
+	{
+		if (inst == null)
+		{
+			inst = new SongTracker(context);
+		}
+
+		return inst;
+	}
+
+	private SongTracker(Context context)
 	{
 		this.context = context;
 		this.sqlite = new SQLiteOpener(context);
@@ -106,7 +119,7 @@ public class SongTracker
 	 */
 	public void deleteRoute(long routeId)
 	{
-		String[] deleteArgs = new String[] { Long.toString(routeId) };
+		String[] deleteArgs = new String[] {Long.toString(routeId)};
 		this.db.delete("points", "route_id = ?", deleteArgs);
 		this.db.delete("songs", "route_id = ?", deleteArgs);
 		this.db.delete("routes", "id = ?", deleteArgs);
@@ -144,9 +157,9 @@ public class SongTracker
 	 */
 	private long findSong(long routeId, String track, String artist, String album)
 	{
-		Cursor cursor = this.db.query("songs", new String[] { "id" },
+		Cursor cursor = this.db.query("songs", new String[] {"id"},
 				"track = ? AND artist = ? AND album = ?",
-				new String[] { track, artist, album },
+				new String[] {track, artist, album},
 				null, null, null);
 		cursor.moveToFirst();
 

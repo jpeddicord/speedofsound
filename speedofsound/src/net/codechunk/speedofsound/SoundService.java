@@ -88,7 +88,7 @@ public class SoundService extends Service
 		this.audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		this.maxVolume = this.audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 		this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		this.songTracker = new SongTracker(this);
+		this.songTracker = SongTracker.getInstance(this);
 
 		// activation broadcasts
 		// XXX: these won't be necessary when the intents are launched via
