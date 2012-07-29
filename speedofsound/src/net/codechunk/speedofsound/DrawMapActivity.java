@@ -290,7 +290,7 @@ public class DrawMapActivity extends SherlockMapActivity
 		/**
 		 * Maximum distance to draw a line between points.
 		 */
-		private static final int MAX_DIST = 4000;
+		private static final int MAX_DIST = 6000;
 
 		public SongOverlay()
 		{
