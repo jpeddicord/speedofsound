@@ -135,6 +135,7 @@ public class VolumeThread extends Thread
 			Log.v(TAG, "New volume is " + newVolume);
 
 			// set the volume
+			// TODO: can't assume all devices have a 255 max; should scale this.
 			this.audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0);
 			currentVolume = newVolume;
 		}

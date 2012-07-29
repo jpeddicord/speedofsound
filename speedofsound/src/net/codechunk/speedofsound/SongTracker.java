@@ -1,8 +1,10 @@
 package net.codechunk.speedofsound;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import net.codechunk.speedofsound.players.BasePlayer;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -19,14 +21,9 @@ public class SongTracker
 {
 	private static final String TAG = "SongTracker";
 
-	/**
-	 * SQLite opener.
-	 */
-	private SQLiteOpener sqlite;
+	private Context context;
 
-	/**
-	 * DB write access.
-	 */
+	private SQLiteOpener sqlite;
 	private SQLiteDatabase db;
 
 	/**
@@ -34,14 +31,7 @@ public class SongTracker
 	 */
 	private static final int UPDATE_RATE = 1500;
 
-	/**
-	 * The last known location.
-	 */
 	private Location previousLocation;
-
-	/**
-	 * The current route.
-	 */
 	private long routeId;
 
 	private String songTrack;
@@ -50,6 +40,7 @@ public class SongTracker
 
 	SongTracker(Context context)
 	{
+		this.context = context;
 		this.sqlite = new SQLiteOpener(context);
 		this.db = this.sqlite.getWritableDatabase();
 
@@ -57,7 +48,19 @@ public class SongTracker
 		LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(context);
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(SoundService.LOCATION_UPDATE_BROADCAST);
+		filter.addAction(BasePlayer.PLAYBACK_CHANGED_BROADCAST);
+		filter.addAction(BasePlayer.PLAYBACK_STOPPED_BROADCAST);
 		lbm.registerReceiver(this.messageReceiver, filter);
+	}
+
+	/**
+	 * External classes can get a read-only view of the data set.
+	 * 
+	 * @return a read-only SQLite database
+	 */
+	public SQLiteDatabase getReadableDatabase()
+	{
+		return this.sqlite.getReadableDatabase();
 	}
 
 	/**
@@ -75,14 +78,19 @@ public class SongTracker
 		this.db.delete("points", null, null);
 		this.db.delete("songs", null, null);
 		this.db.delete("routes", null, null);
-		
+
 		// grab the current time
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		// set a nice name according to the user's locale settings
+		DateFormat localeDF = android.text.format.DateFormat.getMediumDateFormat(this.context);
+		DateFormat localeTF = android.text.format.DateFormat.getTimeFormat(this.context);
+		String routeName = localeDF.format(date) + " " + localeTF.format(date);
 
 		// store the route
 		ContentValues values = new ContentValues();
-		values.put("name", df.format(date));
+		values.put("name", routeName);
 		values.put("start", df.format(date));
 		this.routeId = this.db.insert("routes", null, values);
 
@@ -98,10 +106,27 @@ public class SongTracker
 	 */
 	public void deleteRoute(long routeId)
 	{
-		String[] deleteArgs = new String[] {Long.toString(routeId)};
+		String[] deleteArgs = new String[] { Long.toString(routeId) };
 		this.db.delete("points", "route_id = ?", deleteArgs);
 		this.db.delete("songs", "route_id = ?", deleteArgs);
 		this.db.delete("routes", "id = ?", deleteArgs);
+	}
+
+	/**
+	 * Return a cursor for all points associated with a route.
+	 * 
+	 * @param routeId
+	 *            ID of the route containing points
+	 * @return a cursor to iterate
+	 */
+	public Cursor getRoutePoints(long routeId)
+	{
+		Cursor cursor = this.db.query("points",
+				new String[] { "id", "song_id", "latitude", "longitude" },
+				"route_id = ?", new String[] { Long.toString(routeId) },
+				null, null, "id ASC");
+		cursor.moveToFirst();
+		return cursor;
 	}
 
 	/**
@@ -115,7 +140,7 @@ public class SongTracker
 	 *            Song artist
 	 * @param album
 	 *            Song album
-	 * @return
+	 * @return the ID of the song
 	 */
 	private long findSong(long routeId, String track, String artist, String album)
 	{
@@ -149,6 +174,9 @@ public class SongTracker
 	 */
 	private BroadcastReceiver messageReceiver = new BroadcastReceiver()
 	{
+		// TODO: need to make sure that nothing happens if
+		// we're not actively tracking the speed. don't want to needlessly
+		// spin the storage.
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
@@ -160,10 +188,16 @@ public class SongTracker
 				Location location = intent.getParcelableExtra("location");
 				SongTracker.this.locationUpdate(location);
 			}
+
 			// new song reported
-			if (action.equals("XXXXX"))
+			else if (action.equals(BasePlayer.PLAYBACK_CHANGED_BROADCAST))
 			{
-				// TODO
+				SongTracker.this.songTrack = intent.getStringExtra("track");
+				SongTracker.this.songArtist = intent.getStringExtra("artist");
+				SongTracker.this.songAlbum = intent.getStringExtra("album");
+
+				Log.v(TAG, "New song set: " + SongTracker.this.songTrack +
+						" by " + SongTracker.this.songArtist);
 			}
 		}
 	};
@@ -185,12 +219,17 @@ public class SongTracker
 			return;
 
 		// rate limiting
-		if (location.getTime() - this.previousLocation.getTime() < SongTracker.UPDATE_RATE)
+		if (this.previousLocation != null &&
+				location.getTime() - this.previousLocation.getTime() < SongTracker.UPDATE_RATE)
 			return;
+
+		Log.v(TAG, "Storing point");
 
 		// get the data we need to store
 		int latitudeE6 = (int) (location.getLatitude() * 1000000);
 		int longitudeE6 = (int) (location.getLongitude() * 1000000);
+		// FIXME: don't do this here! update a member song ID
+		// when it changes.
 		long songId = this.findSong(this.routeId, this.songTrack, this.songArtist, this.songAlbum);
 
 		// store the point
@@ -222,18 +261,18 @@ public class SongTracker
 		public void onCreate(SQLiteDatabase db)
 		{
 			db.execSQL("CREATE TABLE routes (" +
-					"id INTEGER PRIMERY KEY AUTOINCREMENT NOT NULL," +
+					"id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
 					"name TEXT," +
 					"start DATETIME," +
 					"end DATETIME);");
 			db.execSQL("CREATE TABLE songs (" +
-					"id INTEGER PRIMERY KEY AUTOINCREMENT NOT NULL," +
+					"id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
 					"route_id INTEGER," +
 					"track TEXT," +
 					"artist TEXT," +
 					"album TEXT);");
 			db.execSQL("CREATE TABLE points (" +
-					"id INTEGER PRIMERY KEY AUTOINCREMENT NOT NULL," +
+					"id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
 					"route_id INTEGER," +
 					"song_id INTEGER," +
 					"latitude INTEGER," +

@@ -2,10 +2,8 @@ package net.codechunk.speedofsound;
 
 import net.codechunk.speedofsound.util.AppPreferences;
 import net.codechunk.speedofsound.util.AverageSpeed;
-import net.codechunk.speedofsound.util.ColorCreator;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -31,9 +29,6 @@ import android.util.Log;
  */
 public class SoundService extends Service
 {
-	/**
-	 * Logging tag.
-	 */
 	private static final String TAG = "SoundService";
 
 	/**
@@ -52,70 +47,27 @@ public class SoundService extends Service
 	public static final String LOCATION_UPDATE_BROADCAST = "location-update";
 
 	/**
-	 * Application shared preferences. Used to load speed/volume settings.
+	 * The current tracking state. XXX: this should probably not be a public
+	 * field
 	 */
+	public boolean tracking = false;
+
 	private SharedPreferences settings;
-
-	/**
-	 * Broadcast manager to send speed/volume updates to the UI.
-	 */
 	private LocalBroadcastManager localBroadcastManager;
-
-	/**
-	 * Sound service manager instance.
-	 */
 	private SoundServiceManager soundServiceManager = new SoundServiceManager();
-
-	/**
-	 * Audio manager to control the system media volume.
-	 */
 	private AudioManager audioManager;
 
 	/**
 	 * System maximum volume. Typically 255, but might be different on some
-	 * platforms.
+	 * platforms. TODO: remove this and calculate the volume scaling elsewhere
 	 */
 	private int maxVolume;
 
-	/**
-	 * Volume changing thread.
-	 */
 	private VolumeThread volumeThread = null;
-
-	/**
-	 * Location manager to receive and process new GPS speeds/values.
-	 */
 	private LocationManager locationManager;
-
-	/**
-	 * Speed averager/smoother.
-	 */
 	private AverageSpeed averager = new AverageSpeed(6);
-
-	/**
-	 * Service binder for activities to communicate with this service.
-	 */
 	private LocalBinder binder = new LocalBinder();
-
-	/**
-	 * The current tracking state.
-	 */
-	public boolean tracking = false;
-
-	/**
-	 * Our local database for storing song/location info.
-	 */
-	private DatabaseManager db;
-
-	/**
-	 * The current song being played.
-	 */
-	private String song = "Unknown";
-
-	/**
-	 * A random color generator.
-	 */
-	private ColorCreator cc = new ColorCreator();
+	private SongTracker songTracker;
 
 	/**
 	 * Start up the service and initialize some values. Does not start tracking.
@@ -136,19 +88,11 @@ public class SoundService extends Service
 		this.audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		this.maxVolume = this.audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 		this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-		this.db = DatabaseManager.getDBManager(this);
-
-		// listen to certain broadcasts
-		IntentFilter filter = new IntentFilter();
-		filter.addAction("com.android.music.metachanged");
-		filter.addAction("com.android.music.playstatechanged");
-		filter.addAction("com.android.music.playbackcomplete");
-		filter.addAction("com.android.music.queuechanged");
-		this.registerReceiver(this.broadcastReceiver, filter);
+		this.songTracker = new SongTracker(this);
 
 		// activation broadcasts
-		// XXX: these won't be necessary when the intents are launched via manifest
+		// XXX: these won't be necessary when the intents are launched via
+		// manifest
 		IntentFilter activationFilter = this.soundServiceManager.activationIntents();
 		this.registerReceiver(this.soundServiceManager, activationFilter);
 	}
@@ -188,12 +132,6 @@ public class SoundService extends Service
 	public void onDestroy()
 	{
 		Log.d(TAG, "Service shutting down");
-
-		// unregister receivers
-		this.unregisterReceiver(this.broadcastReceiver);
-
-		// Close the database
-		this.db.close();
 	}
 
 	/**
@@ -207,6 +145,9 @@ public class SoundService extends Service
 		{
 			return;
 		}
+
+		// start a new route
+		this.songTracker.startRoute();
 
 		// request updates
 		Criteria criteria = new Criteria();
@@ -239,9 +180,6 @@ public class SoundService extends Service
 
 		this.tracking = true;
 		Log.d(TAG, "Tracking started with location provider " + provider);
-
-		// Clear the database for new tracking data
-		this.db.resetDB();
 	}
 
 	/**
@@ -325,51 +263,12 @@ public class SoundService extends Service
 	}
 
 	/**
-	 * Add a location to the song database.
-	 * 
-	 * @param location
-	 *            Location/point to store.
-	 */
-	private void addPoint(Location location)
-	{
-		long songid = this.db.getSongId(this.song);
-		double longitude = location.getLongitude();
-		double latitude = location.getLatitude();
-
-		if (songid < 0)
-		{
-			Log.d(TAG, "Song did not exist in db. Adding. Song id: " + songid);
-
-			int pathcolor = cc.getColor();
-
-			this.db.addSong(this.song, pathcolor);
-
-			songid = this.db.getSongId(this.song);
-
-			Log.d(TAG, "Song added. Song id: " + songid);
-		}
-
-		int longitudeE6 = (int) (longitude * 1000000);
-		int latitudeE6 = (int) (latitude * 1000000);
-
-		this.db.addPoint(songid, latitudeE6, longitudeE6);
-	}
-
-	/**
 	 * Custom location listener. Triggers volume changes based on the current
 	 * average speed.
 	 */
 	private LocationListener locationUpdater = new LocationListener()
 	{
 		private Location previousLocation = null;
-		private long previousTime = 0;
-
-		/**
-		 * How often the location is stored in the database in milliseconds.
-		 * Saving more often will result in a smoother path but a larger
-		 * database.
-		 */
-		private static final int POINT_FREQ = 1000;
 
 		/**
 		 * Change the volume based on the current average speed. If speed is not
@@ -382,20 +281,6 @@ public class SoundService extends Service
 			// grab the speed
 			float speed;
 
-			// get the time
-			long time;
-
-			time = location.getTime();
-
-			if (time - this.previousTime >= POINT_FREQ)
-			{
-				// update previous time since we are saving a point now
-				this.previousTime = time;
-
-				Log.v(TAG, "Adding new point to database");
-				SoundService.this.addPoint(location);
-			}
-
 			// use the GPS-provided speed if available
 			if (location.hasSpeed())
 			{
@@ -403,8 +288,6 @@ public class SoundService extends Service
 			}
 			else
 			{
-				Log.v(TAG, "Location fallback mode");
-
 				// speed fall-back (mostly for the emulator)
 				if (this.previousLocation != null)
 				{
@@ -452,32 +335,6 @@ public class SoundService extends Service
 
 		public void onStatusChanged(String provider, int status, Bundle extras)
 		{
-		}
-	};
-
-	/**
-	 * Start or stop tracking on certain broadcasts.
-	 */
-	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver()
-	{
-		@Override
-		public void onReceive(Context context, Intent intent)
-		{
-			String action = intent.getAction();
-			Log.d(TAG, "Received intent " + action);
-
-			// music actions
-			if (action.equals("com.android.music.metachanged") ||
-					action.equals("com.android.music.playstatechanged") ||
-					action.equals("com.android.music.playbackcomplete") ||
-					action.equals("com.android.music.queuechanged"))
-			{
-				String artist = intent.getStringExtra("artist");
-				String track = intent.getStringExtra("track");
-				Log.d(TAG, "Track changed: " + track + " by " + artist);
-
-				SoundService.this.song = track + " - " + artist;
-			}
 		}
 	};
 

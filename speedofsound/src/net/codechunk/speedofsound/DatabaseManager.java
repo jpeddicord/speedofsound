@@ -21,6 +21,7 @@ import android.util.Log;
  * 
  * @author Andrew
  */
+@Deprecated
 public class DatabaseManager
 {
 	/**
