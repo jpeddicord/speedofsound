@@ -409,7 +409,7 @@ public class SpeedActivity extends SherlockActivity implements OnCheckedChangeLi
 				startActivity(new Intent(this, PreferencesActivity.class));
 				break;
 			case R.id.view_map:
-				startActivity(new Intent(this, DrawMapActivity.class));
+				startActivity(new Intent(this, MapperActivity.class));
 				break;
 		}
 		return true;

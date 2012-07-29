@@ -40,7 +40,7 @@ import com.google.android.maps.Projection;
  * 
  * @author Andrew
  */
-public class DrawMapActivity extends SherlockMapActivity
+public class MapperActivity extends SherlockMapActivity
 {
 	private static final String TAG = "DrawMapActivity";
 
@@ -71,7 +71,7 @@ public class DrawMapActivity extends SherlockMapActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.drawmap);
+		setContentView(R.layout.mapper);
 
 		this.songTracker = SongTracker.getInstance(this);
 
@@ -276,7 +276,7 @@ public class DrawMapActivity extends SherlockMapActivity
 			GeoPoint next = null;
 
 			// For each path
-			for (SongSet loc : DrawMapActivity.this.mapContent)
+			for (SongSet loc : MapperActivity.this.mapContent)
 			{
 				Path path = new Path();
 
@@ -287,7 +287,7 @@ public class DrawMapActivity extends SherlockMapActivity
 				paint.setStrokeWidth(6);
 
 				// Get the color for this path
-				paint.setColor(DrawMapActivity.this.songColors.get(loc.song.id));
+				paint.setColor(MapperActivity.this.songColors.get(loc.song.id));
 
 				// for each geopoint on this path
 				for (GeoPoint point : loc.points)
