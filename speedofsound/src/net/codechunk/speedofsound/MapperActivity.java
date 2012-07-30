@@ -18,8 +18,6 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -30,7 +28,6 @@ import com.actionbarsherlock.view.MenuItem;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
-import com.google.android.maps.MapView.LayoutParams;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.Projection;
 
@@ -66,7 +63,6 @@ public class MapperActivity extends SherlockMapActivity
 	/**
 	 * Set up the map and overlay.
 	 */
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -82,16 +78,8 @@ public class MapperActivity extends SherlockMapActivity
 
 		// load the map view
 		mapView = (MapView) findViewById(R.id.mapView);
-		LinearLayout zoomLayout = (LinearLayout) findViewById(R.id.zoom);
+		mapView.setBuiltInZoomControls(true);
 		songTable = (TableLayout) findViewById(R.id.song_table);
-		View zoomView = mapView.getZoomControls();
-
-		// add zoom controls
-		zoomLayout.addView(zoomView,
-				new LinearLayout.LayoutParams(
-						LayoutParams.WRAP_CONTENT,
-						LayoutParams.WRAP_CONTENT));
-		mapView.displayZoomControls(true);
 
 		mapOverlays = mapView.getOverlays();
 		projection = mapView.getProjection();
