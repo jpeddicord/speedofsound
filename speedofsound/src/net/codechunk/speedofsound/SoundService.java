@@ -85,14 +85,12 @@ public class SoundService extends Service
 
 		// register handlers & audio
 		this.localBroadcastManager = LocalBroadcastManager.getInstance(this);
-		this.audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		this.audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
 		this.maxVolume = this.audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-		this.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		this.locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		this.songTracker = SongTracker.getInstance(this);
 
 		// activation broadcasts
-		// XXX: these won't be necessary when the intents are launched via
-		// manifest
 		IntentFilter activationFilter = this.soundServiceManager.activationIntents();
 		this.registerReceiver(this.soundServiceManager, activationFilter);
 	}
