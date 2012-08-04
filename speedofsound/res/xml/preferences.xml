@@ -61,6 +61,11 @@
             android:key="enable_headphones"
             android:summary="Track when headphones are plugged in"
             android:title="Enable on Headphones" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="enable_bluetooth"
+            android:summary="Track when a Bluetooth A2DP music device is connected"
+            android:title="Enable on Bluetooth" />
     </PreferenceCategory>
 
 </PreferenceScreen>

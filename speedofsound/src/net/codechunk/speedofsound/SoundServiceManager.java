@@ -18,19 +18,33 @@ public class SoundServiceManager extends BroadcastReceiver
 {
 	private static final String TAG = "SoundServiceManager";
 
+	private static final int UNDOCUMENTED_STATE_DISCONNECTED = 0;
+	private static final int UNDOCUMENTED_STATE_CONNECTED = 2;
+	private static final String UNDOCUMENTED_A2DP_ACTION = "android.bluetooth.a2dp.action.SINK_STATE_CHANGED";
+	private static final String UNDOCUMENTED_A2DP_ACTION_ALTERNATE = "android.bluetooth.a2dp.intent.action.SINK_STATE_CHANGED";
+	private static final String UNDOCUMENTED_A2DP_EXTRA_STATE = "android.bluetooth.a2dp.extra.SINK_STATE";
+
 	/**
 	 * Get the filter of extra intents we care about.
 	 */
 	public IntentFilter activationIntents()
 	{
 		IntentFilter filter = new IntentFilter();
-		filter.addAction("android.intent.action.ACTION_POWER_CONNECTED");
-		filter.addAction("android.intent.action.ACTION_POWER_DISCONNECTED");
-		filter.addAction("android.intent.action.HEADSET_PLUG");
 
-		// NOTE: these are undocumented!
-		filter.addAction("android.bluetooth.a2dp.action.SINK_STATE_CHANGED");
-		filter.addAction("android.bluetooth.a2dp.intent.action.SINK_STATE_CHANGED");
+		// power events
+		filter.addAction(Intent.ACTION_POWER_CONNECTED);
+		filter.addAction(Intent.ACTION_POWER_DISCONNECTED);
+
+		// headset plug/unplug events
+		filter.addAction(Intent.ACTION_HEADSET_PLUG);
+
+		// undocumented bluetooth API
+		filter.addAction(SoundServiceManager.UNDOCUMENTED_A2DP_ACTION);
+		filter.addAction(SoundServiceManager.UNDOCUMENTED_A2DP_ACTION_ALTERNATE);
+
+		// documented API11+ bluetooth API
+		filter.addAction(android.bluetooth.BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED);
+
 		return filter;
 	}
 
@@ -68,9 +82,10 @@ public class SoundServiceManager extends BroadcastReceiver
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		boolean powerPreference = prefs.getBoolean("enable_only_charging", false);
 		boolean headphonePreference = prefs.getBoolean("enable_headphones", false);
+		boolean bluetoothPreference = prefs.getBoolean("enable_bluetooth", false);
 
 		// resume tracking if we're also in a satisfactory mode
-		if (action.equals("android.intent.action.ACTION_POWER_CONNECTED"))
+		if (action.equals(Intent.ACTION_POWER_CONNECTED))
 		{
 			Log.d(TAG, "Power connected");
 
@@ -86,7 +101,7 @@ public class SoundServiceManager extends BroadcastReceiver
 		}
 
 		// stop tracking if desired for only when charging
-		else if (action.equals("android.intent.action.ACTION_POWER_DISCONNECTED"))
+		else if (action.equals(Intent.ACTION_POWER_DISCONNECTED))
 		{
 			Log.d(TAG, "Power disconnected");
 
@@ -99,7 +114,7 @@ public class SoundServiceManager extends BroadcastReceiver
 		}
 
 		// start or stop tracking for headset events
-		else if (action.equals("android.intent.action.HEADSET_PLUG"))
+		else if (action.equals(Intent.ACTION_HEADSET_PLUG))
 		{
 			Log.d(TAG, "Headset event");
 
@@ -126,20 +141,44 @@ public class SoundServiceManager extends BroadcastReceiver
 
 		// these broadcasts are undocumented, but seem to work on a bunch of
 		// android versions. used with caution.
-		else if (action.equals("android.bluetooth.a2dp.action.SINK_STATE_CHANGED") ||
-				action.equals("android.bluetooth.a2dp.intent.action.SINK_STATE_CHANGED"))
+		else if (action.equals(SoundServiceManager.UNDOCUMENTED_A2DP_ACTION) ||
+				action.equals(SoundServiceManager.UNDOCUMENTED_A2DP_ACTION_ALTERNATE))
 		{
 			Log.d(TAG, "A2DP undocumented event");
 
-			// ignore if BT preference is inactive TODO
-			if (false)
+			// ignore if BT preference is inactive
+			if (bluetoothPreference)
 			{
-				if (audioManager.isBluetoothA2dpOn())
+				int state = intent.getIntExtra(SoundServiceManager.UNDOCUMENTED_A2DP_EXTRA_STATE, -1);
+
+				if (state == SoundServiceManager.UNDOCUMENTED_STATE_CONNECTED)
 				{
 					Log.v(TAG, "A2DP active, starting tracking");
 					SoundServiceManager.setTracking(context, true);
 				}
-				else
+				else if (state == SoundServiceManager.UNDOCUMENTED_STATE_DISCONNECTED)
+				{
+					Log.v(TAG, "A2DP inactive, stopping tracking");
+					SoundServiceManager.setTracking(context, false);
+				}
+			}
+		}
+
+		// official API 11+ bluetooth A2DP broadcasts
+		else if (action.equals(android.bluetooth.BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED))
+		{
+			Log.d(TAG, "A2DP API11+ event");
+
+			if (bluetoothPreference)
+			{
+				int state = intent.getIntExtra(android.bluetooth.BluetoothA2dp.EXTRA_STATE, -1);
+
+				if (state == android.bluetooth.BluetoothA2dp.STATE_CONNECTED)
+				{
+					Log.v(TAG, "A2DP active, starting tracking");
+					SoundServiceManager.setTracking(context, true);
+				}
+				else if (state == android.bluetooth.BluetoothA2dp.STATE_DISCONNECTED)
 				{
 					Log.v(TAG, "A2DP inactive, stopping tracking");
 					SoundServiceManager.setTracking(context, false);
