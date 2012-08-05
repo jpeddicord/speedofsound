@@ -17,7 +17,7 @@ public abstract class BasePlayer extends BroadcastReceiver
 
 	protected enum PlaybackAction
 	{
-		CHANGED, STOPPED
+		CHANGED, STOPPED, PAUSED, RESUMED
 	}
 
 	public abstract PlaybackAction getPlaybackAction(Context context, Intent intent);
@@ -42,9 +42,9 @@ public abstract class BasePlayer extends BroadcastReceiver
 
 			// send out a broadcast with the details
 			Intent broadcast = new Intent(BasePlayer.PLAYBACK_CHANGED_BROADCAST);
-			broadcast.putExtra("track", info.track);
-			broadcast.putExtra("artist", info.artist);
-			broadcast.putExtra("album", info.album);
+			broadcast.putExtra("track", info.track == null ? "Unknown" : info.track);
+			broadcast.putExtra("artist", info.artist == null ? "Unknown" : info.artist);
+			broadcast.putExtra("album", info.album == null ? "Unknown" : info.album);
 			lbm.sendBroadcast(broadcast);
 		}
 		else if (action == PlaybackAction.STOPPED)

@@ -262,6 +262,14 @@ public class SongTracker
 				Log.v(TAG, "New song set: " + SongTracker.this.currentSong.track +
 						" by " + SongTracker.this.currentSong.artist);
 			}
+
+			// they've stopped playing music :(
+			else if (action.equals(BasePlayer.PLAYBACK_STOPPED_BROADCAST))
+			{
+				SongTracker.this.currentSong = null;
+
+				Log.v(TAG, "Playback stopped");
+			}
 		}
 	};
 
