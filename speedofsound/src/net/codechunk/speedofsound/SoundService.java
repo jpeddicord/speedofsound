@@ -201,6 +201,9 @@ public class SoundService extends Service
 			this.volumeThread = null;
 		}
 
+		// end the current route
+		this.songTracker.endRoute();
+
 		// disable location updates
 		this.locationManager.removeUpdates(this.locationUpdater);
 

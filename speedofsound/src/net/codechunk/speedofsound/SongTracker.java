@@ -41,10 +41,7 @@ public class SongTracker
 	private Location previousLocation;
 	private long routeId;
 
-	// TODO: replace with SongInfo
-	private String songTrack;
-	private String songArtist;
-	private String songAlbum;
+	private SongInfo currentSong = null;
 
 	public static SongTracker getInstance(Context context)
 	{
@@ -112,8 +109,24 @@ public class SongTracker
 		values.put("start", df.format(date));
 		this.routeId = this.db.insert("routes", null, values);
 
+		// clear out the current song ID (it's linked to a route)
+		if (this.currentSong != null)
+		{
+			this.currentSong.id = 0;
+		}
+
 		Log.d(TAG, "Starting new route with id " + this.routeId);
 		return this.routeId;
+	}
+
+	/**
+	 * Stop recording to the current route.
+	 * 
+	 * TODO: store the end time
+	 */
+	public void endRoute()
+	{
+		this.routeId = 0;
 	}
 
 	/**
@@ -241,12 +254,16 @@ public class SongTracker
 			// new song reported
 			else if (action.equals(BasePlayer.PLAYBACK_CHANGED_BROADCAST))
 			{
-				SongTracker.this.songTrack = intent.getStringExtra("track");
-				SongTracker.this.songArtist = intent.getStringExtra("artist");
-				SongTracker.this.songAlbum = intent.getStringExtra("album");
+				// set it as the current song
+				SongInfo si = new SongInfo();
+				si.track = intent.getStringExtra("track");
+				si.artist = intent.getStringExtra("artist");
+				si.album = intent.getStringExtra("album");
+				si.id = 0;
+				SongTracker.this.currentSong = si;
 
-				Log.v(TAG, "New song set: " + SongTracker.this.songTrack +
-						" by " + SongTracker.this.songArtist);
+				Log.v(TAG, "New song set: " + SongTracker.this.currentSong.track +
+						" by " + SongTracker.this.currentSong.artist);
 			}
 		}
 	};
@@ -264,8 +281,16 @@ public class SongTracker
 			return;
 
 		// we must have song information
-		if (this.songTrack == null && this.songArtist == null && this.songAlbum == null)
+		if (this.currentSong == null)
 			return;
+
+		// do we need to update song meta?
+		if (this.currentSong.id == 0)
+		{
+			Log.v(TAG, "Updating song meta");
+			this.currentSong.id = this.findSong(this.routeId,
+					this.currentSong.track, this.currentSong.artist, this.currentSong.album);
+		}
 
 		// rate limiting
 		if (this.previousLocation != null)
@@ -284,14 +309,11 @@ public class SongTracker
 		// get the data we need to store
 		int latitudeE6 = (int) (location.getLatitude() * 1000000);
 		int longitudeE6 = (int) (location.getLongitude() * 1000000);
-		// FIXME: don't do this here! update a member song ID
-		// when it changes.
-		long songId = this.findSong(this.routeId, this.songTrack, this.songArtist, this.songAlbum);
 
 		// store the point
 		ContentValues values = new ContentValues();
 		values.put("route_id", this.routeId);
-		values.put("song_id", songId);
+		values.put("song_id", this.currentSong.id);
 		values.put("latitude", latitudeE6);
 		values.put("longitude", longitudeE6);
 		this.db.insert("points", null, values);
