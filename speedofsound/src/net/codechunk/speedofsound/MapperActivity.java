@@ -190,7 +190,6 @@ public class MapperActivity extends SherlockMapActivity
 	{
 		// Disallows duplicate songs to be added to the table even if two paths
 		// have the same song and color
-		// XXX: investigate this a little more
 		HashSet<Long> songs = new HashSet<Long>();
 
 		// for each path

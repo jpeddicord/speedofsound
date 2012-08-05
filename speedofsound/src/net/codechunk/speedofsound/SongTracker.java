@@ -236,9 +236,6 @@ public class SongTracker
 	 */
 	private BroadcastReceiver messageReceiver = new BroadcastReceiver()
 	{
-		// TODO: need to make sure that nothing happens if
-		// we're not actively tracking the speed. don't want to needlessly
-		// spin the storage.
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{

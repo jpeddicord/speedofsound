@@ -51,5 +51,8 @@
     <string name="mph_long">miles/hour</string>
     <string name="no_location_providers">Couldn\'t find any way to get your location. Please turn on GPS.</string>
     <string name="version">Version</string>
+    <string name="contact">Contact Us</string>
+    <string name="github">Open Source on GitHub</string>
+    <string name="help_translate">Translate into another language</string>
 
 </resources>
