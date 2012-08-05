@@ -12,7 +12,6 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.AudioManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -55,13 +54,6 @@ public class SoundService extends Service
 	private SharedPreferences settings;
 	private LocalBroadcastManager localBroadcastManager;
 	private SoundServiceManager soundServiceManager = new SoundServiceManager();
-	private AudioManager audioManager;
-
-	/**
-	 * System maximum volume. Typically 255, but might be different on some
-	 * platforms. TODO: remove this and calculate the volume scaling elsewhere
-	 */
-	private int maxVolume;
 
 	private VolumeThread volumeThread = null;
 	private LocationManager locationManager;
@@ -85,8 +77,6 @@ public class SoundService extends Service
 
 		// register handlers & audio
 		this.localBroadcastManager = LocalBroadcastManager.getInstance(this);
-		this.audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-		this.maxVolume = this.audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 		this.locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		this.songTracker = SongTracker.getInstance(this);
 
@@ -229,7 +219,7 @@ public class SoundService extends Service
 	 */
 	private int updateVolume(float speed)
 	{
-		float volume = 0.0f;
+		float volume = 0f;
 
 		float lowSpeed = this.settings.getFloat("low_speed", 0);
 		int lowVolume = this.settings.getInt("low_volume", 0);
@@ -240,26 +230,26 @@ public class SoundService extends Service
 		{
 			// minimum volume
 			Log.d(TAG, "Low speed triggered at " + speed);
-			volume = lowVolume / 100.0f;
+			volume = lowVolume / 100f;
 		}
 		else if (speed > highSpeed)
 		{
 			// high volume
 			Log.d(TAG, "High speed triggered at " + speed);
-			volume = highVolume / 100.0f;
+			volume = highVolume / 100f;
 		}
 		else
 		{
 			// log scaling
-			float volumeRange = (highVolume - lowVolume) / 100.0f;
+			float volumeRange = (highVolume - lowVolume) / 100f;
 			float speedRangeFrac = (speed - lowSpeed) / (highSpeed - lowSpeed);
 			float volumeRangeFrac = (float) (Math.log1p(speedRangeFrac) / Math.log1p(1));
-			volume = lowVolume / 100.0f + volumeRange * volumeRangeFrac;
+			volume = lowVolume / 100f + volumeRange * volumeRangeFrac;
 			Log.d(TAG, "Log scale triggered with " + speed + ", using volume " + volume);
 		}
 
 		// apply the volume
-		this.volumeThread.setTargetVolume((int) (this.maxVolume * volume));
+		this.volumeThread.setTargetVolume(volume);
 		return (int) (volume * 100);
 	}
 

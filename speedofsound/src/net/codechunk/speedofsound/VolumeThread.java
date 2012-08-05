@@ -11,47 +11,39 @@ import android.util.Log;
  */
 public class VolumeThread extends Thread
 {
-	/**
-	 * Logging tag.
-	 */
 	private static final String TAG = "VolumeThread";
 
 	/**
 	 * Rate in milliseconds at which to update the volume.
 	 */
-	private static final int UPDATE_DELAY = 200;
+	private static final int UPDATE_DELAY = 150;
 
 	/**
 	 * Threshold where we're "close enough" to the target volume to jump
 	 * straight to it.
 	 */
-	private static final int VOLUME_THRESHOLD = 3;
+	private static final float VOLUME_THRESHOLD = 0.03f;
 
 	/**
 	 * Approach rate. Heavily related to the update delay.
 	 */
-	private static final float APPROACH_RATE = 0.35f;
+	private static final float APPROACH_RATE = 0.3f;
 
 	/**
 	 * Maximum speed to approach the target volume. This shouldn't be too high
 	 * or a jump in volume may be noticed.
 	 */
-	private static final int MAX_APPROACH = 8;
+	private static final float MAX_APPROACH = 0.06f;
 
-	/**
-	 * Thread mutex.
-	 */
 	private final Object lock = new Object();
+	private final Object signal = new Object();
+	private final AudioManager audioManager;
+	private final int maxVolume;
 
 	/**
-	 * Audio manager to change the media volume.
+	 * The volume percentage we want to approach. Between 0 and 1.
 	 */
-	private AudioManager audioManager;
-
-	/**
-	 * Current target volume.
-	 */
-	private int targetVolume;
+	private float targetVolumePercent;
 
 	/**
 	 * Start up the thread and set the thread name.
@@ -62,21 +54,30 @@ public class VolumeThread extends Thread
 	public VolumeThread(Context context)
 	{
 		this.audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+		this.maxVolume = this.audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 		this.setName(TAG);
+
+		Log.d(TAG, "System max volume is " + this.maxVolume);
 	}
 
 	/**
 	 * Set a new target volume.
 	 * 
 	 * @param volume
-	 *            New target
+	 *            New target volume percentage from 0 to 1
 	 */
-	public void setTargetVolume(int volume)
+	public void setTargetVolume(float volumePercent)
 	{
-		Log.v(TAG, "Setting target volume to " + volume);
+		Log.v(TAG, "Setting target volume to " + volumePercent);
 		synchronized (this.lock)
 		{
-			this.targetVolume = volume;
+			this.targetVolumePercent = volumePercent;
+		}
+
+		// wake the thread up
+		synchronized (this.signal)
+		{
+			this.signal.notifyAll();
 		}
 	}
 
@@ -89,15 +90,16 @@ public class VolumeThread extends Thread
 
 		// get the current system volume
 		int currentVolume = this.audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-		this.setTargetVolume(currentVolume);
-		Log.d(TAG, "Current volume is " + currentVolume);
+		float currentVolumePercent = currentVolume / (float) this.maxVolume;
+		this.setTargetVolume(currentVolumePercent);
+		Log.d(TAG, "Current volume is " + currentVolumePercent);
 
 		while (!this.isInterrupted())
 		{
 			// sleep for a while
 			try
 			{
-				Thread.sleep(UPDATE_DELAY);
+				Thread.sleep(VolumeThread.UPDATE_DELAY);
 			}
 			catch (InterruptedException e)
 			{
@@ -105,39 +107,72 @@ public class VolumeThread extends Thread
 			}
 
 			// safely grab the target volume
-			int targetVolume;
+			float targetVolumePercent;
 			synchronized (this.lock)
 			{
-				targetVolume = this.targetVolume;
+				targetVolumePercent = this.targetVolumePercent;
 			}
 
-			// don't do anything if the target is already matched
-			if (currentVolume == targetVolume)
+			// if the volume is matched, just sleep
+			if (currentVolumePercent == targetVolumePercent)
 			{
-				continue;
+				Log.v(TAG, "Thread sleeping");
+				synchronized (this.signal)
+				{
+					try
+					{
+						this.signal.wait();
+					}
+					catch (InterruptedException e)
+					{
+						break;
+					}
+				}
+				Log.v(TAG, "Thread awoken");
+
+				// get the updated volume
+				synchronized (this.lock)
+				{
+					targetVolumePercent = this.targetVolumePercent;
+				}
 			}
 
 			// if the target is close enough, just use it
-			int newVolume = 0;
-			if (Math.abs(currentVolume - targetVolume) < VOLUME_THRESHOLD)
+			float newVolumePercent = 0f;
+			if (Math.abs(currentVolumePercent - targetVolumePercent) < VolumeThread.VOLUME_THRESHOLD)
 			{
-				newVolume = targetVolume;
+				newVolumePercent = targetVolumePercent;
 			}
 
 			// otherwise, gently approach the target
 			else
 			{
-				// approach the target, but not more quickly than the max
-				int approach = Math.min((int) ((targetVolume - currentVolume) * APPROACH_RATE), MAX_APPROACH);
-				newVolume = currentVolume + approach;
+				float approach = (targetVolumePercent - currentVolumePercent) * VolumeThread.APPROACH_RATE;
+
+				// don't approach more quickly than the max
+				if (Math.abs(approach) > VolumeThread.MAX_APPROACH)
+				{
+					// approach with the max rate, but with the same sign as the
+					// original
+					if (approach < 0)
+					{
+						approach = -VolumeThread.MAX_APPROACH;
+					}
+					else
+					{
+						approach = VolumeThread.MAX_APPROACH;
+					}
+				}
+
+				newVolumePercent = currentVolumePercent + approach;
 			}
 
-			Log.v(TAG, "New volume is " + newVolume);
-
 			// set the volume
-			// TODO: can't assume all devices have a 255 max; should scale this.
+			int newVolume = (int) (this.maxVolume * newVolumePercent);
 			this.audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0);
-			currentVolume = newVolume;
+			currentVolumePercent = newVolumePercent;
+
+			Log.v(TAG, "New volume is " + newVolumePercent + " translated to " + newVolume);
 		}
 
 		Log.d(TAG, "Thread exiting");
