@@ -78,7 +78,7 @@ public class SpeedActivity extends SherlockActivity implements OnCheckedChangeLi
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+		this.setContentView(R.layout.main);
 
 		// hook up the checkbox
 		this.settings = PreferenceManager.getDefaultSharedPreferences(this);

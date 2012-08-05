@@ -11,7 +11,6 @@
     <string name="waiting">(Waiting for GPS signal)</string>
     <string name="notification_text">Matching your volume to your speed</string>
     <string name="ticker_text">Speed of Sound is running</string>
-    <string name="map_bttn">View Map</string>
     <string name="warning">Warning</string>
     <string name="launch_disclaimer">Speed of Sound is designed to keep your eyes on the road, not your phone. As such, don\'t attempt to change settings or use your phone while driving.</string>
     <string name="launch_disclaimer_accept">Accept</string>
@@ -24,8 +23,9 @@
     <string name="intro_open_music">Open your music player and start playing</string>
     <string name="intro_plug_phone">Plug your phone into your car\'s stereo system</string>
     <string name="intro_start_driving">Start driving and enjoy automatic volumes</string>
-    <string name="view_map">View Map</string>
+    <string name="song_map">Song Map</string>
     <string name="preferences">Preferences</string>
+    <string name="about">About</string>
     <string name="general">General</string>
     <string name="speed_units">Speed Units</string>
     <string name="speed_units_summary">Choose the speed units you want to use</string>
@@ -50,5 +50,6 @@
     <string name="kph_long">kilometers/hour</string>
     <string name="mph_long">miles/hour</string>
     <string name="no_location_providers">Couldn\'t find any way to get your location. Please turn on GPS.</string>
+    <string name="version">Version</string>
 
 </resources>

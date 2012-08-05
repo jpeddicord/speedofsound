@@ -10,6 +10,8 @@ import android.util.Log;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 /**
@@ -66,6 +68,15 @@ public class PreferencesActivity extends SherlockPreferenceActivity implements O
 
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.menu.prefs_menu, menu);
+		menu.findItem(R.id.about).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		return true;
+	}
+
 	/**
 	 * Handle the home button press on the action bar.
 	 */
@@ -77,6 +88,9 @@ public class PreferencesActivity extends SherlockPreferenceActivity implements O
 				Intent intent = new Intent(this, SpeedActivity.class);
 				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				startActivity(intent);
+				break;
+			case R.id.about:
+				startActivity(new Intent(this, AboutActivity.class));
 				break;
 		}
 		return true;

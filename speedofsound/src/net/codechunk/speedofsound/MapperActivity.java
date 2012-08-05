@@ -67,7 +67,7 @@ public class MapperActivity extends SherlockMapActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.mapper);
+		this.setContentView(R.layout.mapper);
 
 		this.songTracker = SongTracker.getInstance(this);
 
