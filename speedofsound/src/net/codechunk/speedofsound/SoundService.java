@@ -19,6 +19,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * The main sound control service.
@@ -137,14 +138,23 @@ public class SoundService extends Service
 			return;
 		}
 
-		// start a new route
-		this.songTracker.startRoute();
-
 		// request updates
 		Criteria criteria = new Criteria();
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
 		String provider = this.locationManager.getBestProvider(criteria, true);
-		this.locationManager.requestLocationUpdates(provider, 0, 0, this.locationUpdater);
+		if (provider != null)
+		{
+			this.locationManager.requestLocationUpdates(provider, 0, 0, this.locationUpdater);
+		}
+		else
+		{
+			Toast toast = Toast.makeText(this, this.getString(R.string.no_location_providers), Toast.LENGTH_LONG);
+			toast.show();
+			return;
+		}
+
+		// start a new route
+		this.songTracker.startRoute();
 
 		// start up the volume thread
 		if (this.volumeThread == null)

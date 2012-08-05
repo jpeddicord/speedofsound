@@ -49,5 +49,6 @@
     <string name="mps_long">meters/second</string>
     <string name="kph_long">kilometers/hour</string>
     <string name="mph_long">miles/hour</string>
+    <string name="no_location_providers">Couldn\'t find any way to get your location. Please turn on GPS.</string>
 
 </resources>
