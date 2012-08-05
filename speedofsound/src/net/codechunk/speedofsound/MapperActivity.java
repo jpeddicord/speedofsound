@@ -127,6 +127,7 @@ public class MapperActivity extends SherlockMapActivity
 		if (routeCursor.isAfterLast())
 		{
 			Log.w(TAG, "No routes found");
+			routeCursor.close();
 			return data;
 		}
 		long routeId = routeCursor.getLong(0);
