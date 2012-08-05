@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- do NOT i18n these! -->
     <string-array name="speed_units">
-        <item >m/s</item>
-        <item >km/h</item>
-        <item >mph</item>
+        <item>m/s</item>
+        <item>km/h</item>
+        <item>mph</item>
     </string-array>
+
+    <!-- but these are fine -->
     <string-array name="speed_units_display">
-        <item >meters/second</item>
-        <item >kilometers/hour</item>
-        <item >miles/hour</item>
+        <item>@string/mps_long</item>
+        <item>@string/kph_long</item>
+        <item>@string/mph_long</item>
     </string-array>
-    
+
 </resources>

@@ -2,14 +2,14 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:osu="http://schemas.android.com/apk/res/net.codechunk.speedofsound" >
 
-    <PreferenceCategory android:title="General" >
+    <PreferenceCategory android:title="@string/general" >
         <ListPreference
             android:defaultValue="mph"
             android:entries="@array/speed_units_display"
             android:entryValues="@array/speed_units"
             android:key="speed_units"
-            android:summary="Choose the speed units you want to use"
-            android:title="Speed Units" />
+            android:summary="@string/speed_units_summary"
+            android:title="@string/speed_units" />
     </PreferenceCategory>
 
     <!--
@@ -18,54 +18,54 @@
          Be sure to change them there if you change them here!
     -->
 
-    <PreferenceCategory android:title="Slow Speed" >
+    <PreferenceCategory android:title="@string/slow_speed" >
         <net.codechunk.speedofsound.util.SliderPreference
             android:defaultValue="10"
             android:key="low_speed_localized"
-            android:summary="Minimum speed to start adjusting volume"
-            android:title="Slowest Speed"
+            android:summary="@string/low_speed_summary"
+            android:title="@string/low_speed"
             osu:maxValue="100"
             osu:minValue="0" />
         <net.codechunk.speedofsound.util.SliderPreference
             android:defaultValue="60"
             android:key="low_volume"
-            android:summary="Volume at the minimum speed"
-            android:title="Minimum Volume"
+            android:summary="@string/low_volume_summary"
+            android:title="@string/low_volume"
             osu:maxValue="100"
             osu:minValue="0" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="High Speed" >
+    <PreferenceCategory android:title="@string/high_speed" >
         <net.codechunk.speedofsound.util.SliderPreference
             android:defaultValue="25"
             android:key="high_speed_localized"
-            android:summary="Speed where maximum volume applies"
-            android:title="Fastest Speed"
+            android:summary="@string/fast_speed_summary"
+            android:title="@string/fast_speed"
             osu:maxValue="100"
             osu:minValue="0" />
         <net.codechunk.speedofsound.util.SliderPreference
             android:defaultValue="90"
             android:key="high_volume"
-            android:summary="Volume at the maximum speed"
-            android:title="Max Volume"
+            android:summary="@string/fast_volume_summary"
+            android:title="@string/fast_volume"
             osu:maxValue="100"
             osu:minValue="0" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="Activation" >
+    <PreferenceCategory android:title="@string/activation" >
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="enable_only_charging"
-            android:summary="Only automatically track when charging"
-            android:title="Only when Charging" />
+            android:summary="@string/enable_only_charging_summary"
+            android:title="@string/only_when_charging" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="enable_headphones"
-            android:summary="Track when headphones are plugged in"
-            android:title="Enable on Headphones" />
+            android:summary="@string/enable_headphones_summary"
+            android:title="@string/enable_on_headphones" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="enable_bluetooth"
-            android:summary="Track when a Bluetooth A2DP music device is connected"
-            android:title="Enable on Bluetooth" />
+            android:summary="@string/enable_bluetooth_summary"
+            android:title="@string/enable_on_bluetooth" />
     </PreferenceCategory>
 
 </PreferenceScreen>

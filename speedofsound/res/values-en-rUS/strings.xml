@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="launch_disclaimer_accept">I\'ll be careful</string>
+    <string name="gps_warning_dismiss">Deal with it</string>
+
+</resources>

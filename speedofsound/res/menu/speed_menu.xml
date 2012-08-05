@@ -4,12 +4,12 @@
     <item
         android:id="@+id/view_map"
         android:icon="@drawable/ic_map"
-        android:title="View Map">
+        android:title="@string/view_map">
     </item>
     <item
         android:id="@+id/preferences"
         android:icon="@drawable/ic_preferences"
-        android:title="Preferences">
+        android:title="@string/preferences">
     </item>
 
 </menu>
