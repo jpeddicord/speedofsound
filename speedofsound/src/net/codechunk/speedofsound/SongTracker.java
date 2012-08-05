@@ -33,6 +33,11 @@ public class SongTracker
 	 */
 	private static final int UPDATE_RATE = 1500;
 
+	/**
+	 * Minimum update distance in meters.
+	 */
+	private static final int MIN_DISTANCE = 10;
+
 	private Location previousLocation;
 	private long routeId;
 
@@ -263,9 +268,16 @@ public class SongTracker
 			return;
 
 		// rate limiting
-		if (this.previousLocation != null &&
-				location.getTime() - this.previousLocation.getTime() < SongTracker.UPDATE_RATE)
-			return;
+		if (this.previousLocation != null)
+		{
+			// time-based
+			if (location.getTime() - this.previousLocation.getTime() < SongTracker.UPDATE_RATE)
+				return;
+
+			// distance-based
+			if (previousLocation.distanceTo(location) < SongTracker.MIN_DISTANCE)
+				return;
+		}
 
 		Log.v(TAG, "Storing point");
 
