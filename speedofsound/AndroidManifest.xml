@@ -58,6 +58,8 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <!-- Music player broadcasts -->
         <receiver
             android:name="net.codechunk.speedofsound.players.AndroidMusicPlayer"
             android:enabled="true"
@@ -66,6 +68,50 @@
                 <action android:name="com.android.music.metachanged" />
                 <action android:name="com.android.music.playbackcomplete" />
                 <action android:name="com.android.music.playstatechanged" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="net.codechunk.speedofsound.players.HTCPlayer"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.htc.music.metachanged" />
+                <action android:name="com.htc.music.playbackcomplete" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="net.codechunk.speedofsound.players.LastFmAPIPlayer"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="fm.last.android.metachanged" />
+                <action android:name="fm.last.android.playbackcomplete" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="net.codechunk.speedofsound.players.SamsungPlayer"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.samsung.sec.android.MusicPlayer.metachanged" />
+                <action android:name="com.samsung.sec.android.MusicPlayer.playbackcomplete" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="net.codechunk.speedofsound.players.SLSAPIPlayer"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.adam.aslfms.notify.playstatechanged" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="net.codechunk.speedofsound.players.WinampPlayer"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.nullsoft.winamp.metachanged" />
+                <action android:name="com.nullsoft.winamp.playbackcomplete" />
             </intent-filter>
         </receiver>
     </application>
