@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.media.AudioManager;
 import android.os.BatteryManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -23,6 +22,12 @@ public class SoundServiceManager extends BroadcastReceiver
 	private static final String UNDOCUMENTED_A2DP_ACTION = "android.bluetooth.a2dp.action.SINK_STATE_CHANGED";
 	private static final String UNDOCUMENTED_A2DP_ACTION_ALTERNATE = "android.bluetooth.a2dp.intent.action.SINK_STATE_CHANGED";
 	private static final String UNDOCUMENTED_A2DP_EXTRA_STATE = "android.bluetooth.a2dp.extra.SINK_STATE";
+
+	/**
+	 * Keep track of the bluetooth state here, as the undocumented broadcasts
+	 * might not be sticky. Not sure if the official ones are either.
+	 */
+	private boolean bluetoothConnected = false;
 
 	/**
 	 * Get the filter of extra intents we care about.
@@ -52,7 +57,6 @@ public class SoundServiceManager extends BroadcastReceiver
 	 * Receive a broadcast and start the service or update the tracking state.
 	 */
 	@Override
-	@SuppressWarnings("deprecation")
 	public void onReceive(Context context, Intent intent)
 	{
 		String action = intent.getAction();
@@ -66,77 +70,12 @@ public class SoundServiceManager extends BroadcastReceiver
 			return;
 		}
 
-		// get power status
-		IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-		// getApplicationContext() workaround for android issue 5111
-		Intent powerStatus = context.getApplicationContext().registerReceiver(null, filter);
-		int plugState = powerStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-		boolean powerConnected = (plugState == BatteryManager.BATTERY_PLUGGED_AC ||
-				plugState == BatteryManager.BATTERY_PLUGGED_USB);
-
-		// get headset status
-		AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-		boolean headphoneConnected = audioManager.isWiredHeadsetOn();
-
-		// load preferences
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		boolean powerPreference = prefs.getBoolean("enable_only_charging", false);
-		boolean headphonePreference = prefs.getBoolean("enable_headphones", false);
-		boolean bluetoothPreference = prefs.getBoolean("enable_bluetooth", false);
-
 		// resume tracking if we're also in a satisfactory mode
-		if (action.equals(Intent.ACTION_POWER_CONNECTED))
+		if (action.equals(Intent.ACTION_POWER_CONNECTED) ||
+				action.equals(Intent.ACTION_POWER_DISCONNECTED) ||
+				action.equals(Intent.ACTION_HEADSET_PLUG))
 		{
-			Log.d(TAG, "Power connected");
-
-			// ignore if preference is inactive
-			if (powerPreference)
-			{
-				// activate if we want and have a headset
-				if (headphonePreference && headphoneConnected)
-				{
-					SoundServiceManager.setTracking(context, true);
-				}
-			}
-		}
-
-		// stop tracking if desired for only when charging
-		else if (action.equals(Intent.ACTION_POWER_DISCONNECTED))
-		{
-			Log.d(TAG, "Power disconnected");
-
-			// ignore if preference is inactive
-			if (powerPreference)
-			{
-				Log.v(TAG, "Preference active, stopping tracking");
-				SoundServiceManager.setTracking(context, false);
-			}
-		}
-
-		// start or stop tracking for headset events
-		else if (action.equals(Intent.ACTION_HEADSET_PLUG))
-		{
-			Log.d(TAG, "Headset event");
-
-			// ignore if preference not active
-			if (headphonePreference)
-			{
-				// check the headphone plug state
-				if (intent.getIntExtra("state", 0) == 1)
-				{
-					// only if we don't care or are powered anyway
-					if (!powerPreference || powerConnected)
-					{
-						Log.v(TAG, "Plugged in, starting tracking");
-						SoundServiceManager.setTracking(context, true);
-					}
-				}
-				else
-				{
-					Log.v(TAG, "Unplugged, stopping tracking");
-					SoundServiceManager.setTracking(context, false);
-				}
-			}
+			SoundServiceManager.setTracking(context, this.shouldTrack(context));
 		}
 
 		// these broadcasts are undocumented, but seem to work on a bunch of
@@ -146,22 +85,21 @@ public class SoundServiceManager extends BroadcastReceiver
 		{
 			Log.d(TAG, "A2DP undocumented event");
 
-			// ignore if BT preference is inactive
-			if (bluetoothPreference)
+			// set the bluetooth state
+			int state = intent.getIntExtra(SoundServiceManager.UNDOCUMENTED_A2DP_EXTRA_STATE, -1);
+			if (state == SoundServiceManager.UNDOCUMENTED_STATE_CONNECTED)
 			{
-				int state = intent.getIntExtra(SoundServiceManager.UNDOCUMENTED_A2DP_EXTRA_STATE, -1);
-
-				if (state == SoundServiceManager.UNDOCUMENTED_STATE_CONNECTED)
-				{
-					Log.v(TAG, "A2DP active, starting tracking");
-					SoundServiceManager.setTracking(context, true);
-				}
-				else if (state == SoundServiceManager.UNDOCUMENTED_STATE_DISCONNECTED)
-				{
-					Log.v(TAG, "A2DP inactive, stopping tracking");
-					SoundServiceManager.setTracking(context, false);
-				}
+				Log.v(TAG, "A2DP active");
+				this.bluetoothConnected = true;
 			}
+			else if (state == SoundServiceManager.UNDOCUMENTED_STATE_DISCONNECTED)
+			{
+				Log.v(TAG, "A2DP inactive");
+				this.bluetoothConnected = false;
+			}
+
+			// start or stop tracking
+			SoundServiceManager.setTracking(context, this.shouldTrack(context));
 		}
 
 		// official API 11+ bluetooth A2DP broadcasts
@@ -169,22 +107,74 @@ public class SoundServiceManager extends BroadcastReceiver
 		{
 			Log.d(TAG, "A2DP API11+ event");
 
-			if (bluetoothPreference)
+			// set the bluetooth state
+			int state = intent.getIntExtra(android.bluetooth.BluetoothA2dp.EXTRA_STATE, -1);
+			if (state == android.bluetooth.BluetoothA2dp.STATE_CONNECTED)
 			{
-				int state = intent.getIntExtra(android.bluetooth.BluetoothA2dp.EXTRA_STATE, -1);
-
-				if (state == android.bluetooth.BluetoothA2dp.STATE_CONNECTED)
-				{
-					Log.v(TAG, "A2DP active, starting tracking");
-					SoundServiceManager.setTracking(context, true);
-				}
-				else if (state == android.bluetooth.BluetoothA2dp.STATE_DISCONNECTED)
-				{
-					Log.v(TAG, "A2DP inactive, stopping tracking");
-					SoundServiceManager.setTracking(context, false);
-				}
+				Log.v(TAG, "A2DP active");
+				this.bluetoothConnected = true;
 			}
+			else if (state == android.bluetooth.BluetoothA2dp.STATE_DISCONNECTED)
+			{
+				Log.v(TAG, "A2DP inactive");
+				this.bluetoothConnected = false;
+			}
+
+			// start or stop tracking
+			SoundServiceManager.setTracking(context, this.shouldTrack(context));
 		}
+	}
+
+	/**
+	 * Determine whether we should be tracking.
+	 * 
+	 * @param context
+	 *            Application context
+	 * @return suggested state
+	 */
+	private boolean shouldTrack(Context context)
+	{
+		// load preferences
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		boolean powerPreference = prefs.getBoolean("enable_only_charging", false);
+		boolean headphonePreference = prefs.getBoolean("enable_headphones", false);
+		boolean bluetoothPreference = prefs.getBoolean("enable_bluetooth", false);
+
+		// get power status
+		IntentFilter plugFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+		Intent powerStatus = context.getApplicationContext().registerReceiver(null, plugFilter);
+		int plugState = powerStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+		boolean powerConnected = (plugState == BatteryManager.BATTERY_PLUGGED_AC ||
+				plugState == BatteryManager.BATTERY_PLUGGED_USB);
+
+		// don't track if power is disconnected and we care
+		if (powerPreference && !powerConnected)
+		{
+			Log.v(TAG, "Power preference active & disconnected");
+			return false;
+		}
+
+		// get headphone status
+		IntentFilter headsetFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+		Intent headphoneStatus = context.getApplicationContext().registerReceiver(null, headsetFilter);
+		boolean headphoneConnected = headphoneStatus.getIntExtra("state", 0) == 1;
+
+		// activate if headphones are plugged in
+		if (headphonePreference && headphoneConnected)
+		{
+			Log.v(TAG, "Headphone connected");
+			return true;
+		}
+
+		// also activate if bluetooth is connected
+		if (bluetoothPreference && this.bluetoothConnected)
+		{
+			Log.v(TAG, "Bluetooth connected");
+			return true;
+		}
+
+		// anything else is a no-go
+		return false;
 	}
 
 	/**
@@ -197,6 +187,7 @@ public class SoundServiceManager extends BroadcastReceiver
 	 */
 	private static void setTracking(Context context, boolean state)
 	{
+		Log.d(TAG, "Setting tracking state: " + state);
 		Intent serviceIntent = new Intent(context, SoundService.class);
 		serviceIntent.putExtra(SoundService.SET_TRACKING_STATE, state);
 		context.startService(serviceIntent);
