@@ -143,9 +143,17 @@ public class SoundServiceManager extends BroadcastReceiver
 		// get power status
 		IntentFilter plugFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
 		Intent powerStatus = context.getApplicationContext().registerReceiver(null, plugFilter);
-		int plugState = powerStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-		boolean powerConnected = (plugState == BatteryManager.BATTERY_PLUGGED_AC ||
-				plugState == BatteryManager.BATTERY_PLUGGED_USB);
+		boolean powerConnected = false;
+		if (powerStatus != null)
+		{
+			int plugState = powerStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+			powerConnected = (plugState == BatteryManager.BATTERY_PLUGGED_AC ||
+					plugState == BatteryManager.BATTERY_PLUGGED_USB);
+		}
+		else
+		{
+			Log.e(TAG, "Power status was null");
+		}
 
 		// don't track if power is disconnected and we care
 		if (powerPreference && !powerConnected)
@@ -157,7 +165,15 @@ public class SoundServiceManager extends BroadcastReceiver
 		// get headphone status
 		IntentFilter headsetFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
 		Intent headphoneStatus = context.getApplicationContext().registerReceiver(null, headsetFilter);
-		boolean headphoneConnected = headphoneStatus.getIntExtra("state", 0) == 1;
+		boolean headphoneConnected = false;
+		if (headphoneStatus != null)
+		{
+			headphoneConnected = headphoneStatus.getIntExtra("state", 0) == 1;
+		}
+		else
+		{
+			Log.e(TAG, "Headphone status was null");
+		}
 
 		// activate if headphones are plugged in
 		if (headphonePreference && headphoneConnected)
