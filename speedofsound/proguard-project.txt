@@ -9,6 +9,10 @@
 -optimizationpasses 5
 -allowaccessmodification
 
+# obfuscation customization
+-renamesourcefileattribute SourceFile
+-keepattributes SourceFile,LineNumberTable
+
 # strip debug/verbose logs
 -assumenosideeffects class android.util.Log {
     public static *** d(...);
