@@ -1,2 +1,8 @@
-target/
+bin/
+gen/
+lib/
+proguard/
+speedofsound/res/values/keys.xml
+.metadata
 local.properties
+lint.xml
