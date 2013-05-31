@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:weightSum="1.0"
-    android:orientation="vertical" >
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:weightSum="1.0"
+              android:orientation="vertical">
 
-    <!-- map fragment here -->
+	<!-- map fragment here -->
 
-    <ScrollView
-        android:id="@+id/scroll_table"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.3" >
+	<ScrollView
+			android:id="@+id/scroll_table"
+			android:layout_width="fill_parent"
+			android:layout_height="0dp"
+			android:layout_weight="0.3">
 
-        <TableLayout
-            android:id="@+id/song_table"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingTop="10dp"
-            android:shrinkColumns="1" >
+		<TableLayout
+				android:id="@+id/song_table"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:paddingLeft="5dp"
+				android:paddingRight="5dp"
+				android:paddingTop="10dp"
+				android:shrinkColumns="1">
 
-            <TableRow>
+			<TableRow>
 
-                <TextView
-                    android:gravity="center_horizontal"
-                    android:minWidth="30dp"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+				<TextView
+						android:gravity="center_horizontal"
+						android:minWidth="30dp"
+						android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <TextView
-                    android:text="@string/ct_song"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-            </TableRow>
-        </TableLayout>
-    </ScrollView>
+				<TextView
+						android:text="@string/ct_song"
+						android:textAppearance="?android:attr/textAppearanceMedium" />
+			</TableRow>
+		</TableLayout>
+	</ScrollView>
 
 </LinearLayout>

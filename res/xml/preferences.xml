@@ -1,71 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:osu="http://schemas.android.com/apk/res/net.codechunk.speedofsound" >
+                  xmlns:cc="http://schemas.android.com/apk/res/net.codechunk.speedofsound">
 
-    <PreferenceCategory android:title="@string/general" >
-        <ListPreference
-            android:defaultValue="mph"
-            android:entries="@array/speed_units_display"
-            android:entryValues="@array/speed_units"
-            android:key="speed_units"
-            android:summary="@string/speed_units_summary"
-            android:title="@string/speed_units" />
-    </PreferenceCategory>
+	<PreferenceCategory android:title="@string/general">
+		<ListPreference
+				android:defaultValue="mph"
+				android:entries="@array/speed_units_display"
+				android:entryValues="@array/speed_units"
+				android:key="speed_units"
+				android:summary="@string/speed_units_summary"
+				android:title="@string/speed_units" />
+	</PreferenceCategory>
 
-    <!--
-         Because Android won't read custom preferences by default,
-         we have to re-define the default values in PreferencesActivity.
-         Be sure to change them there if you change them here!
-    -->
+	<!--
+		 Because Android won't read custom preferences by default,
+		 we have to re-define the default values in PreferencesActivity.
+		 Be sure to change them there if you change them here!
+	-->
 
-    <PreferenceCategory android:title="@string/slow_speed" >
-        <net.codechunk.speedofsound.util.SliderPreference
-            android:defaultValue="10"
-            android:key="low_speed_localized"
-            android:summary="@string/low_speed_summary"
-            android:title="@string/low_speed"
-            osu:maxValue="100"
-            osu:minValue="0" />
-        <net.codechunk.speedofsound.util.SliderPreference
-            android:defaultValue="60"
-            android:key="low_volume"
-            android:summary="@string/low_volume_summary"
-            android:title="@string/low_volume"
-            osu:maxValue="100"
-            osu:minValue="0" />
-    </PreferenceCategory>
-    <PreferenceCategory android:title="@string/high_speed" >
-        <net.codechunk.speedofsound.util.SliderPreference
-            android:defaultValue="25"
-            android:key="high_speed_localized"
-            android:summary="@string/fast_speed_summary"
-            android:title="@string/fast_speed"
-            osu:maxValue="100"
-            osu:minValue="0" />
-        <net.codechunk.speedofsound.util.SliderPreference
-            android:defaultValue="90"
-            android:key="high_volume"
-            android:summary="@string/fast_volume_summary"
-            android:title="@string/fast_volume"
-            osu:maxValue="100"
-            osu:minValue="0" />
-    </PreferenceCategory>
-    <PreferenceCategory android:title="@string/activation" >
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="enable_only_charging"
-            android:summary="@string/enable_only_charging_summary"
-            android:title="@string/only_when_charging" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="enable_headphones"
-            android:summary="@string/enable_headphones_summary"
-            android:title="@string/enable_on_headphones" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="enable_bluetooth"
-            android:summary="@string/enable_bluetooth_summary"
-            android:title="@string/enable_on_bluetooth" />
-    </PreferenceCategory>
+	<PreferenceCategory android:title="@string/slow_speed">
+		<net.codechunk.speedofsound.util.SliderPreference
+				android:defaultValue="10"
+				android:key="low_speed_localized"
+				android:summary="@string/low_speed_summary"
+				android:title="@string/low_speed"
+				cc:maxValue="100"
+				cc:minValue="0" />
+		<net.codechunk.speedofsound.util.SliderPreference
+				android:defaultValue="60"
+				android:key="low_volume"
+				android:summary="@string/low_volume_summary"
+				android:title="@string/low_volume"
+				cc:maxValue="100"
+				cc:minValue="0" />
+	</PreferenceCategory>
+	<PreferenceCategory android:title="@string/high_speed">
+		<net.codechunk.speedofsound.util.SliderPreference
+				android:defaultValue="25"
+				android:key="high_speed_localized"
+				android:summary="@string/fast_speed_summary"
+				android:title="@string/fast_speed"
+				cc:maxValue="100"
+				cc:minValue="0" />
+		<net.codechunk.speedofsound.util.SliderPreference
+				android:defaultValue="90"
+				android:key="high_volume"
+				android:summary="@string/fast_volume_summary"
+				android:title="@string/fast_volume"
+				cc:maxValue="100"
+				cc:minValue="0" />
+	</PreferenceCategory>
+	<PreferenceCategory android:title="@string/activation">
+		<CheckBoxPreference
+				android:defaultValue="false"
+				android:key="enable_only_charging"
+				android:summary="@string/enable_only_charging_summary"
+				android:title="@string/only_when_charging" />
+		<CheckBoxPreference
+				android:defaultValue="false"
+				android:key="enable_headphones"
+				android:summary="@string/enable_headphones_summary"
+				android:title="@string/enable_on_headphones" />
+		<CheckBoxPreference
+				android:defaultValue="false"
+				android:key="enable_bluetooth"
+				android:summary="@string/enable_bluetooth_summary"
+				android:title="@string/enable_on_bluetooth" />
+	</PreferenceCategory>
 
 </PreferenceScreen>
