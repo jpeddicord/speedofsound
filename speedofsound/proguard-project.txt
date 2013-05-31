@@ -19,12 +19,15 @@
     public static *** v(...);
 }
 
-# ActionBarSherlock
+# support
 -keep class android.support.v4.app.** { *; }
 -keep interface android.support.v4.app.** { *; }
--keep class com.actionbarsherlock.** { *; }
--keep interface com.actionbarsherlock.** { *; }
 -keepattributes *Annotation*
+
+# play services
+-keep class * extends java.util.ListResourceBundle {
+    protected Object[][] getContents();
+}
 
 # android stuff
 -keepattributes *Annotation*
