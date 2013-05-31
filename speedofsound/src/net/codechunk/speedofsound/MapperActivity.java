@@ -8,6 +8,7 @@ import java.util.Map;
 
 import net.codechunk.speedofsound.util.ColorCreator;
 import net.codechunk.speedofsound.util.SongInfo;
+import android.app.ActionBar;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,14 +19,13 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockMapActivity;
-import com.actionbarsherlock.view.MenuItem;
 import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
@@ -37,7 +37,7 @@ import com.google.android.maps.Projection;
  * 
  * @author Andrew
  */
-public class MapperActivity extends SherlockMapActivity
+public class MapperActivity extends MapActivity
 {
 	private static final String TAG = "DrawMapActivity";
 
@@ -72,7 +72,7 @@ public class MapperActivity extends SherlockMapActivity
 		this.songTracker = SongTracker.getInstance(this);
 
 		// activate the up functionality on the action bar
-		ActionBar ab = this.getSupportActionBar();
+		ActionBar ab = this.getActionBar();
 		ab.setHomeButtonEnabled(true);
 		ab.setDisplayHomeAsUpEnabled(true);
 

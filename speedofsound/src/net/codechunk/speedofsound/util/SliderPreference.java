@@ -63,7 +63,7 @@ public class SliderPreference extends DialogPreference implements
 
 	/**
 	 * Create a new slider preference.
-	 * 
+	 *
 	 * @param context
 	 *            Context to use
 	 * @param attrs

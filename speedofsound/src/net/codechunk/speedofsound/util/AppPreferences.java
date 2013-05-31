@@ -3,6 +3,7 @@ package net.codechunk.speedofsound.util;
 import java.io.File;
 
 import net.codechunk.speedofsound.R;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -18,7 +19,7 @@ public class AppPreferences
 	 * Set defaults for preferences if not already stored. Needed to supplement
 	 * missing functionality in setDefaultValues: it doesn't properly handle
 	 * custom preferences.
-	 * 
+	 *
 	 * @param context
 	 *            Application context
 	 */
@@ -44,10 +45,10 @@ public class AppPreferences
 
 	/**
 	 * Run an upgrade from one app version to another.
-	 * 
+	 *
 	 * Stores the current version as a shared preference so we can detect future
 	 * upgrades and act on them.
-	 * 
+	 *
 	 * @param context
 	 *            Application context
 	 */
@@ -98,7 +99,7 @@ public class AppPreferences
 
 	/**
 	 * Process the upgrade, one version at a time.
-	 * 
+	 *
 	 * @param context
 	 *            Application context
 	 * @param from
@@ -127,7 +128,7 @@ public class AppPreferences
 	/**
 	 * Update internal speeds in native units. Calculated from user-facing
 	 * localized speeds.
-	 * 
+	 *
 	 * @param prefs
 	 *            Shared Preferences to update.
 	 */
@@ -150,7 +151,7 @@ public class AppPreferences
 	/**
 	 * Update user-facing localized speeds from internal values. Useful if
 	 * changing between units.
-	 * 
+	 *
 	 * @param prefs
 	 *            Shared Preferences to update.
 	 */
