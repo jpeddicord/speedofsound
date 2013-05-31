@@ -5,14 +5,7 @@
     android:weightSum="1.0"
     android:orientation="horizontal" >
 
-    <com.google.android.maps.MapView
-        android:id="@+id/mapView"
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:layout_weight="0.7"
-        android:apiKey="@string/maps_api_key"
-        android:clickable="true"
-        android:state_enabled="true" />
+    <!-- map fragment here -->
 
     <ScrollView
         android:id="@+id/scroll_table"

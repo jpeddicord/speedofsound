@@ -1,33 +1,58 @@
 buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.4.2'
-    }
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'com.android.tools.build:gradle:0.4.2'
+	}
 }
 apply plugin: 'android'
 
 dependencies {
-    compile 'com.android.support:support-v4:13.0.0'
-    compile 'com.google.android.gms:play-services:3.1.36'
+	compile 'com.android.support:support-v4:13.0.0'
+	compile 'com.google.android.gms:play-services:3.1.36'
 }
 
+
+
 android {
-    compileSdkVersion 17
-    buildToolsVersion "17.0.0"
+	compileSdkVersion 17
+	buildToolsVersion "17.0.0"
 
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-        }
+	sourceSets {
+		main {
+			manifest.srcFile 'AndroidManifest.xml'
+			java.srcDirs = ['src']
+			resources.srcDirs = ['src']
+			aidl.srcDirs = ['src']
+			renderscript.srcDirs = ['src']
+			res.srcDirs = ['res']
+			assets.srcDirs = ['assets']
+		}
 
-        instrumentTest.setRoot('tests')
-    }
+		instrumentTest.setRoot('tests')
+	}
+
+	signingConfigs {
+		release
+	}
+
+	buildTypes {
+		release {
+			signingConfig signingConfigs.release
+			runProguard true
+			proguardFile 'proguard.txt'
+		}
+	}
+}
+
+// specify signing properties on the command line
+if (hasProperty('storeFile')) {
+	println 'Generating a signed package.'
+	android.signingConfigs.release.storeFile = file(storeFile)
+	android.signingConfigs.release.storePassword = storePassword
+	android.signingConfigs.release.keyAlias = keyAlias
+	android.signingConfigs.release.keyPassword = keyPassword
+} else {
+	android.buildTypes.release.signingConfig = null
 }

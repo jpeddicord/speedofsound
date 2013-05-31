@@ -1,11 +1,6 @@
+*.swp
 build/
-bin/
 gen/
 lib/
-proguard/
-speedofsound/res/values/keys.xml
 .gradle
 .idea
-.metadata
-local.properties
-lint.xml
