@@ -1,6 +1,12 @@
-*.swp
+# Build
 build/
 gen/
-lib/
 .gradle
-.idea
+
+# IntelliJ IDEA
+*.iml
+.idea/
+!speedofsound/.idea/codeStyleSettings.xml
+
+# Misc
+*.swp
