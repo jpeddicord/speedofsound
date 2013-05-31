@@ -1,6 +1,5 @@
 package net.codechunk.speedofsound;
 
-import net.codechunk.speedofsound.util.SpeedConversions;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -18,6 +17,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +27,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
+
+import net.codechunk.speedofsound.util.SpeedConversions;
 
 /**
  * Main status activity. Displays the current speed and set volume. Does not
@@ -391,8 +393,8 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 	{
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.speed_menu, menu);
-		menu.findItem(R.id.preferences).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		menu.findItem(R.id.view_map).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		MenuItemCompat.setShowAsAction(menu.findItem(R.id.preferences), MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
+		MenuItemCompat.setShowAsAction(menu.findItem(R.id.view_map), MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
 		return true;
 	}
 

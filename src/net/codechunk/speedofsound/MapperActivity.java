@@ -78,9 +78,13 @@ public class MapperActivity extends Activity /* MapActivity */
 //		this.songTracker = SongTracker.getInstance(this);
 //
 //		// activate the up functionality on the action bar
-//		ActionBar ab = this.getActionBar();
-//		ab.setHomeButtonEnabled(true);
-//		ab.setDisplayHomeAsUpEnabled(true);
+//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+//			ActionBar ab = this.getActionBar();
+//			if (ab != null) {
+//				ab.setHomeButtonEnabled(true);
+//				ab.setDisplayHomeAsUpEnabled(true);
+//			}
+//		}
 //
 //		// load the map view
 //		mapView = (MapView) findViewById(R.id.mapView);

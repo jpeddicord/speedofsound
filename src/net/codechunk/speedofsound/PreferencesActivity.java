@@ -1,13 +1,17 @@
 package net.codechunk.speedofsound;
 
 import net.codechunk.speedofsound.util.AppPreferences;
+
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.support.v4.view.MenuItemCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +31,7 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 	/**
 	 * Load preferences and prepare conversions.
 	 */
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -34,9 +39,13 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 		super.onCreate(savedInstanceState);
 
 		// activate the up functionality on the action bar
-		ActionBar ab = this.getActionBar();
-		ab.setHomeButtonEnabled(true);
-		ab.setDisplayHomeAsUpEnabled(true);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			ActionBar ab = this.getActionBar();
+			if (ab != null) {
+				ab.setHomeButtonEnabled(true);
+				ab.setDisplayHomeAsUpEnabled(true);
+			}
+		}
 
 		// sadly, the newer fragment preference API is
 		// not yet in the support library.
@@ -73,7 +82,7 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 	{
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.prefs_menu, menu);
-		menu.findItem(R.id.about).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		MenuItemCompat.setShowAsAction(menu.findItem(R.id.about), MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
 		return true;
 	}
 
