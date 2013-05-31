@@ -152,11 +152,10 @@ public class SongTracker
 	 */
 	public Cursor getRoutePoints(long routeId)
 	{
-		Cursor cursor = this.db.query("points",
+		return this.db.query("points",
 				new String[] { "id", "song_id", "latitude", "longitude" },
 				"route_id = ?", new String[] { Long.toString(routeId) },
 				null, null, "id ASC");
-		return cursor;
 	}
 
 	/**
