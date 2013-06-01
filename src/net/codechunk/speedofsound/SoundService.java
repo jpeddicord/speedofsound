@@ -172,6 +172,14 @@ public class SoundService extends Service
 		builder.setTicker(getString(R.string.ticker_text));
 		builder.setSmallIcon(R.drawable.ic_notification);
 		builder.setWhen(System.currentTimeMillis());
+
+		// 4.1+ actions
+		Intent stopIntent = new Intent(this, SoundService.class);
+		stopIntent.putExtra(SoundService.SET_TRACKING_STATE, false);
+		builder.addAction(R.drawable.ic_stop, getString(R.string.stop),
+				PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_ONE_SHOT));
+
+		// show the notification
 		startForeground(R.string.notification_text, builder.getNotification());
 
 		// let everyone know

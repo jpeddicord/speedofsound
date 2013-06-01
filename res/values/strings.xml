@@ -10,6 +10,7 @@
 	<string name="waiting">(Waiting for GPS signal)</string>
 	<string name="notification_text">Matching your volume to your speed</string>
 	<string name="ticker_text">Speed of Sound is running</string>
+	<string name="stop">Stop</string>
 	<string name="warning">Warning</string>
 	<string name="launch_disclaimer">Speed of Sound is designed to keep your eyes on the road, not
 		your phone. As such, don\'t attempt to change settings or use your phone while driving.
