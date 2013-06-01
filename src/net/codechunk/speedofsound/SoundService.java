@@ -180,7 +180,7 @@ public class SoundService extends Service
 				PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_ONE_SHOT));
 
 		// show the notification
-		startForeground(R.string.notification_text, builder.getNotification());
+		startForeground(R.string.notification_text, builder.build());
 
 		// let everyone know
 		Intent intent = new Intent(SoundService.TRACKING_STATE_BROADCAST);
