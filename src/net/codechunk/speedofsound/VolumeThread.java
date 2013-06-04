@@ -66,18 +66,18 @@ public class VolumeThread extends Thread
 	 * @param volume
 	 *            New target volume percentage from 0 to 1
 	 */
-	public void setTargetVolume(float volumePercent)
-	{
-		Log.v(TAG, "Setting target volume to " + volumePercent);
-		synchronized (this.lock)
-		{
-			this.targetVolumePercent = volumePercent;
-		}
+	public void setTargetVolume(float volumePercent) {
+		// only set & wake if the target has actually changed
+		if (volumePercent != this.targetVolumePercent) {
+			Log.v(TAG, "Setting target volume to " + volumePercent);
+			synchronized (this.lock) {
+				this.targetVolumePercent = volumePercent;
+			}
 
-		// wake the thread up
-		synchronized (this.signal)
-		{
-			this.signal.notifyAll();
+			// wake the thread up
+			synchronized (this.signal) {
+				this.signal.notifyAll();
+			}
 		}
 	}
 
