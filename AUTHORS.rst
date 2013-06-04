@@ -19,16 +19,16 @@ https://www.transifex.com/projects/p/speedofsound/
 
 * German (de)
 
-  * `wasilis.mandratzis <https://www.transifex.com/accounts/profile/wasilis.mandratzis/>`_
+  * `Wasilis <https://www.transifex.com/accounts/profile/wasilis.mandratzis/>`_
 
 * Greek (el)
 
-  * `wasilis.mandratzis <https://www.transifex.com/accounts/profile/wasilis.mandratzis/>`_
+  * `Wasilis <https://www.transifex.com/accounts/profile/wasilis.mandratzis/>`_
 
 * Dutch (nl)
 
-  * `Deputy <https://www.transifex.com/projects/p/speedofsound/language/nl/>`_
+  * `Arthur <https://www.transifex.com/accounts/profile/Deputy/>`_
 
 * Portugese/Brazil (pt_BR)
 
-  * `rafaelff1 <https://www.transifex.com/accounts/profile/rafaelff1/>`_
+  * `Rafael Ferreira <https://www.transifex.com/accounts/profile/rafaelff1/>`_
