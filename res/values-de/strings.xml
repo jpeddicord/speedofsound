@@ -8,12 +8,12 @@
   <string name="enabled">Speed of Sound aktivieren</string>
   <string name="waiting">(Auf das GPS signal warten)</string>
   <string name="notification_text">Ihre Lautstärke wird der Geschwindigkeit angepasst</string>
-  <string name="ticker_text">Speed ​​of Sound wird ausgeführt</string>
+  <string name="ticker_text">Speed of Sound wird ausgeführt</string>
   <string name="stop">Stopp</string>
   <string name="warning">Warnung</string>
-  <string name="launch_disclaimer">Speed ​​of Sound ist entworfen, um Ihre Augen auf der Straße zu halten, nicht\n\t\tins Handy. Versuchen Sie nicht, die Einstellungen zu ändern oder Ihr Handy während der Fahrt zu benutzen.\n\t</string>
+  <string name="launch_disclaimer">Speed of Sound ist entworfen, um Ihre Augen auf der Straße zu halten, nicht ins Handy. Versuchen Sie nicht, die Einstellungen zu ändern oder Ihr Handy während der Fahrt zu benutzen.</string>
   <string name="launch_disclaimer_accept">Akzeptieren</string>
-  <string name="gps_warning">Sie sollten das GPS einschalten in den Standort-Einstellungen andereefalls wird diese App nicht sehr gut funktionieren.\n\t</string>
+  <string name="gps_warning">Sie sollten das GPS einschalten in den Standort-Einstellungen andereefalls wird diese App nicht sehr gut funktionieren.</string>
   <string name="location_settings">Standort Einstellungen</string>
   <string name="gps_warning_dismiss">Ignorieren</string>
   <string name="ct_song">Lied</string>
@@ -33,7 +33,7 @@
   <string name="enable_on_headphones">Auf Kopfhörer aktivieren</string>
   <string name="enable_headphones_summary">Verfolgen, wenn die Kopfhörer eingesteckt sind</string>
   <string name="enable_on_bluetooth">Auf Bluetooth aktivieren</string>
-  <string name="enable_bluetooth_summary">Verfolgen, wenn ein Bluetooth A2DP Musik-Gerät angeschlossen ist\n\t</string>
+  <string name="enable_bluetooth_summary">Verfolgen, wenn ein Bluetooth A2DP Musik-Gerät angeschlossen ist</string>
   <string name="slow_speed">Geringe Geschwindigkeit</string>
   <string name="low_speed">Geringste Geschwindigkeit</string>
   <string name="low_speed_summary">Minimale Drehzahl um das Einstellen der Lautstärke zu starten</string>
@@ -47,7 +47,7 @@
   <string name="mps_long">meter/sekunde</string>
   <string name="kph_long">kilometer/stunde</string>
   <string name="mph_long">meilen/stunde</string>
-  <string name="no_location_providers">Es konnte kein Weg gefunden werden, um Ihren Standort zu erhalten. Bitte schalten Sie ihr\nGPS ein.\n\t</string>
+  <string name="no_location_providers">Es konnte kein Weg gefunden werden, um Ihren Standort zu erhalten. Bitte schalten Sie ihr GPS ein.</string>
   <string name="version">Version</string>
   <string name="contact">Kontaktieren Sie uns</string>
   <string name="github">Open Source auf GitHub</string>

@@ -37,6 +37,7 @@
           <option name="USE_CUSTOM_SETTINGS" value="true" />
         </AndroidXmlCodeStyleSettings>
         <XML>
+          <option name="XML_TEXT_WRAP" value="0" />
           <option name="XML_SPACE_INSIDE_EMPTY_TAG" value="true" />
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>

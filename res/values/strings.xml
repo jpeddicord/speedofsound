@@ -12,13 +12,9 @@
 	<string name="ticker_text">Speed of Sound is running</string>
 	<string name="stop">Stop</string>
 	<string name="warning">Warning</string>
-	<string name="launch_disclaimer">Speed of Sound is designed to keep your eyes on the road, not
-		your phone. As such, don\'t attempt to change settings or use your phone while driving.
-	</string>
+	<string name="launch_disclaimer">Speed of Sound is designed to keep your eyes on the road, not your phone. As such, don\'t attempt to change settings or use your phone while driving.</string>
 	<string name="launch_disclaimer_accept">Accept</string>
-	<string name="gps_warning">You should turn GPS on in Location Settings or this app won\'t work
-		very well.
-	</string>
+	<string name="gps_warning">You should turn GPS on in Location Settings or this app won\'t work very well.</string>
 	<string name="location_settings">Location Settings</string>
 	<string name="gps_warning_dismiss">Ignore</string>
 	<string name="ct_song">Song</string>
@@ -38,8 +34,7 @@
 	<string name="enable_on_headphones">Enable on Headphones</string>
 	<string name="enable_headphones_summary">Track when headphones are plugged in</string>
 	<string name="enable_on_bluetooth">Enable on Bluetooth</string>
-	<string name="enable_bluetooth_summary">Track when a Bluetooth A2DP music device is connected
-	</string>
+	<string name="enable_bluetooth_summary">Track when a Bluetooth A2DP music device is connected</string>
 	<string name="slow_speed">Slow Speed</string>
 	<string name="low_speed">Slowest Speed</string>
 	<string name="low_speed_summary">Minimum speed to start adjusting volume</string>
@@ -53,9 +48,7 @@
 	<string name="mps_long">meters/second</string>
 	<string name="kph_long">kilometers/hour</string>
 	<string name="mph_long">miles/hour</string>
-	<string name="no_location_providers">Couldn\'t find any way to get your location. Please turn on
-		GPS.
-	</string>
+	<string name="no_location_providers">Couldn\'t find any way to get your location. Please turn on GPS.</string>
 	<string name="version">Version</string>
 	<string name="contact">Contact Us</string>
 	<string name="github">Open Source on GitHub</string>

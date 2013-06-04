@@ -11,9 +11,9 @@
   <string name="ticker_text">Το Speed of Sound εκτελείται</string>
   <string name="stop">Στοπ</string>
   <string name="warning">Προσοχή</string>
-  <string name="launch_disclaimer">Το Speed of Sound έχει σχεδιαστεί για να κρατήσετε τα μάτια σας στο δρόμο, οχι\n\t\tστο κινητο σας. Ως εκ τούτου, μην προσπαθήσετε να αλλάξετε ρυθμίσεις ή να χρησιμοποιήσετε το κινητο σας κατά την οδήγηση.\n\t</string>
+  <string name="launch_disclaimer">Το Speed of Sound έχει σχεδιαστεί για να κρατήσετε τα μάτια σας στο δρόμο, οχι στο κινητο σας. Ως εκ τούτου, μην προσπαθήσετε να αλλάξετε ρυθμίσεις ή να χρησιμοποιήσετε το κινητο σας κατά την οδήγηση.</string>
   <string name="launch_disclaimer_accept">Αποδοχή</string>
-  <string name="gps_warning">Θα πρέπει να ενεργοποιήσετε το GPS στις Ρυθμίσεις τοποθεσίας αλλιως αυτή η εφαρμογή δεν θα λειτουργήσει πολύ καλά.\n\t</string>
+  <string name="gps_warning">Θα πρέπει να ενεργοποιήσετε το GPS στις Ρυθμίσεις τοποθεσίας αλλιως αυτή η εφαρμογή δεν θα λειτουργήσει πολύ καλά.</string>
   <string name="location_settings">Ρυθμίσεις τοποθεσίας</string>
   <string name="gps_warning_dismiss">Αγνόηση</string>
   <string name="ct_song">Τραγούδι</string>
@@ -47,7 +47,7 @@
   <string name="mps_long">μέτρα/δευτερόλεπτο</string>
   <string name="kph_long">χιλιόμετρα/ώρα</string>
   <string name="mph_long">μίλια/ώρα</string>
-  <string name="no_location_providers">Δεν μπορεσε να βρεθει κάποιος τρόπος για να πάρθει η τοποθεσία σας. Παρακαλούμε ενεργοποιήστε το⏎\n⇥⇥GPS σας.⏎</string>
+  <string name="no_location_providers">Δεν μπορεσε να βρεθει κάποιος τρόπος για να πάρθει η τοποθεσία σας. Παρακαλούμε ενεργοποιήστε το GPS σας.</string>
   <string name="version">Εκδοση</string>
   <string name="contact">Επικοινωνήστε μαζί μας</string>
   <string name="github">Open Source στο GitHub</string>
