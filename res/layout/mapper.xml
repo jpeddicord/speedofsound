@@ -6,7 +6,12 @@
               android:weightSum="1.0"
               android:orientation="vertical">
 
-	<!-- map fragment here -->
+	<fragment
+			android:id="@+id/map_fragment"
+			class="com.google.android.gms.maps.SupportMapFragment"
+			android:layout_width="fill_parent"
+			android:layout_height="0dp"
+			android:layout_weight="0.7"/>
 
 	<ScrollView
 			android:id="@+id/scroll_table"

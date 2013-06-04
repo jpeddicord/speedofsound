@@ -1,28 +1,13 @@
-// *** DISABLED UNTIL MAPS v2 UPGRADE ***
-
 package net.codechunk.speedofsound;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
-import net.codechunk.speedofsound.util.ColorCreator;
-import net.codechunk.speedofsound.util.SongInfo;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -30,224 +15,241 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-//import com.google.android.maps.GeoPoint;
-//import com.google.android.maps.MapActivity;
-//import com.google.android.maps.MapController;
-//import com.google.android.maps.MapView;
-//import com.google.android.maps.Overlay;
-//import com.google.android.maps.Projection;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import net.codechunk.speedofsound.util.ColorCreator;
+import net.codechunk.speedofsound.util.SongInfo;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
 
 /**
  * Draws a path based on the points in the database. Paths are colored based on
  * the song that was being listened to at that point.
- *
- * @author Andrew
  */
-public class MapperActivity extends Activity /* MapActivity */
+public class MapperActivity extends FragmentActivity
 {
-//	private static final String TAG = "DrawMapActivity";
-//
-//	private MapView mapView;
-//	private MapController mc;
-//	private List<Overlay> mapOverlays;
-//	private Projection projection;
-//
-//	private SongTracker songTracker;
-//	private ColorCreator colorCreator = new ColorCreator();
-//	private Map<Long, Integer> songColors = new HashMap<Long, Integer>();
-//
-//	private class SongSet
-//	{
-//		SongInfo song;
-//		ArrayList<GeoPoint> points;
-//	}
-//
-//	private ArrayList<SongSet> mapContent = new ArrayList<SongSet>();
-//
-//	private TableLayout songTable;
+	private static final String TAG = "DrawMapActivity";
+	private static final float ZOOM_LEVEL = 16.0f;
+
+	private GoogleMap map;
+	private TableLayout songTable;
+
+	private SongTracker songTracker;
+	private ColorCreator colorCreator = new ColorCreator();
+	private Map<Long, Integer> songColors = new HashMap<Long, Integer>();
+
+	private class SongSet
+	{
+		SongInfo song;
+		ArrayList<LatLng> points;
+	}
+
+	private ArrayList<SongSet> mapContent = new ArrayList<SongSet>();
+
 
 	/**
 	 * Set up the map and overlay.
 	 */
-    @Override
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-//		this.setContentView(R.layout.mapper);
-//
-//		this.songTracker = SongTracker.getInstance(this);
-//
-//		// activate the up functionality on the action bar
-//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-//			ActionBar ab = this.getActionBar();
-//			if (ab != null) {
-//				ab.setHomeButtonEnabled(true);
-//				ab.setDisplayHomeAsUpEnabled(true);
-//			}
-//		}
-//
-//		// load the map view
-//		mapView = (MapView) findViewById(R.id.mapView);
-//		mapView.setBuiltInZoomControls(true);
-//		songTable = (TableLayout) findViewById(R.id.song_table);
-//
-//		mapOverlays = mapView.getOverlays();
-//		projection = mapView.getProjection();
-//		mapOverlays.add(new SongOverlay());
+		this.setContentView(R.layout.mapper);
+
+		this.songTracker = SongTracker.getInstance(this);
+		this.songTable = (TableLayout) findViewById(R.id.song_table);
+
+		// activate the up functionality on the action bar
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			ActionBar ab = this.getActionBar();
+			if (ab != null) {
+				ab.setHomeButtonEnabled(true);
+				ab.setDisplayHomeAsUpEnabled(true);
+			}
+		}
+
+		// load the map
+		this.map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment)).getMap();
+		if (this.map == null) {
+			Log.e(TAG, "Couldn't load map");
+			this.finish();
+		}
 	}
 
 	/**
 	 * Updates the path on resume.
 	 */
-//	@Override
-//	public void onResume()
-//	{
-//		super.onResume();
-//
-//		// update the path & table
-//		this.mapContent = this.getPath();
-//		this.displayTable(this.mapContent);
-//
-//		// zoom the map in to an appropriate spot if there are points
-//		if (this.mapContent.size() > 0)
-//		{
-//			mc = mapView.getController();
-//
-//			SongSet loc = this.mapContent.get(mapContent.size() - 1);
-//
-//			if (loc.points.size() > 0)
-//			{
-//				GeoPoint lastpoint = loc.points.get(loc.points.size() - 1);
-//
-//				mc.animateTo(lastpoint);
-//				mc.setZoom(17);
-//			}
-//		}
-//	}
-//
-//	private ArrayList<SongSet> getPath()
-//	{
-//		ArrayList<SongSet> data = new ArrayList<SongSet>();
-//
-//		// XXX: 0.8 hack to get the only route
-//		SQLiteDatabase db = this.songTracker.getReadableDatabase();
-//		Cursor routeCursor = db.query("routes", new String[] { "id" },
-//				null, null, null, null, "id DESC", "1");
-//		routeCursor.moveToFirst();
-//		if (routeCursor.isAfterLast())
-//		{
-//			Log.w(TAG, "No routes found");
-//			routeCursor.close();
-//			return data;
-//		}
-//		long routeId = routeCursor.getLong(0);
-//		routeCursor.close();
-//
-//		// get the points from the route
-//		Log.v(TAG, "Fetching path of route " + routeId);
-//		Cursor cursor = this.songTracker.getRoutePoints(routeId);
-//
-//		long prevSongId = -1;
-//		ArrayList<GeoPoint> points = new ArrayList<GeoPoint>();
-//
-//		// iterate the cursor building up a structure
-//		cursor.moveToFirst();
-//		while (!cursor.isAfterLast())
-//		{
-//			// unpack row data
-//			long songId = cursor.getLong(1);
-//			int latitudeE6 = cursor.getInt(2);
-//			int longitudeE6 = cursor.getInt(3);
-//
-//			// new song => new meta
-//			if (songId != prevSongId)
-//			{
-//				prevSongId = songId;
-//
-//				// store song data
-//				SongSet loc = new SongSet();
-//				loc.song = this.songTracker.getSongInfo(songId);
-//
-//				// set a color if we don't have one
-//				if (!this.songColors.containsKey(songId))
-//				{
-//					this.songColors.put(songId, this.colorCreator.getColor());
-//				}
-//
-//				// reference a new list in the location structure
-//				points = new ArrayList<GeoPoint>();
-//				loc.points = points;
-//				data.add(loc);
-//			}
-//
-//			// add the point to the active point list
-//			points.add(new GeoPoint(latitudeE6, longitudeE6));
-//
-//			cursor.moveToNext();
-//		}
-//
-//		cursor.close();
-//		return data;
-//	}
-//
-//	/**
-//	 * Displays a list of songs along with the color of the path for that song.
-//	 *
-//	 * @param paths
-//	 *            List of current paths along with their color and song name.
-//	 */
-//	private void displayTable(ArrayList<SongSet> paths)
-//	{
-//		// Disallows duplicate songs to be added to the table even if two paths
-//		// have the same song and color
-//		HashSet<Long> songs = new HashSet<Long>();
-//
-//		// for each path
-//		for (SongSet loc : paths)
-//		{
-//			// ensure the song isn't listed yet
-//			if (songs.contains(loc.song.id))
-//				continue;
-//
-//			TableRow tableRow = new TableRow(this);
-//
-//			// make a colored block
-//			TextView colorTV = new TextView(this);
-//			colorTV.setText("\u25A0");
-//			colorTV.setTextColor(this.songColors.get(loc.song.id));
-//			colorTV.setGravity(Gravity.CENTER);
-//			colorTV.setTextSize(20f);
-//			tableRow.addView(colorTV);
-//
-//			// get the song name
-//			String song;
-//			if (loc.song == null)
-//			{
-//				song = "Unknown";
-//			}
-//			else
-//			{
-//				song = loc.song.track;
-//			}
-//
-//			// create a text view for the song name
-//			TextView songTV = new TextView(this);
-//			songTV.setText(song);
-//			songTV.setTextSize(18f);
-//			tableRow.addView(songTV);
-//
-//			songTable.addView(tableRow);
-//
-//			songs.add(loc.song.id);
-//		}
-//	}
-//
-//	@Override
-//	protected boolean isRouteDisplayed()
-//	{
-//		return false;
-//	}
-//
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+
+		// update the path, table, and map
+		this.mapContent = this.getPath();
+		this.displayTable(this.mapContent);
+		this.drawPaths(this.mapContent);
+
+		// zoom the map in to an appropriate spot if there are points
+		if (this.mapContent.size() > 0)
+		{
+			SongSet loc = this.mapContent.get(mapContent.size() - 1);
+
+			if (loc.points.size() > 0)
+			{
+				LatLng lastpoint = loc.points.get(loc.points.size() - 1);
+
+				this.map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastpoint, MapperActivity.ZOOM_LEVEL));
+			}
+		}
+	}
+
+	/**
+	 * Fetch a list of paths for stored routes.
+	 */
+	private ArrayList<SongSet> getPath()
+	{
+		ArrayList<SongSet> data = new ArrayList<SongSet>();
+
+		// XXX: 0.8 hack to get the only route
+		SQLiteDatabase db = this.songTracker.getReadableDatabase();
+		Cursor routeCursor = db.query("routes", new String[] { "id" },
+				null, null, null, null, "id DESC", "1");
+		routeCursor.moveToFirst();
+		if (routeCursor.isAfterLast())
+		{
+			Log.w(TAG, "No routes found");
+			routeCursor.close();
+			return data;
+		}
+		long routeId = routeCursor.getLong(0);
+		routeCursor.close();
+
+		// get the points from the route
+		Log.v(TAG, "Fetching path of route " + routeId);
+		Cursor cursor = this.songTracker.getRoutePoints(routeId);
+
+		long prevSongId = -1;
+		ArrayList<LatLng> points = new ArrayList<LatLng>();
+
+		// iterate the cursor building up a structure
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast())
+		{
+			Log.v(TAG, "Adding point");
+			// unpack row data
+			long songId = cursor.getLong(1);
+			int latitudeE6 = cursor.getInt(2);
+			int longitudeE6 = cursor.getInt(3);
+
+			double lat = latitudeE6 / 1000000.0f;
+			double lon = longitudeE6 / 1000000.0f;
+
+			// new song => new meta
+			if (songId != prevSongId)
+			{
+				prevSongId = songId;
+
+				// store song data
+				SongSet loc = new SongSet();
+				loc.song = this.songTracker.getSongInfo(songId);
+
+				// set a color if we don't have one
+				if (!this.songColors.containsKey(songId))
+				{
+					this.songColors.put(songId, this.colorCreator.getColor());
+				}
+
+				// reference a new list in the location structure
+				points = new ArrayList<LatLng>();
+				loc.points = points;
+				data.add(loc);
+			}
+
+			// add the point to the active point list
+			points.add(new LatLng(lat, lon));
+
+			cursor.moveToNext();
+		}
+
+		cursor.close();
+		return data;
+	}
+
+	/**
+	 * Displays a list of songs along with the color of the path for that song.
+	 */
+	private void displayTable(ArrayList<SongSet> paths)
+	{
+		// Disallows duplicate songs to be added to the table even if two paths
+		// have the same song and color
+		HashSet<Long> songs = new HashSet<Long>();
+
+		// for each path
+		for (SongSet loc : paths)
+		{
+			// ensure the song isn't listed yet
+			if (songs.contains(loc.song.id))
+				continue;
+
+			TableRow tableRow = new TableRow(this);
+
+			// make a colored block
+			TextView colorTV = new TextView(this);
+			colorTV.setText("\u25A0");
+			colorTV.setTextColor(this.songColors.get(loc.song.id));
+			colorTV.setGravity(Gravity.CENTER);
+			colorTV.setTextSize(20f);
+			tableRow.addView(colorTV);
+
+			// get the song name
+			String song;
+			if (loc.song == null)
+			{
+				song = "Unknown";
+			}
+			else
+			{
+				song = loc.song.track;
+			}
+
+			// create a text view for the song name
+			TextView songTV = new TextView(this);
+			songTV.setText(song);
+			songTV.setTextSize(18f);
+			tableRow.addView(songTV);
+
+			songTable.addView(tableRow);
+
+			songs.add(loc.song.id);
+		}
+	}
+
+	/**
+	 * Draw the song paths on the map.
+	 */
+	private void drawPaths(ArrayList<SongSet> paths) {
+		// draw all the paths
+		for (SongSet loc : paths) {
+			// generate a new line
+			PolylineOptions opts = new PolylineOptions();
+			opts.color(this.songColors.get(loc.song.id));
+			opts.width(6);
+			opts.addAll(loc.points);
+
+			// add it
+			this.map.addPolyline(opts);
+		}
+	}
+
 //	/**
 //	 * A map overlay to draw songs listened to as colored lines on the map.
 //	 */
@@ -256,7 +258,6 @@ public class MapperActivity extends Activity /* MapActivity */
 //		/**
 //		 * Maximum distance to draw a line between points.
 //		 */
-//		private static final int MAX_DIST = 6000;
 //
 //		public SongOverlay()
 //		{

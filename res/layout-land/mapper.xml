@@ -7,7 +7,12 @@
               android:orientation="horizontal"
               android:baselineAligned="false">
 
-	<!-- map fragment here -->
+	<fragment
+			android:id="@+id/map_fragment"
+			class="com.google.android.gms.maps.SupportMapFragment"
+			android:layout_width="0dp"
+			android:layout_height="fill_parent"
+			android:layout_weight="0.7" />
 
 	<ScrollView
 			android:id="@+id/scroll_table"
