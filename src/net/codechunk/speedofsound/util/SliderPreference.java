@@ -19,42 +19,47 @@ public class SliderPreference extends DialogPreference implements OnSeekBarChang
 	/**
 	 * Our custom namespace for this preference.
 	 */
-	private static final String LOCAL_NS = "http://schemas.android.com/apk/res/net.codechunk.speedofsound";
+	protected static final String LOCAL_NS = "http://schemas.android.com/apk/res/net.codechunk.speedofsound";
+
+	/**
+	 * Current context.
+	 */
+	protected Context context;
 
 	/**
 	 * Seek bar widget to control preference value.
 	 */
-	private SeekBar seekBar;
+	protected SeekBar seekBar;
 
 	/**
 	 * Text view displaying the value of the seek bar.
 	 */
-	private TextView valueDisplay;
+	protected TextView valueDisplay;
 
 	/**
 	 * Dialog view.
 	 */
-	private View view;
+	protected View view;
 
 	/**
 	 * Minimum value.
 	 */
-	private final int minValue;
+	protected final int minValue;
 
 	/**
 	 * Maximum value.
 	 */
-	private final int maxValue;
+	protected final int maxValue;
 
 	/**
 	 * Units of this preference.
 	 */
-	private String units;
+	protected String units;
 
 	/**
 	 * Current value.
 	 */
-	private int value;
+	protected int value;
 
 	/**
 	 * Create a new slider preference.
@@ -65,6 +70,7 @@ public class SliderPreference extends DialogPreference implements OnSeekBarChang
 	public SliderPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
+		this.context = context;
 		this.minValue = attrs.getAttributeIntValue(LOCAL_NS, "minValue", 0);
 		this.maxValue = attrs.getAttributeIntValue(LOCAL_NS, "maxValue", 0);
 		this.units = attrs.getAttributeValue(LOCAL_NS, "units");
@@ -137,7 +143,7 @@ public class SliderPreference extends DialogPreference implements OnSeekBarChang
 		this.notifyChanged();
 	}
 
-	private void updateDisplay() {
+	protected void updateDisplay() {
 		String text = Integer.toString(this.value);
 		if (this.units != null) {
 			text += this.units;

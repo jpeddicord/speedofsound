@@ -13,18 +13,18 @@
 	</PreferenceCategory>
 
 	<!--
-		 Because Android won't read custom preferences by default,
-		 we have to re-define the default values in PreferencesActivity.
-		 Be sure to change them there if you change them here!
+		For SpeedSliderPreference, the default value is the localized value
+		(which is probably mph). However, cc:maxValue is m/s and will be localized
+		when the dialog is displayed.
 	-->
 
 	<PreferenceCategory android:title="@string/slow_speed">
-		<net.codechunk.speedofsound.util.SliderPreference
+		<net.codechunk.speedofsound.util.SpeedSliderPreference
 				android:defaultValue="10"
 				android:key="low_speed_localized"
 				android:summary="@string/low_speed_summary"
 				android:title="@string/low_speed"
-				cc:maxValue="100"
+				cc:maxValue="40"
 				cc:minValue="0" />
 		<net.codechunk.speedofsound.util.SliderPreference
 				android:defaultValue="60"
@@ -36,12 +36,12 @@
 				cc:units="%" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/high_speed">
-		<net.codechunk.speedofsound.util.SliderPreference
+		<net.codechunk.speedofsound.util.SpeedSliderPreference
 				android:defaultValue="25"
 				android:key="high_speed_localized"
 				android:summary="@string/fast_speed_summary"
 				android:title="@string/fast_speed"
-				cc:maxValue="100"
+				cc:maxValue="50"
 				cc:minValue="0" />
 		<net.codechunk.speedofsound.util.SliderPreference
 				android:defaultValue="90"
