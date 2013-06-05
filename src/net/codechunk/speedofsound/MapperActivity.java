@@ -34,8 +34,7 @@ import java.util.Map;
  * Draws a path based on the points in the database. Paths are colored based on
  * the song that was being listened to at that point.
  */
-public class MapperActivity extends FragmentActivity
-{
+public class MapperActivity extends FragmentActivity {
 	private static final String TAG = "DrawMapActivity";
 	private static final float ZOOM_LEVEL = 16.0f;
 	private static final int LINE_WIDTH = 8;
@@ -47,8 +46,7 @@ public class MapperActivity extends FragmentActivity
 	private ColorCreator colorCreator = new ColorCreator();
 	private Map<Long, Integer> songColors = new HashMap<Long, Integer>();
 
-	private class SongSet
-	{
+	private class SongSet {
 		SongInfo song;
 		ArrayList<LatLng> points;
 	}
@@ -56,10 +54,9 @@ public class MapperActivity extends FragmentActivity
 	/**
 	 * Set up the map and overlay.
 	 */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.mapper);
 
@@ -88,12 +85,10 @@ public class MapperActivity extends FragmentActivity
 		this.drawPaths(mapContent);
 
 		// zoom the map in to an appropriate spot if there are points
-		if (mapContent.size() > 0)
-		{
+		if (mapContent.size() > 0) {
 			SongSet loc = mapContent.get(mapContent.size() - 1);
 
-			if (loc.points.size() > 0)
-			{
+			if (loc.points.size() > 0) {
 				LatLng lastpoint = loc.points.get(loc.points.size() - 1);
 
 				this.map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastpoint, MapperActivity.ZOOM_LEVEL));
@@ -104,17 +99,15 @@ public class MapperActivity extends FragmentActivity
 	/**
 	 * Fetch a list of paths for stored routes.
 	 */
-	private ArrayList<SongSet> getPath()
-	{
+	private ArrayList<SongSet> getPath() {
 		ArrayList<SongSet> data = new ArrayList<SongSet>();
 
 		// XXX: 0.8 hack to get the only route
 		SQLiteDatabase db = this.songTracker.getReadableDatabase();
-		Cursor routeCursor = db.query("routes", new String[] { "id" },
+		Cursor routeCursor = db.query("routes", new String[]{"id"},
 				null, null, null, null, "id DESC", "1");
 		routeCursor.moveToFirst();
-		if (routeCursor.isAfterLast())
-		{
+		if (routeCursor.isAfterLast()) {
 			Log.w(TAG, "No routes found");
 			routeCursor.close();
 			return data;
@@ -131,8 +124,7 @@ public class MapperActivity extends FragmentActivity
 
 		// iterate the cursor building up a structure
 		cursor.moveToFirst();
-		while (!cursor.isAfterLast())
-		{
+		while (!cursor.isAfterLast()) {
 			Log.v(TAG, "Adding point");
 			// unpack row data
 			long songId = cursor.getLong(1);
@@ -143,8 +135,7 @@ public class MapperActivity extends FragmentActivity
 			double lon = longitudeE6 / 1000000.0f;
 
 			// new song => new meta
-			if (songId != prevSongId)
-			{
+			if (songId != prevSongId) {
 				prevSongId = songId;
 
 				// store song data
@@ -152,8 +143,7 @@ public class MapperActivity extends FragmentActivity
 				loc.song = this.songTracker.getSongInfo(songId);
 
 				// set a color if we don't have one
-				if (!this.songColors.containsKey(songId))
-				{
+				if (!this.songColors.containsKey(songId)) {
 					this.songColors.put(songId, this.colorCreator.getColor());
 				}
 
@@ -176,15 +166,13 @@ public class MapperActivity extends FragmentActivity
 	/**
 	 * Displays a list of songs along with the color of the path for that song.
 	 */
-	private void displayTable(ArrayList<SongSet> paths)
-	{
+	private void displayTable(ArrayList<SongSet> paths) {
 		// Disallows duplicate songs to be added to the table even if two paths
 		// have the same song and color
 		HashSet<Long> songs = new HashSet<Long>();
 
 		// for each path
-		for (SongSet loc : paths)
-		{
+		for (SongSet loc : paths) {
 			// ensure the song isn't listed yet
 			if (songs.contains(loc.song.id))
 				continue;
@@ -201,12 +189,9 @@ public class MapperActivity extends FragmentActivity
 
 			// get the song name
 			String song;
-			if (loc.song == null)
-			{
+			if (loc.song == null) {
 				song = "Unknown";
-			}
-			else
-			{
+			} else {
 				song = loc.song.track;
 			}
 
@@ -242,10 +227,8 @@ public class MapperActivity extends FragmentActivity
 	/**
 	 * Handle the home button press on the action bar.
 	 */
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		switch (item.getItemId())
-		{
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
 			case android.R.id.home:
 				Intent intent = new Intent(this, SpeedActivity.class);
 				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

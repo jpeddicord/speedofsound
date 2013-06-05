@@ -1,7 +1,5 @@
 package net.codechunk.speedofsound;
 
-import net.codechunk.speedofsound.util.AppPreferences;
-
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.content.Intent;
@@ -17,12 +15,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import net.codechunk.speedofsound.util.AppPreferences;
+
 
 /**
  * Speed and volume preferences screen.
  */
-public class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener
-{
+public class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	/**
 	 * Logging tag.
 	 */
@@ -34,8 +33,7 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@SuppressWarnings("deprecation")
 	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		// activate the up functionality on the action bar
@@ -59,17 +57,13 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 	/**
 	 * Convert stored preferences when the speed units change.
 	 */
-	public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
-	{
+	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 		Log.v(TAG, "Preferences " + key);
 
-		if (key.equals("low_speed_localized") || key.equals("high_speed_localized"))
-		{
+		if (key.equals("low_speed_localized") || key.equals("high_speed_localized")) {
 			// update the internal native speeds
 			AppPreferences.updateNativeSpeeds(prefs);
-		}
-		else if (key.equals("speed_units"))
-		{
+		} else if (key.equals("speed_units")) {
 			// convert localized speeds from their internal values on unit
 			// change
 			AppPreferences.updateLocalizedSpeeds(prefs);
@@ -78,8 +72,7 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
+	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.prefs_menu, menu);
 		MenuItemCompat.setShowAsAction(menu.findItem(R.id.about), MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
@@ -89,10 +82,8 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 	/**
 	 * Handle the home button press on the action bar.
 	 */
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		switch (item.getItemId())
-		{
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
 			case android.R.id.home:
 				Intent intent = new Intent(this, SpeedActivity.class);
 				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

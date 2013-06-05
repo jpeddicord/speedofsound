@@ -1,7 +1,5 @@
 package net.codechunk.speedofsound;
 
-import net.codechunk.speedofsound.util.AppPreferences;
-import net.codechunk.speedofsound.util.AverageSpeed;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -21,14 +19,16 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import net.codechunk.speedofsound.util.AppPreferences;
+import net.codechunk.speedofsound.util.AverageSpeed;
+
 /**
  * The main sound control service.
- * 
+ *
  * Responsible for adjusting the volume based on the current speed. Can be
  * started and stopped externally, but is largely independent.
  */
-public class SoundService extends Service
-{
+public class SoundService extends Service {
 	private static final String TAG = "SoundService";
 
 	/**
@@ -66,8 +66,7 @@ public class SoundService extends Service
 	 * Start up the service and initialize some values. Does not start tracking.
 	 */
 	@Override
-	public void onCreate()
-	{
+	public void onCreate() {
 		Log.d(TAG, "Service starting up");
 
 		// set up preferences
@@ -88,27 +87,21 @@ public class SoundService extends Service
 
 	/**
 	 * Handle a start command.
-	 * 
+	 *
 	 * Return sticky mode to tell Android to keep the service active.
 	 */
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId)
-	{
+	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(TAG, "Start command received");
 
 		// check if we've been commanded to start or stop tracking
-		if (intent != null)
-		{
+		if (intent != null) {
 			Bundle extras = intent.getExtras();
-			if (extras != null && extras.containsKey(SoundService.SET_TRACKING_STATE))
-			{
+			if (extras != null && extras.containsKey(SoundService.SET_TRACKING_STATE)) {
 				Log.v(TAG, "Commanded to change state");
-				if (extras.getBoolean(SoundService.SET_TRACKING_STATE))
-				{
+				if (extras.getBoolean(SoundService.SET_TRACKING_STATE)) {
 					this.startTracking();
-				}
-				else
-				{
+				} else {
 					this.stopTracking();
 				}
 			}
@@ -121,8 +114,7 @@ public class SoundService extends Service
 	 * Service shut-down log.
 	 */
 	@Override
-	public void onDestroy()
-	{
+	public void onDestroy() {
 		Log.d(TAG, "Service shutting down");
 	}
 
@@ -130,11 +122,9 @@ public class SoundService extends Service
 	 * Start tracking. Find the best location provider (likely GPS), create an
 	 * ongoing notification, and request location updates.
 	 */
-	public void startTracking()
-	{
+	public void startTracking() {
 		// ignore requests when we're already tracking
-		if (this.tracking)
-		{
+		if (this.tracking) {
 			return;
 		}
 
@@ -142,12 +132,9 @@ public class SoundService extends Service
 		Criteria criteria = new Criteria();
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
 		String provider = this.locationManager.getBestProvider(criteria, true);
-		if (provider != null)
-		{
+		if (provider != null) {
 			this.locationManager.requestLocationUpdates(provider, 0, 0, this.locationUpdater);
-		}
-		else
-		{
+		} else {
 			Toast toast = Toast.makeText(this, this.getString(R.string.no_location_providers), Toast.LENGTH_LONG);
 			toast.show();
 			return;
@@ -157,8 +144,7 @@ public class SoundService extends Service
 		this.songTracker.startRoute();
 
 		// start up the volume thread
-		if (this.volumeThread == null)
-		{
+		if (this.volumeThread == null) {
 			this.volumeThread = new VolumeThread(this);
 			this.volumeThread.start();
 		}
@@ -194,17 +180,14 @@ public class SoundService extends Service
 	/**
 	 * Stop tracking. Remove the location updates and notification.
 	 */
-	public void stopTracking()
-	{
+	public void stopTracking() {
 		// don't do anything if we're not tracking
-		if (!this.tracking)
-		{
+		if (!this.tracking) {
 			return;
 		}
 
 		// shut off the volume thread
-		if (this.volumeThread != null)
-		{
+		if (this.volumeThread != null) {
 			this.volumeThread.interrupt();
 			this.volumeThread = null;
 		}
@@ -233,34 +216,27 @@ public class SoundService extends Service
 	 * speed, uses the minimum volume. If above the maximum speed, uses the max
 	 * volume. If somewhere in between, use a log scaling function to smoothly
 	 * scale the volume.
-	 * 
-	 * @param speed
-	 *            Reference speed to base volume on
+	 *
+	 * @param speed Reference speed to base volume on
 	 * @return Set volume (0-100).
 	 */
-	private int updateVolume(float speed)
-	{
-		float volume = 0f;
+	private int updateVolume(float speed) {
+		float volume;
 
 		float lowSpeed = this.settings.getFloat("low_speed", 0);
 		int lowVolume = this.settings.getInt("low_volume", 0);
 		float highSpeed = this.settings.getFloat("high_speed", 100);
 		int highVolume = this.settings.getInt("high_volume", 100);
 
-		if (speed < lowSpeed)
-		{
+		if (speed < lowSpeed) {
 			// minimum volume
 			Log.d(TAG, "Low speed triggered at " + speed);
 			volume = lowVolume / 100f;
-		}
-		else if (speed > highSpeed)
-		{
+		} else if (speed > highSpeed) {
 			// high volume
 			Log.d(TAG, "High speed triggered at " + speed);
 			volume = highVolume / 100f;
-		}
-		else
-		{
+		} else {
 			// log scaling
 			float volumeRange = (highVolume - lowVolume) / 100f;
 			float speedRangeFrac = (speed - lowSpeed) / (highSpeed - lowSpeed);
@@ -278,8 +254,7 @@ public class SoundService extends Service
 	 * Custom location listener. Triggers volume changes based on the current
 	 * average speed.
 	 */
-	private LocationListener locationUpdater = new LocationListener()
-	{
+	private LocationListener locationUpdater = new LocationListener() {
 		private Location previousLocation = null;
 
 		/**
@@ -288,21 +263,16 @@ public class SoundService extends Service
 		 * previous location. After updating the average and updating the
 		 * volume, send out a broadcast notifying of the changes.
 		 */
-		public void onLocationChanged(Location location)
-		{
+		public void onLocationChanged(Location location) {
 			// grab the speed
 			float speed;
 
 			// use the GPS-provided speed if available
-			if (location.hasSpeed())
-			{
+			if (location.hasSpeed()) {
 				speed = location.getSpeed();
-			}
-			else
-			{
+			} else {
 				// speed fall-back (mostly for the emulator)
-				if (this.previousLocation != null)
-				{
+				if (this.previousLocation != null) {
 					// get the distance between this and the previous update
 					float meters = previousLocation.distanceTo(location);
 					float timeDelta = location.getTime() - previousLocation.getTime();
@@ -311,9 +281,7 @@ public class SoundService extends Service
 
 					// convert to meters/second
 					speed = 1000 * meters / timeDelta;
-				}
-				else
-				{
+				} else {
 					speed = 0;
 				}
 
@@ -337,29 +305,24 @@ public class SoundService extends Service
 			SoundService.this.localBroadcastManager.sendBroadcast(intent);
 		}
 
-		public void onProviderDisabled(String provider)
-		{
+		public void onProviderDisabled(String provider) {
 		}
 
-		public void onProviderEnabled(String provider)
-		{
+		public void onProviderEnabled(String provider) {
 		}
 
-		public void onStatusChanged(String provider, int status, Bundle extras)
-		{
+		public void onStatusChanged(String provider, int status, Bundle extras) {
 		}
 	};
 
 	/**
 	 * Service-level access for external classes and activities.
 	 */
-	public class LocalBinder extends Binder
-	{
+	public class LocalBinder extends Binder {
 		/**
 		 * Return the service associated with this binder.
 		 */
-		public SoundService getService()
-		{
+		public SoundService getService() {
 			return SoundService.this;
 		}
 	}
@@ -368,8 +331,7 @@ public class SoundService extends Service
 	 * Return the binder associated with this service.
 	 */
 	@Override
-	public IBinder onBind(Intent intent)
-	{
+	public IBinder onBind(Intent intent) {
 		return this.binder;
 	}
 

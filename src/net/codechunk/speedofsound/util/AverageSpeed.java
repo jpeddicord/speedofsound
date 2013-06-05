@@ -8,8 +8,7 @@ import java.util.List;
  * Speed averager. Consumes a set amount of speeds, throwing away those that are
  * older beyond a set limit.
  */
-public class AverageSpeed
-{
+public class AverageSpeed {
 	/**
 	 * Size limit of the averager.
 	 */
@@ -22,28 +21,23 @@ public class AverageSpeed
 
 	/**
 	 * Create a new averager of the set limit.
-	 * 
-	 * @param size
-	 *            Size limit. 6 or higher is recommended.
+	 *
+	 * @param size Size limit. 6 or higher is recommended.
 	 */
-	public AverageSpeed(int size)
-	{
+	public AverageSpeed(int size) {
 		this.size = size;
 	}
 
 	/**
 	 * Record a new speed.
-	 * 
-	 * @param speed
-	 *            Speed to record.
+	 *
+	 * @param speed Speed to record.
 	 */
-	public void push(float speed)
-	{
+	public void push(float speed) {
 		this.speeds.add(speed);
 
 		// if the list is too large, remove the top element
-		if (this.speeds.size() > this.size)
-		{
+		if (this.speeds.size() > this.size) {
 			this.speeds.remove(0);
 		}
 	}
@@ -51,11 +45,10 @@ public class AverageSpeed
 	/**
 	 * Get the current average. Calculated based on the IQR of the most recent
 	 * values, if there are enough.
-	 * 
+	 *
 	 * @return The current average.
 	 */
-	public float getAverage()
-	{
+	public float getAverage() {
 		// Copying values instead of just using speeds. We might remove outliers
 		// from the average but we want to keep them
 		// in case they are accurate readings and we just happened to have a
@@ -72,8 +65,7 @@ public class AverageSpeed
 		// be a little low but I'm limiting this to 4.
 		// If we have under 4 values then it won't try to filter out any
 		// outliers.
-		if (length >= 4)
-		{
+		if (length >= 4) {
 
 			// Determine the positions of q1 and q3. Could do some optimization
 			// here since our length won't change. Won't
@@ -94,16 +86,14 @@ public class AverageSpeed
 
 			// Start from the left and remove anything under q1 - iqr.
 			int i = 0;
-			while ((speedsorted.size() > 0) && (speedsorted.get(i) < quart1 - iqr))
-			{
+			while ((speedsorted.size() > 0) && (speedsorted.get(i) < quart1 - iqr)) {
 				speedsorted.remove(i);
 				i++;
 			}
 
 			// Start from the right and remove anything over q3 + iqr
 			i = speedsorted.size() - 1;
-			while ((i >= 0) && (speedsorted.get(i) > quart3 + iqr))
-			{
+			while ((i >= 0) && (speedsorted.get(i) > quart3 + iqr)) {
 				speedsorted.remove(i);
 				i--;
 			}
@@ -115,8 +105,7 @@ public class AverageSpeed
 		float total = 0;
 		int size = speedsorted.size();
 		int num = 0;
-		for (int i = size - 1; i >= 0 && num < 3; i--)
-		{
+		for (int i = size - 1; i >= 0 && num < 3; i--) {
 			total += speedsorted.get(i);
 			num++;
 		}

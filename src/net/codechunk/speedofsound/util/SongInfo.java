@@ -1,7 +1,6 @@
 package net.codechunk.speedofsound.util;
 
-public class SongInfo
-{
+public class SongInfo {
 	public long id;
 	public String track;
 	public String artist;

@@ -28,7 +28,6 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import net.codechunk.speedofsound.util.SpeedConversions;
@@ -37,8 +36,7 @@ import net.codechunk.speedofsound.util.SpeedConversions;
  * Main status activity. Displays the current speed and set volume. Does not
  * actually track the volume itself; that is handled in SoundService.
  */
-public class SpeedActivity extends Activity implements OnCheckedChangeListener
-{
+public class SpeedActivity extends Activity implements OnCheckedChangeListener {
 	/**
 	 * Logging tag.
 	 */
@@ -79,8 +77,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 	 * Load the view and attach a checkbox listener.
 	 */
 	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.main);
 
@@ -97,8 +94,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 	 * Start the service with the view, if it wasn't already running.
 	 */
 	@Override
-	public void onStart()
-	{
+	public void onStart() {
 		super.onStart();
 		Log.d(TAG, "View starting");
 
@@ -112,14 +108,12 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 	 * Stop the view and unbind from the service (but don't stop that).
 	 */
 	@Override
-	public void onStop()
-	{
+	public void onStop() {
 		super.onStop();
 		Log.d(TAG, "View stopping");
 
 		// unbind from our service
-		if (this.bound)
-		{
+		if (this.bound) {
 			unbindService(this.serviceConnection);
 			this.bound = false;
 		}
@@ -129,8 +123,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 	 * Pause the view and stop listening to broadcasts.
 	 */
 	@Override
-	public void onPause()
-	{
+	public void onPause() {
 		super.onPause();
 		Log.d(TAG, "Paused, unsubscribing from updates");
 
@@ -141,8 +134,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 	 * Resume the view and subscribe to broadcasts.
 	 */
 	@Override
-	public void onResume()
-	{
+	public void onResume() {
 		super.onResume();
 		Log.d(TAG, "Resumed, subscribing to service updates");
 
@@ -156,21 +148,17 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 	/**
 	 * Create disclaimer/gps dialogs to show.
 	 */
-	protected Dialog onCreateDialog(int id)
-	{
+	protected Dialog onCreateDialog(int id) {
 		Dialog dialog;
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		switch (id)
-		{
+		switch (id) {
 			case DIALOG_DISCLAIMER:
 				builder.setMessage(getString(R.string.launch_disclaimer))
 						.setTitle(getString(R.string.warning))
 						.setCancelable(false)
 						.setPositiveButton(getString(R.string.launch_disclaimer_accept),
-								new DialogInterface.OnClickListener()
-								{
-									public void onClick(DialogInterface dialog, int id)
-									{
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int id) {
 										SpeedActivity.this.checkGPS();
 									}
 								});
@@ -181,10 +169,8 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 				builder.setMessage(getString(R.string.gps_warning))
 						.setCancelable(false)
 						.setPositiveButton(getString(R.string.location_settings),
-								new DialogInterface.OnClickListener()
-								{
-									public void onClick(DialogInterface dialog, int which)
-									{
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int which) {
 										startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
 									}
 								})
@@ -204,23 +190,19 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 	 * enable it.
 	 */
 	@SuppressWarnings("deprecation")
-	private void startupMessages()
-	{
+	private void startupMessages() {
 		// only show disclaimers and the like once
 		boolean runonce = this.settings.getBoolean("runonce", false);
 
 		// firstrun things
-		if (!runonce)
-		{
+		if (!runonce) {
 			SharedPreferences.Editor editor = this.settings.edit();
 			editor.putBoolean("runonce", true);
 			editor.commit();
 
 			// driving disclaimer (followed by GPS)
 			this.showDialog(DIALOG_DISCLAIMER);
-		}
-		else
-		{
+		} else {
 			// GPS notice
 			this.checkGPS();
 		}
@@ -230,11 +212,9 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 	 * Check if GPS is enabled. If it isn't, bug the user to turn it on.
 	 */
 	@SuppressWarnings("deprecation")
-	private void checkGPS()
-	{
+	private void checkGPS() {
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-		{
+		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			this.showDialog(DIALOG_GPS);
 		}
 	}
@@ -242,20 +222,17 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 	/**
 	 * Start or stop tracking in the service on checked/unchecked.
 	 */
-	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-	{
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		Log.d(TAG, "Checkbox changed to " + isChecked);
 
 		// uh-oh
-		if (!this.bound)
-		{
+		if (!this.bound) {
 			Log.e(TAG, "Service is unavailable");
 			return;
 		}
 
 		// start up the service
-		if (isChecked)
-		{
+		if (isChecked) {
 			this.service.startTracking();
 
 			// update the UI
@@ -270,8 +247,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 			volume.setText(getString(R.string.waiting));
 		}
 		// stop the service
-		else
-		{
+		else {
 			this.service.stopTracking();
 
 			// update the UI
@@ -281,12 +257,10 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 
 	/**
 	 * Switch between the intro message and the speed details.
-	 * 
-	 * @param tracking
-	 *            The current tracking state
+	 *
+	 * @param tracking The current tracking state
 	 */
-	private void updateStatusState(boolean tracking)
-	{
+	private void updateStatusState(boolean tracking) {
 		View statusDetails = findViewById(R.id.status_details);
 		statusDetails.setVisibility(tracking ? View.VISIBLE : View.GONE);
 
@@ -297,27 +271,23 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 	/**
 	 * Handle incoming broadcasts from the service.
 	 */
-	private BroadcastReceiver messageReceiver = new BroadcastReceiver()
-	{
+	private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
 		/**
 		 * Receive a speed/sound status update.
 		 */
 		@Override
-		public void onReceive(Context context, Intent intent)
-		{
+		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 			Log.v(TAG, "Received broadcast " + action);
 
-			if (action.equals(SoundService.TRACKING_STATE_BROADCAST))
-			{
+			if (action.equals(SoundService.TRACKING_STATE_BROADCAST)) {
 				boolean state = intent.getBooleanExtra("tracking", false);
 				SpeedActivity.this.enabledCheckBox.setChecked(state);
 				SpeedActivity.this.updateStatusState(state);
 			}
 
 			// new location data
-			else if (action.equals(SoundService.LOCATION_UPDATE_BROADCAST))
-			{
+			else if (action.equals(SoundService.LOCATION_UPDATE_BROADCAST)) {
 				// unpack the speed/volume
 				float speed = intent.getFloatExtra("speed", -1.0f);
 				int volume = intent.getIntExtra("volume", -1);
@@ -340,16 +310,11 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 				int highVolume = SpeedActivity.this.settings.getInt("high_volume", 100);
 
 				// show different text values depending on the limits hit
-				if (volume <= lowVolume)
-				{
+				if (volume <= lowVolume) {
 					volumeDesc.setText(getString(R.string.volume_header_low));
-				}
-				else if (volume >= highVolume)
-				{
+				} else if (volume >= highVolume) {
 					volumeDesc.setText(getText(R.string.volume_header_high));
-				}
-				else
-				{
+				} else {
 					volumeDesc.setText(getText(R.string.volume_header_scaled));
 				}
 			}
@@ -359,13 +324,11 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 	/**
 	 * Attach to the sound service.
 	 */
-	private ServiceConnection serviceConnection = new ServiceConnection()
-	{
+	private ServiceConnection serviceConnection = new ServiceConnection() {
 		/**
 		 * Update the UI "Enabled" checkbox based on the tracking state.
 		 */
-		public void onServiceConnected(ComponentName className, IBinder service)
-		{
+		public void onServiceConnected(ComponentName className, IBinder service) {
 			Log.v(TAG, "ServiceConnection connected");
 
 			SoundService.LocalBinder binder = (SoundService.LocalBinder) service;
@@ -380,8 +343,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 		/**
 		 * Mark the service as unbound on disconnect.
 		 */
-		public void onServiceDisconnected(ComponentName arg)
-		{
+		public void onServiceDisconnected(ComponentName arg) {
 			Log.v(TAG, "ServiceConnection disconnected");
 			SpeedActivity.this.bound = false;
 		}
@@ -392,8 +354,7 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 	 * instead.
 	 */
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
+	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.speed_menu, menu);
 		MenuItemCompat.setShowAsAction(menu.findItem(R.id.preferences), MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
@@ -406,10 +367,8 @@ public class SpeedActivity extends Activity implements OnCheckedChangeListener
 	 * Handle actions from the menu/action bar.
 	 */
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		switch (item.getItemId())
-		{
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
 			case R.id.preferences:
 				startActivity(new Intent(this, PreferencesActivity.class));
 				break;

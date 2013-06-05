@@ -1,11 +1,5 @@
 package net.codechunk.speedofsound;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import net.codechunk.speedofsound.players.BasePlayer;
-import net.codechunk.speedofsound.util.SongInfo;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,8 +12,14 @@ import android.location.Location;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-public class SongTracker
-{
+import net.codechunk.speedofsound.players.BasePlayer;
+import net.codechunk.speedofsound.util.SongInfo;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class SongTracker {
 	private static final String TAG = "SongTracker";
 	private static SongTracker inst = null;
 
@@ -43,18 +43,15 @@ public class SongTracker
 
 	private SongInfo currentSong = null;
 
-	public static SongTracker getInstance(Context context)
-	{
-		if (inst == null)
-		{
+	public static SongTracker getInstance(Context context) {
+		if (inst == null) {
 			inst = new SongTracker(context);
 		}
 
 		return inst;
 	}
 
-	private SongTracker(Context context)
-	{
+	private SongTracker(Context context) {
 		this.context = context;
 		this.sqlite = new SQLiteOpener(context);
 		this.db = this.sqlite.getWritableDatabase();
@@ -70,24 +67,22 @@ public class SongTracker
 
 	/**
 	 * External classes can get a read-only view of the data set.
-	 * 
+	 *
 	 * @return a read-only SQLite database
 	 */
-	public SQLiteDatabase getReadableDatabase()
-	{
+	public SQLiteDatabase getReadableDatabase() {
 		return this.sqlite.getReadableDatabase();
 	}
 
 	/**
 	 * Start a new route.
-	 * 
+	 *
 	 * TODO: it would be nice if we could detect the age of the previous route
 	 * and use that instead, if it wasn't too long ago, say, 30s.
-	 * 
+	 *
 	 * @return the route ID
 	 */
-	public long startRoute()
-	{
+	public long startRoute() {
 		// XXX: we're not supporting multiple routes in 0.8 initially.
 		// but when we do, get rid of this!
 		this.db.delete("points", null, null);
@@ -110,8 +105,7 @@ public class SongTracker
 		this.routeId = this.db.insert("routes", null, values);
 
 		// clear out the current song ID (it's linked to a route)
-		if (this.currentSong != null)
-		{
+		if (this.currentSong != null) {
 			this.currentSong.id = 0;
 		}
 
@@ -121,23 +115,20 @@ public class SongTracker
 
 	/**
 	 * Stop recording to the current route.
-	 * 
+	 *
 	 * TODO: store the end time
 	 */
-	public void endRoute()
-	{
+	public void endRoute() {
 		this.routeId = 0;
 	}
 
 	/**
 	 * Delete a route and all of its associated data.
-	 * 
-	 * @param routeId
-	 *            the ID of the route to delete
+	 *
+	 * @param routeId the ID of the route to delete
 	 */
-	public void deleteRoute(long routeId)
-	{
-		String[] deleteArgs = new String[] { Long.toString(routeId) };
+	public void deleteRoute(long routeId) {
+		String[] deleteArgs = new String[]{Long.toString(routeId)};
 		this.db.delete("points", "route_id = ?", deleteArgs);
 		this.db.delete("songs", "route_id = ?", deleteArgs);
 		this.db.delete("routes", "id = ?", deleteArgs);
@@ -145,36 +136,31 @@ public class SongTracker
 
 	/**
 	 * Return a cursor for all points associated with a route.
-	 * 
-	 * @param routeId
-	 *            ID of the route containing points
+	 *
+	 * @param routeId ID of the route containing points
 	 * @return a cursor to iterate
 	 */
-	public Cursor getRoutePoints(long routeId)
-	{
+	public Cursor getRoutePoints(long routeId) {
 		return this.db.query("points",
-				new String[] { "id", "song_id", "latitude", "longitude" },
-				"route_id = ?", new String[] { Long.toString(routeId) },
+				new String[]{"id", "song_id", "latitude", "longitude"},
+				"route_id = ?", new String[]{Long.toString(routeId)},
 				null, null, "id ASC");
 	}
 
 	/**
 	 * Get the info/meta associated with a given song ID.
-	 * 
-	 * @param songId
-	 *            ID of the song
+	 *
+	 * @param songId ID of the song
 	 * @return song meta
 	 */
-	public SongInfo getSongInfo(long songId)
-	{
+	public SongInfo getSongInfo(long songId) {
 		Cursor cursor = this.db.query("songs",
-				new String[] { "track", "artist", "album" },
-				"id = ?", new String[] { Long.toString(songId) },
+				new String[]{"track", "artist", "album"},
+				"id = ?", new String[]{Long.toString(songId)},
 				null, null, null);
 		cursor.moveToFirst();
 
-		if (cursor.isAfterLast())
-		{
+		if (cursor.isAfterLast()) {
 			Log.w(TAG, "Song with ID " + songId + " doesn't exist");
 			cursor.close();
 			return null;
@@ -192,28 +178,22 @@ public class SongTracker
 
 	/**
 	 * Find a song's id, creating an entry if it doesn't have one.
-	 * 
-	 * @param routeId
-	 *            Route ID of the song.
-	 * @param track
-	 *            Track name
-	 * @param artist
-	 *            Song artist
-	 * @param album
-	 *            Song album
+	 *
+	 * @param routeId Route ID of the song.
+	 * @param track   Track name
+	 * @param artist  Song artist
+	 * @param album   Song album
 	 * @return the ID of the song
 	 */
-	private long findSong(long routeId, String track, String artist, String album)
-	{
-		Cursor cursor = this.db.query("songs", new String[] { "id" },
+	private long findSong(long routeId, String track, String artist, String album) {
+		Cursor cursor = this.db.query("songs", new String[]{"id"},
 				"track = ? AND artist = ? AND album = ?",
-				new String[] { track, artist, album },
+				new String[]{track, artist, album},
 				null, null, null);
 		cursor.moveToFirst();
 
 		// create the song if it wasn't found
-		if (cursor.isAfterLast())
-		{
+		if (cursor.isAfterLast()) {
 			cursor.close();
 			ContentValues values = new ContentValues();
 			values.put("route_id", routeId);
@@ -221,9 +201,7 @@ public class SongTracker
 			values.put("artist", artist);
 			values.put("album", album);
 			return this.db.insert("songs", null, values);
-		}
-		else
-		{
+		} else {
 			long id = cursor.getLong(0);
 			cursor.close();
 			return id;
@@ -233,23 +211,19 @@ public class SongTracker
 	/**
 	 * Local broadcast receiver for location and song updates.
 	 */
-	private BroadcastReceiver messageReceiver = new BroadcastReceiver()
-	{
+	private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
 		@Override
-		public void onReceive(Context context, Intent intent)
-		{
+		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 
 			// new location reported
-			if (action.equals(SoundService.LOCATION_UPDATE_BROADCAST))
-			{
+			if (action.equals(SoundService.LOCATION_UPDATE_BROADCAST)) {
 				Location location = intent.getParcelableExtra("location");
 				SongTracker.this.locationUpdate(location);
 			}
 
 			// new song reported
-			else if (action.equals(BasePlayer.PLAYBACK_CHANGED_BROADCAST))
-			{
+			else if (action.equals(BasePlayer.PLAYBACK_CHANGED_BROADCAST)) {
 				// set it as the current song
 				SongInfo si = new SongInfo();
 				si.track = intent.getStringExtra("track");
@@ -263,8 +237,7 @@ public class SongTracker
 			}
 
 			// they've stopped playing music :(
-			else if (action.equals(BasePlayer.PLAYBACK_STOPPED_BROADCAST))
-			{
+			else if (action.equals(BasePlayer.PLAYBACK_STOPPED_BROADCAST)) {
 				SongTracker.this.currentSong = null;
 
 				Log.v(TAG, "Playback stopped");
@@ -274,12 +247,10 @@ public class SongTracker
 
 	/**
 	 * Process a location update broadcast.
-	 * 
-	 * @param location
-	 *            New location.
+	 *
+	 * @param location New location.
 	 */
-	private void locationUpdate(Location location)
-	{
+	private void locationUpdate(Location location) {
 		// ignore if we have no route yet
 		if (this.routeId == 0)
 			return;
@@ -289,16 +260,14 @@ public class SongTracker
 			return;
 
 		// do we need to update song meta?
-		if (this.currentSong.id == 0)
-		{
+		if (this.currentSong.id == 0) {
 			Log.v(TAG, "Updating song meta");
 			this.currentSong.id = this.findSong(this.routeId,
 					this.currentSong.track, this.currentSong.artist, this.currentSong.album);
 		}
 
 		// rate limiting
-		if (this.previousLocation != null)
-		{
+		if (this.previousLocation != null) {
 			// time-based
 			if (location.getTime() - this.previousLocation.getTime() < SongTracker.UPDATE_RATE)
 				return;
@@ -329,19 +298,16 @@ public class SongTracker
 	/**
 	 * Android hook to open the SQLite database.
 	 */
-	private class SQLiteOpener extends SQLiteOpenHelper
-	{
+	private class SQLiteOpener extends SQLiteOpenHelper {
 		public static final String DB_NAME = "songtracker";
 		public static final int DB_VERSION = 2;
 
-		public SQLiteOpener(Context context)
-		{
+		public SQLiteOpener(Context context) {
 			super(context, DB_NAME, null, DB_VERSION);
 		}
 
 		@Override
-		public void onCreate(SQLiteDatabase db)
-		{
+		public void onCreate(SQLiteDatabase db) {
 			db.execSQL("CREATE TABLE routes (" +
 					"id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
 					"name TEXT," +
@@ -362,9 +328,7 @@ public class SongTracker
 		}
 
 		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
-		{
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		}
-
-	};
+	}
 }

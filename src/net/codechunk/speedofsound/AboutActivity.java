@@ -1,8 +1,5 @@
 package net.codechunk.speedofsound;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -19,24 +16,21 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class AboutActivity extends Activity
-{
+import java.util.ArrayList;
+import java.util.List;
+
+public class AboutActivity extends Activity {
 	public static final String TAG = "AboutActivity";
 
 	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.about);
 
 		PackageInfo pi;
-		try
-		{
-			pi = this.getPackageManager().getPackageInfo(
-					this.getPackageName(), 0);
-		}
-		catch (NameNotFoundException e)
-		{
+		try {
+			pi = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
+		} catch (NameNotFoundException e) {
 			Log.e(TAG, "Couldn't get package information?!");
 			return;
 		}
@@ -57,23 +51,17 @@ public class AboutActivity extends Activity
 		list.setOnItemClickListener(this.listener);
 	}
 
-	private OnItemClickListener listener = new AdapterView.OnItemClickListener()
-	{
-		public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-		{
-			Uri uri = null;
+	private final OnItemClickListener listener = new AdapterView.OnItemClickListener() {
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			Uri uri;
 
 			// XXX: probably a better way to do this
-			switch (position)
-			{
+			switch (position) {
 				case 0:
-					try
-					{
+					try {
 						uri = Uri.parse("market://details?id=net.codechunk.speedofsound");
 						AboutActivity.this.startActivity(new Intent(Intent.ACTION_VIEW, uri));
-					}
-					catch (ActivityNotFoundException e)
-					{
+					} catch (ActivityNotFoundException e) {
 						uri = Uri.parse("https://play.google.com/store/apps/details?id=net.codechunk.speedofsound");
 						AboutActivity.this.startActivity(new Intent(Intent.ACTION_VIEW, uri));
 					}
@@ -81,7 +69,7 @@ public class AboutActivity extends Activity
 				case 1:
 					Intent email = new Intent(Intent.ACTION_SEND);
 					email.setType("plain/text");
-					email.putExtra(Intent.EXTRA_EMAIL, new String[] { "mobile@codechunk.net" });
+					email.putExtra(Intent.EXTRA_EMAIL, new String[]{"mobile@codechunk.net"});
 					email.putExtra(Intent.EXTRA_SUBJECT, "Speed of Sound");
 					AboutActivity.this.startActivity(email);
 					return;

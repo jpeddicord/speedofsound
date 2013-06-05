@@ -1,17 +1,16 @@
 package net.codechunk.speedofsound.util;
 
-import java.util.Random;
-
 import android.graphics.Color;
+
+import java.util.Random;
 
 /**
  * Chooses an arbitrary color. Attempts to choose a color that is not very
  * similar to the previously chosen color.
- * 
+ *
  * @author Andrew
  */
-public class ColorCreator
-{
+public class ColorCreator {
 	/**
 	 * Holds the previous color that was chosen by this color creator.
 	 */
@@ -20,11 +19,10 @@ public class ColorCreator
 	/**
 	 * Uses a random generator to determine the rgb components and returns the
 	 * values as a color-int.
-	 * 
+	 *
 	 * @return A new random color
 	 */
-	public int getColor()
-	{
+	public int getColor() {
 		Random generator = new Random();
 
 		// rgb values range from 0 to 255.
@@ -40,8 +38,7 @@ public class ColorCreator
 		// sequence.
 		if ((Math.abs(r - Color.red(this.previous)) <= 50) ||
 				(Math.abs(b - Color.blue(this.previous)) <= 50) ||
-				(Math.abs(g - Color.green(this.previous)) <= 50))
-		{
+				(Math.abs(g - Color.green(this.previous)) <= 50)) {
 			// generate a different color
 			color = this.getColor();
 		}

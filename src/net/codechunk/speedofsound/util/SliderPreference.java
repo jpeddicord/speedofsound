@@ -1,6 +1,5 @@
 package net.codechunk.speedofsound.util;
 
-import net.codechunk.speedofsound.R;
 import android.content.Context;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
@@ -10,12 +9,12 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import net.codechunk.speedofsound.R;
+
 /**
  * A preference that is displayed as a seek bar.
  */
-public class SliderPreference extends DialogPreference implements
-		OnSeekBarChangeListener
-{
+public class SliderPreference extends DialogPreference implements OnSeekBarChangeListener {
 	/**
 	 * Stock Android XML namespace.
 	 */
@@ -64,17 +63,13 @@ public class SliderPreference extends DialogPreference implements
 	/**
 	 * Create a new slider preference.
 	 *
-	 * @param context
-	 *            Context to use
-	 * @param attrs
-	 *            XML attributes to load
+	 * @param context Context to use
+	 * @param attrs   XML attributes to load
 	 */
-	public SliderPreference(Context context, AttributeSet attrs)
-	{
+	public SliderPreference(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
-		this.defaultValue = attrs.getAttributeIntValue(ANDROID_NS,
-				"defaultValue", 0);
+		this.defaultValue = attrs.getAttributeIntValue(ANDROID_NS, "defaultValue", 0);
 		this.minValue = attrs.getAttributeIntValue(LOCAL_NS, "minValue", 0);
 		this.maxValue = attrs.getAttributeIntValue(LOCAL_NS, "maxValue", 0);
 	}
@@ -83,8 +78,7 @@ public class SliderPreference extends DialogPreference implements
 	 * Set up the preference display.
 	 */
 	@Override
-	protected View onCreateDialogView()
-	{
+	protected View onCreateDialogView() {
 		this.value = getPersistedInt(this.defaultValue);
 
 		// load the layout
@@ -106,17 +100,14 @@ public class SliderPreference extends DialogPreference implements
 	 * Save on dialog close.
 	 */
 	@Override
-	protected void onDialogClosed(boolean positiveResult)
-	{
+	protected void onDialogClosed(boolean positiveResult) {
 		super.onDialogClosed(positiveResult);
 
-		if (!positiveResult)
-		{
+		if (!positiveResult) {
 			return;
 		}
 
-		if (shouldPersist())
-		{
+		if (shouldPersist()) {
 			this.persistInt(this.value);
 		}
 
@@ -126,18 +117,15 @@ public class SliderPreference extends DialogPreference implements
 	/**
 	 * Updated the displayed value on change.
 	 */
-	public void onProgressChanged(SeekBar seekBar, int value, boolean fromTouch)
-	{
+	public void onProgressChanged(SeekBar seekBar, int value, boolean fromTouch) {
 		this.value = value + this.minValue;
 		this.valueDisplay.setText(Integer.toString(this.value));
 	}
 
-	public void onStartTrackingTouch(SeekBar sb)
-	{
+	public void onStartTrackingTouch(SeekBar sb) {
 	}
 
-	public void onStopTrackingTouch(SeekBar sb)
-	{
+	public void onStopTrackingTouch(SeekBar sb) {
 	}
 
 }
