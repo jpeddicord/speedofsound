@@ -64,8 +64,7 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 			// update the internal native speeds
 			AppPreferences.updateNativeSpeeds(prefs);
 		} else if (key.equals("speed_units")) {
-			// convert localized speeds from their internal values on unit
-			// change
+			// convert localized speeds from their internal values on unit change
 			AppPreferences.updateLocalizedSpeeds(prefs);
 		}
 

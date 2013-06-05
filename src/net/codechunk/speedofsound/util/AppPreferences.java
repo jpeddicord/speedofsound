@@ -9,8 +9,6 @@ import android.util.Log;
 
 import net.codechunk.speedofsound.R;
 
-import java.io.File;
-
 public class AppPreferences {
 	private static final String TAG = "AppPreferences";
 
@@ -26,8 +24,7 @@ public class AppPreferences {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		SharedPreferences.Editor editor = prefs.edit();
 
-		// if you change these, be sure to update the defaults in
-		// preferences.xml
+		// if you change these, be sure to update the defaults in preferences.xml
 		if (!prefs.contains("low_speed_localized"))
 			editor.putInt("low_speed_localized", 10);
 		if (!prefs.contains("low_volume"))
@@ -66,23 +63,16 @@ public class AppPreferences {
 		// first-time install has no upgrade
 		if (!prefs.contains("app_version_code")) {
 			Log.v(TAG, "First-time install; no upgrade required");
-			SharedPreferences.Editor editor = prefs.edit();
-			editor.putInt("app_version_code", versionCode);
-			editor.commit();
 		} else {
 			int prevVersion = prefs.getInt("app_version_code", 0);
 
 			processUpgrade(context, prevVersion, versionCode);
 		}
 
-		// safe upgrade hack: delete old locations db
-		// this was in use before we stored version info
-		// XXX: this is safe to remove after a few versions.
-		// check the google play listing for % on v7 and up.
-		File oldDatabase = context.getDatabasePath("locations");
-		if (oldDatabase.exists()) {
-			context.deleteDatabase("locations");
-		}
+		// mark the currently-installed version
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putInt("app_version_code", versionCode);
+		editor.commit();
 	}
 
 	/**
