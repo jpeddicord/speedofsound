@@ -38,6 +38,7 @@ public class MapperActivity extends FragmentActivity
 {
 	private static final String TAG = "DrawMapActivity";
 	private static final float ZOOM_LEVEL = 16.0f;
+	private static final int LINE_WIDTH = 8;
 
 	private GoogleMap map;
 	private TableLayout songTable;
@@ -51,9 +52,6 @@ public class MapperActivity extends FragmentActivity
 		SongInfo song;
 		ArrayList<LatLng> points;
 	}
-
-	private ArrayList<SongSet> mapContent = new ArrayList<SongSet>();
-
 
 	/**
 	 * Set up the map and overlay.
@@ -83,25 +81,16 @@ public class MapperActivity extends FragmentActivity
 			Log.e(TAG, "Couldn't load map");
 			this.finish();
 		}
-	}
 
-	/**
-	 * Updates the path on resume.
-	 */
-	@Override
-	public void onResume()
-	{
-		super.onResume();
-
-		// update the path, table, and map
-		this.mapContent = this.getPath();
-		this.displayTable(this.mapContent);
-		this.drawPaths(this.mapContent);
+		// update the path, table, and polyline
+		ArrayList<SongSet> mapContent = this.getPath();
+		this.displayTable(mapContent);
+		this.drawPaths(mapContent);
 
 		// zoom the map in to an appropriate spot if there are points
-		if (this.mapContent.size() > 0)
+		if (mapContent.size() > 0)
 		{
-			SongSet loc = this.mapContent.get(mapContent.size() - 1);
+			SongSet loc = mapContent.get(mapContent.size() - 1);
 
 			if (loc.points.size() > 0)
 			{
@@ -227,7 +216,7 @@ public class MapperActivity extends FragmentActivity
 			songTV.setTextSize(18f);
 			tableRow.addView(songTV);
 
-			songTable.addView(tableRow);
+			this.songTable.addView(tableRow);
 
 			songs.add(loc.song.id);
 		}
@@ -242,107 +231,13 @@ public class MapperActivity extends FragmentActivity
 			// generate a new line
 			PolylineOptions opts = new PolylineOptions();
 			opts.color(this.songColors.get(loc.song.id));
-			opts.width(6);
+			opts.width(MapperActivity.LINE_WIDTH);
 			opts.addAll(loc.points);
 
 			// add it
 			this.map.addPolyline(opts);
 		}
 	}
-
-//	/**
-//	 * A map overlay to draw songs listened to as colored lines on the map.
-//	 */
-//	class SongOverlay extends Overlay
-//	{
-//		/**
-//		 * Maximum distance to draw a line between points.
-//		 */
-//
-//		public SongOverlay()
-//		{
-//		}
-//
-//		/**
-//		 * Draws the path created by the geopoints on an overlay.
-//		 */
-//		public void draw(Canvas canvas, MapView mapv, boolean shadow)
-//		{
-//			super.draw(canvas, mapv, shadow);
-//
-//			GeoPoint previous = null;
-//			GeoPoint next = null;
-//
-//			// For each path
-//			for (SongSet loc : MapperActivity.this.mapContent)
-//			{
-//				Path path = new Path();
-//
-//				Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-//				paint.setStyle(Paint.Style.FILL_AND_STROKE);
-//				paint.setStrokeJoin(Paint.Join.ROUND);
-//				paint.setStrokeCap(Paint.Cap.ROUND);
-//				paint.setStrokeWidth(6);
-//
-//				// Get the color for this path
-//				paint.setColor(MapperActivity.this.songColors.get(loc.song.id));
-//
-//				// for each geopoint on this path
-//				for (GeoPoint point : loc.points)
-//				{
-//					// ensure a previous exists to look for distance
-//					if (previous != null)
-//					{
-//						int oldlong = previous.getLongitudeE6();
-//						int oldlat = previous.getLatitudeE6();
-//
-//						int newlong = point.getLongitudeE6();
-//						int newlat = point.getLatitudeE6();
-//
-//						// if the distance is too large then the path isn't
-//						// drawn. Prevents large lines being drawn
-//						// at times when the gps cuts out and can't record
-//						// points.
-//						double dist = Math.sqrt(Math.pow((oldlong - newlong), 2) + Math.pow((oldlat - newlat), 2));
-//
-//						if (dist >= SongOverlay.MAX_DIST)
-//						{
-//							previous = null;
-//							next = null;
-//						}
-//					}
-//
-//					// Checking for first point
-//					if (next == null)
-//					{
-//						next = point;
-//					}
-//					else
-//					// draw between the two points
-//					{
-//						previous = next;
-//						next = point;
-//
-//						Point p1 = new Point();
-//						Point p2 = new Point();
-//
-//						// convert to pixels. This takes the most processing
-//						// time in this class.
-//						// Not much can really be done about it.
-//						projection.toPixels(previous, p1);
-//						projection.toPixels(next, p2);
-//
-//						// Create the path
-//						path.moveTo(p1.x, p1.y);
-//						path.lineTo(p2.x, p2.y);
-//					}
-//				}
-//
-//				// draw it
-//				canvas.drawPath(path, paint);
-//			}
-//		}
-//	}
 
 	/**
 	 * Handle the home button press on the action bar.
