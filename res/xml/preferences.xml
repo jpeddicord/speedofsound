@@ -32,7 +32,8 @@
 				android:summary="@string/low_volume_summary"
 				android:title="@string/low_volume"
 				cc:maxValue="100"
-				cc:minValue="0" />
+				cc:minValue="0"
+				cc:units="%" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/high_speed">
 		<net.codechunk.speedofsound.util.SliderPreference
@@ -48,7 +49,8 @@
 				android:summary="@string/fast_volume_summary"
 				android:title="@string/fast_volume"
 				cc:maxValue="100"
-				cc:minValue="0" />
+				cc:minValue="0"
+				cc:units="%" />
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/activation">
 		<CheckBoxPreference

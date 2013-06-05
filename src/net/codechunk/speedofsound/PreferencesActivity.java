@@ -21,7 +21,7 @@ import net.codechunk.speedofsound.util.AppPreferences;
 /**
  * Speed and volume preferences screen.
  */
-public class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
+public class PreferencesActivity extends PreferenceActivity {
 	/**
 	 * Logging tag.
 	 */
@@ -51,23 +51,7 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 
 		// register change listener
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		prefs.registerOnSharedPreferenceChangeListener(this);
-	}
-
-	/**
-	 * Convert stored preferences when the speed units change.
-	 */
-	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-		Log.v(TAG, "Preferences " + key);
-
-		if (key.equals("low_speed_localized") || key.equals("high_speed_localized")) {
-			// update the internal native speeds
-			AppPreferences.updateNativeSpeeds(prefs);
-		} else if (key.equals("speed_units")) {
-			// convert localized speeds from their internal values on unit change
-			AppPreferences.updateLocalizedSpeeds(prefs);
-		}
-
+		prefs.registerOnSharedPreferenceChangeListener(new AppPreferences());
 	}
 
 	@Override

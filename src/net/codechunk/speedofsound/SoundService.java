@@ -70,9 +70,9 @@ public class SoundService extends Service {
 		Log.d(TAG, "Service starting up");
 
 		// set up preferences
-		AppPreferences.setDefaults(this);
-		AppPreferences.runUpgrade(this);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
+		AppPreferences.runUpgrade(this);
 		AppPreferences.updateNativeSpeeds(this.settings);
 
 		// register handlers & audio

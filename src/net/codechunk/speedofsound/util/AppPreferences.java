@@ -7,34 +7,22 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import net.codechunk.speedofsound.R;
-
-public class AppPreferences {
+public class AppPreferences implements SharedPreferences.OnSharedPreferenceChangeListener {
 	private static final String TAG = "AppPreferences";
 
 	/**
-	 * Set defaults for preferences if not already stored. Needed to supplement
-	 * missing functionality in setDefaultValues: it doesn't properly handle
-	 * custom preferences.
-	 *
-	 * @param context Application context
+	 * Convert stored preferences when the speed units change.
 	 */
-	public static void setDefaults(Context context) {
-		PreferenceManager.setDefaultValues(context, R.xml.preferences, false);
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		SharedPreferences.Editor editor = prefs.edit();
+	public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+		Log.v(TAG, "Preferences " + key);
 
-		// if you change these, be sure to update the defaults in preferences.xml
-		if (!prefs.contains("low_speed_localized"))
-			editor.putInt("low_speed_localized", 10);
-		if (!prefs.contains("low_volume"))
-			editor.putInt("low_volume", 60);
-		if (!prefs.contains("high_speed_localized"))
-			editor.putInt("high_speed_localized", 25);
-		if (!prefs.contains("high_volume"))
-			editor.putInt("high_volume", 90);
-
-		editor.commit();
+		if (key.equals("low_speed_localized") || key.equals("high_speed_localized")) {
+			// update the internal native speeds
+			AppPreferences.updateNativeSpeeds(prefs);
+		} else if (key.equals("speed_units")) {
+			// convert localized speeds from their internal values on unit change
+			AppPreferences.updateLocalizedSpeeds(prefs);
+		}
 	}
 
 	/**
