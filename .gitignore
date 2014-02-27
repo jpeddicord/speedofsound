@@ -2,8 +2,9 @@
 build/
 gen/
 .gradle/
+local.properties
 
-# IntelliJ IDEA
+# IntelliJ
 *.iml
 .idea/
 !.idea/codeStyleSettings.xml

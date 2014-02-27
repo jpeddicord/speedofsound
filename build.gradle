@@ -3,21 +3,21 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'com.android.tools.build:gradle:0.4.2'
+		classpath 'com.android.tools.build:gradle:0.8.+'
 	}
 }
 apply plugin: 'android'
 
 dependencies {
-	compile 'com.android.support:support-v4:13.0.0'
+	compile 'com.android.support:support-v4:18.0.0'
 	compile 'com.google.android.gms:play-services:3.1.36'
 }
 
 
 
 android {
-	compileSdkVersion 17
-	buildToolsVersion "17.0.0"
+	compileSdkVersion 19
+	buildToolsVersion "19.0.2"
 
 	sourceSets {
 		main {
@@ -31,6 +31,10 @@ android {
 		}
 
 		instrumentTest.setRoot('tests')
+	}
+
+	lintOptions {
+		abortOnError false
 	}
 
 	signingConfigs {
