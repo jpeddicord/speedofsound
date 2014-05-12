@@ -2,12 +2,14 @@ package net.codechunk.speedofsound;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -34,7 +36,7 @@ import java.util.Map;
  * Draws a path based on the points in the database. Paths are colored based on
  * the song that was being listened to at that point.
  */
-public class MapperActivity extends FragmentActivity {
+public class MapperActivity extends ActionBarActivity {
 	private static final String TAG = "DrawMapActivity";
 	private static final float ZOOM_LEVEL = 16.0f;
 	private static final int LINE_WIDTH = 8;

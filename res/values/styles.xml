@@ -1,8 +1,6 @@
 <resources>
 
-	<style name="AppBaseTheme" parent="android:Theme" />
-
-	<style name="AppTheme" parent="AppBaseTheme" />
+	<style name="AppTheme" parent="Theme.AppCompat" />
 
 	<style name="FallbackDialog" parent="@android:style/Theme.Dialog" />
 
