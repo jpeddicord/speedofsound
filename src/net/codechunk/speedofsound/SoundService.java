@@ -264,10 +264,13 @@ public class SoundService extends Service {
 		 * volume, send out a broadcast notifying of the changes.
 		 */
 		public void onLocationChanged(Location location) {
-			// grab the speed
-			float speed;
+			// some stupid phones occasionally send a null location.
+			// who does that, seriously.
+			if (location == null)
+				return;
 
 			// use the GPS-provided speed if available
+			float speed;
 			if (location.hasSpeed()) {
 				speed = location.getSpeed();
 			} else {
