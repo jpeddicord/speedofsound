@@ -7,7 +7,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -20,7 +19,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AboutActivity extends ActionBarActivity {
+public class AboutActivity extends Activity {
 	public static final String TAG = "AboutActivity";
 
 	@Override
