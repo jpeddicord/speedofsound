@@ -26,7 +26,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -37,7 +36,7 @@ import net.codechunk.speedofsound.util.SpeedConversions;
  * Main status activity. Displays the current speed and set volume. Does not
  * actually track the volume itself; that is handled in SoundService.
  */
-public class SpeedActivity extends ActionBarActivity implements OnCheckedChangeListener {
+public class SpeedActivity extends ActionBarActivity implements View.OnClickListener {
 	/**
 	 * Logging tag.
 	 */
@@ -85,7 +84,7 @@ public class SpeedActivity extends ActionBarActivity implements OnCheckedChangeL
 		// hook up the checkbox
 		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
 		this.enabledCheckBox = (CheckBox) findViewById(R.id.checkbox_enabled);
-		this.enabledCheckBox.setOnCheckedChangeListener(this);
+		this.enabledCheckBox.setOnClickListener(this);
 
 		// show disclaimer and/or GPS nag
 		this.startupMessages();
@@ -223,7 +222,9 @@ public class SpeedActivity extends ActionBarActivity implements OnCheckedChangeL
 	/**
 	 * Start or stop tracking in the service on checked/unchecked.
 	 */
-	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+	@Override
+	public void onClick(View view) {
+		boolean isChecked = ((CheckBox) view).isChecked();
 		Log.d(TAG, "Checkbox changed to " + isChecked);
 
 		// uh-oh
@@ -281,14 +282,14 @@ public class SpeedActivity extends ActionBarActivity implements OnCheckedChangeL
 			String action = intent.getAction();
 			Log.v(TAG, "Received broadcast " + action);
 
-			if (action.equals(SoundService.TRACKING_STATE_BROADCAST)) {
+			if (SoundService.TRACKING_STATE_BROADCAST.equals(action)) {
 				boolean state = intent.getBooleanExtra("tracking", false);
 				SpeedActivity.this.enabledCheckBox.setChecked(state);
 				SpeedActivity.this.updateStatusState(state);
 			}
 
 			// new location data
-			else if (action.equals(SoundService.LOCATION_UPDATE_BROADCAST)) {
+			else if (SoundService.LOCATION_UPDATE_BROADCAST.equals(action)) {
 				// unpack the speed/volume
 				float speed = intent.getFloatExtra("speed", -1.0f);
 				int volume = intent.getIntExtra("volume", -1);
