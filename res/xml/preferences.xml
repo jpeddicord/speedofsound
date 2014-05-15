@@ -55,6 +55,11 @@
 	<PreferenceCategory android:title="@string/activation">
 		<CheckBoxPreference
 				android:defaultValue="false"
+				android:key="enable_on_launch"
+				android:summary="@string/start_automatically_summary"
+				android:title="@string/start_automatically" />
+		<CheckBoxPreference
+				android:defaultValue="false"
 				android:key="enable_only_charging"
 				android:summary="@string/enable_only_charging_summary"
 				android:title="@string/only_when_charging" />

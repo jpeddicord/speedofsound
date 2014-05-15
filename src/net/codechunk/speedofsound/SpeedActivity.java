@@ -328,7 +328,7 @@ public class SpeedActivity extends ActionBarActivity implements View.OnClickList
 	 */
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 		/**
-		 * Update the UI "Enabled" checkbox based on the tracking state.
+		 * Trigger service and UI actions once we have a connection.
 		 */
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			Log.v(TAG, "ServiceConnection connected");
@@ -340,6 +340,11 @@ public class SpeedActivity extends ActionBarActivity implements View.OnClickList
 			// update the enabled check box
 			SpeedActivity.this.enabledCheckBox.setChecked(SpeedActivity.this.service.tracking);
 			SpeedActivity.this.updateStatusState(SpeedActivity.this.service.tracking);
+
+			// start tracking if preference set
+			if (SpeedActivity.this.settings.getBoolean("enable_on_launch", false)) {
+				SpeedActivity.this.service.startTracking();
+			}
 		}
 
 		/**

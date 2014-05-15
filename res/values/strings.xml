@@ -29,6 +29,8 @@
 	<string name="speed_units">Speed Units</string>
 	<string name="speed_units_summary">Choose the speed units you want to use</string>
 	<string name="activation">Activation</string>
+	<string name="start_automatically">Start Automatically</string>
+	<string name="start_automatically_summary">Start tracking when I open the app</string>
 	<string name="only_when_charging">Only when Charging</string>
 	<string name="enable_only_charging_summary">Only automatically track when charging</string>
 	<string name="enable_on_headphones">Enable on Headphones</string>
