@@ -3,22 +3,22 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'com.android.tools.build:gradle:0.9.+'
+		classpath 'com.android.tools.build:gradle:0.12.2'
 	}
 }
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 dependencies {
-	compile 'com.android.support:support-v4:19.1.+'
-	compile 'com.android.support:appcompat-v7:19.1.+'
-	compile 'com.google.android.gms:play-services:4.3.+'
+	compile 'com.android.support:support-v4:20.0.0'
+	compile 'com.android.support:appcompat-v7:20.0.0'
+	compile 'com.google.android.gms:play-services:6.1.11'
 }
 
 
 
 android {
 	compileSdkVersion 19
-	buildToolsVersion "19.0.3"
+	buildToolsVersion '20.0.0'
 
 	sourceSets {
 		main {
@@ -46,7 +46,9 @@ android {
 		release {
 			signingConfig signingConfigs.release
 			runProguard true
-			proguardFile 'proguard.txt'
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.txt'
+			// https://android-review.googlesource.com/#/c/109101
+			// shrinkResources true
 		}
 	}
 }

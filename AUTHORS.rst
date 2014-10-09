@@ -29,6 +29,6 @@ https://www.transifex.com/projects/p/speedofsound/
 
   * `Arthur <https://www.transifex.com/accounts/profile/Deputy/>`_
 
-* Portugese/Brazil (pt_BR)
+* Portuguese/Brazil (pt_BR)
 
   * `Rafael Ferreira <https://www.transifex.com/accounts/profile/rafaelff1/>`_
