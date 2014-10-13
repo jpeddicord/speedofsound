@@ -46,7 +46,7 @@ android {
 		release {
 			signingConfig signingConfigs.release
 			runProguard true
-			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard.txt'
+			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-googleplay.txt', 'proguard.txt'
 			// https://android-review.googlesource.com/#/c/109101
 			// shrinkResources true
 		}
