@@ -1,5 +1,6 @@
-package net.codechunk.speedofsound;
+package net.codechunk.speedofsound.service;
 
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -19,6 +20,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import net.codechunk.speedofsound.R;
+import net.codechunk.speedofsound.SongTracker;
+import net.codechunk.speedofsound.SpeedActivity;
 import net.codechunk.speedofsound.util.AppPreferences;
 import net.codechunk.speedofsound.util.AverageSpeed;
 
@@ -47,19 +51,17 @@ public class SoundService extends Service {
 	public static final String LOCATION_UPDATE_BROADCAST = "location-update";
 
 	/**
-	 * The current tracking state. XXX: this should probably not be a public
-	 * field
+	 * The current tracking state. FIXME: this should probably not be a public field
 	 */
 	public boolean tracking = false;
 
-	private SharedPreferences settings;
 	private LocalBroadcastManager localBroadcastManager;
 	private SoundServiceManager soundServiceManager = new SoundServiceManager();
 
 	private VolumeThread volumeThread = null;
 	private LocationManager locationManager;
-	private AverageSpeed averager = new AverageSpeed(6);
 	private LocalBinder binder = new LocalBinder();
+	private VolumeConversion volumeConversion;
 	private SongTracker songTracker;
 
 	/**
@@ -71,13 +73,15 @@ public class SoundService extends Service {
 
 		// set up preferences
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		AppPreferences.runUpgrade(this);
-		AppPreferences.updateNativeSpeeds(this.settings);
+		// TODO: try to get rid of this
+		AppPreferences.updateNativeSpeeds(settings);
 
 		// register handlers & audio
 		this.localBroadcastManager = LocalBroadcastManager.getInstance(this);
 		this.locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		this.volumeConversion = new VolumeConversion(this);
 		this.songTracker = SongTracker.getInstance(this);
 
 		// activation broadcasts
@@ -149,6 +153,22 @@ public class SoundService extends Service {
 			this.volumeThread.start();
 		}
 
+		// show the notification
+		startForeground(R.string.notification_text, getNotification());
+
+		// let everyone know
+		Intent intent = new Intent(SoundService.TRACKING_STATE_BROADCAST);
+		intent.putExtra("tracking", true);
+		SoundService.this.localBroadcastManager.sendBroadcast(intent);
+
+		this.tracking = true;
+		Log.d(TAG, "Tracking started with location provider " + provider);
+	}
+
+	/**
+	 * Build a fancy-pants notification.
+	 */
+	private Notification getNotification() {
 		// force foreground with an ongoing notification
 		Intent notificationIntent = new Intent(this, SpeedActivity.class);
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
@@ -164,17 +184,7 @@ public class SoundService extends Service {
 		stopIntent.putExtra(SoundService.SET_TRACKING_STATE, false);
 		builder.addAction(R.drawable.ic_stop, getString(R.string.stop),
 				PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_ONE_SHOT));
-
-		// show the notification
-		startForeground(R.string.notification_text, builder.build());
-
-		// let everyone know
-		Intent intent = new Intent(SoundService.TRACKING_STATE_BROADCAST);
-		intent.putExtra("tracking", true);
-		SoundService.this.localBroadcastManager.sendBroadcast(intent);
-
-		this.tracking = true;
-		Log.d(TAG, "Tracking started with location provider " + provider);
+		return builder.build();
 	}
 
 	/**
@@ -208,46 +218,6 @@ public class SoundService extends Service {
 
 		this.tracking = false;
 		Log.d(TAG, "Tracking stopped");
-	}
-
-	/**
-	 * Update the system volume based on the given speed. Reads preferences
-	 * on-the-fly for low and high speeds and volumes. If below the minimum
-	 * speed, uses the minimum volume. If above the maximum speed, uses the max
-	 * volume. If somewhere in between, use a log scaling function to smoothly
-	 * scale the volume.
-	 *
-	 * @param speed Reference speed to base volume on
-	 * @return Set volume (0-100).
-	 */
-	private int updateVolume(float speed) {
-		float volume;
-
-		float lowSpeed = this.settings.getFloat("low_speed", 0);
-		int lowVolume = this.settings.getInt("low_volume", 0);
-		float highSpeed = this.settings.getFloat("high_speed", 100);
-		int highVolume = this.settings.getInt("high_volume", 100);
-
-		if (speed < lowSpeed) {
-			// minimum volume
-			Log.d(TAG, "Low speed triggered at " + speed);
-			volume = lowVolume / 100f;
-		} else if (speed > highSpeed) {
-			// high volume
-			Log.d(TAG, "High speed triggered at " + speed);
-			volume = highVolume / 100f;
-		} else {
-			// log scaling
-			float volumeRange = (highVolume - lowVolume) / 100f;
-			float speedRangeFrac = (speed - lowSpeed) / (highSpeed - lowSpeed);
-			float volumeRangeFrac = (float) (Math.log1p(speedRangeFrac) / Math.log1p(1));
-			volume = lowVolume / 100f + volumeRange * volumeRangeFrac;
-			Log.d(TAG, "Log scale triggered with " + speed + ", using volume " + volume);
-		}
-
-		// apply the volume
-		this.volumeThread.setTargetVolume(volume);
-		return (int) (volume * 100);
 	}
 
 	/**
@@ -291,20 +261,14 @@ public class SoundService extends Service {
 				this.previousLocation = location;
 			}
 
-			// push average to filter out spikes
-			Log.v(TAG, "Pushing speed " + speed);
-			SoundService.this.averager.push(speed);
-
-			// update the speed
-			float avg = SoundService.this.averager.getAverage();
-			Log.v(TAG, "Average currently " + avg);
-			int volume = SoundService.this.updateVolume(avg);
+			float volume = SoundService.this.volumeConversion.speedToVolume(speed);
+			SoundService.this.volumeThread.setTargetVolume(volume);
 
 			// send out a local broadcast with the details
 			Intent intent = new Intent(SoundService.LOCATION_UPDATE_BROADCAST);
 			intent.putExtra("location", location);
 			intent.putExtra("speed", speed);
-			intent.putExtra("volume", volume);
+			intent.putExtra("volumePercent", (int) (volume * 100));
 			SoundService.this.localBroadcastManager.sendBroadcast(intent);
 		}
 

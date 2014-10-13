@@ -62,12 +62,12 @@
 		</activity>
 
 		<service
-				android:name="net.codechunk.speedofsound.SoundService"
+				android:name="net.codechunk.speedofsound.service.SoundService"
 				android:label="SpeedTrackingService">
 		</service>
 
 		<receiver
-				android:name="net.codechunk.speedofsound.SoundServiceManager"
+				android:name="net.codechunk.speedofsound.service.SoundServiceManager"
 				android:enabled="true"
 				android:exported="true">
 			<intent-filter>

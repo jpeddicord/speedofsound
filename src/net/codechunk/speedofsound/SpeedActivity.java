@@ -1,6 +1,5 @@
 package net.codechunk.speedofsound;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -25,11 +24,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+import net.codechunk.speedofsound.service.SoundService;
 import net.codechunk.speedofsound.util.SpeedConversions;
 
 /**
@@ -292,7 +291,7 @@ public class SpeedActivity extends ActionBarActivity implements View.OnClickList
 			else if (SoundService.LOCATION_UPDATE_BROADCAST.equals(action)) {
 				// unpack the speed/volume
 				float speed = intent.getFloatExtra("speed", -1.0f);
-				int volume = intent.getIntExtra("volume", -1);
+				int volume = intent.getIntExtra("volumePercent", -1);
 
 				// convert the speed to the appropriate units
 				String units = SpeedActivity.this.settings.getString("speed_units", "");

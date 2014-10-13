@@ -12,3 +12,4 @@ TODO: Ensure that auto-activation starts only on app start, not activity start.
 TODO: Remove useless info when searching for GPS.
       SpeedActivity should only show the checkbox, a loading spinner, and a GPS message.
 TODO: Unit tests, all around. All around.
+TODO: Switch to Material theme, where available.

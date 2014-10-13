@@ -60,7 +60,7 @@ public class AppPreferences implements SharedPreferences.OnSharedPreferenceChang
 		// mark the currently-installed version
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putInt("app_version_code", versionCode);
-		editor.commit();
+		editor.apply();
 	}
 
 	/**
@@ -105,7 +105,7 @@ public class AppPreferences implements SharedPreferences.OnSharedPreferenceChang
 		int high_speed_localized = prefs.getInt("high_speed_localized", 0);
 		editor.putFloat("low_speed", SpeedConversions.nativeSpeed(units, low_speed_localized));
 		editor.putFloat("high_speed", SpeedConversions.nativeSpeed(units, high_speed_localized));
-		editor.commit();
+		editor.apply();
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class AppPreferences implements SharedPreferences.OnSharedPreferenceChang
 		float high_speed = prefs.getFloat("high_speed", 0);
 		editor.putInt("low_speed_localized", (int) SpeedConversions.localizedSpeed(units, low_speed));
 		editor.putInt("high_speed_localized", (int) SpeedConversions.localizedSpeed(units, high_speed));
-		editor.commit();
+		editor.apply();
 	}
 
 }

@@ -1,4 +1,4 @@
-package net.codechunk.speedofsound;
+package net.codechunk.speedofsound.service;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

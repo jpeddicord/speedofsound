@@ -13,6 +13,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import net.codechunk.speedofsound.players.BasePlayer;
+import net.codechunk.speedofsound.service.SoundService;
 import net.codechunk.speedofsound.util.SongInfo;
 
 import java.text.DateFormat;

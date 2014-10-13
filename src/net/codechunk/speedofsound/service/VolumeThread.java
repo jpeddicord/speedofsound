@@ -1,4 +1,4 @@
-package net.codechunk.speedofsound;
+package net.codechunk.speedofsound.service;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -40,9 +40,9 @@ public class VolumeThread extends Thread {
 	private final int maxVolume;
 
 	/**
-	 * The volume percentage we want to approach. Between 0 and 1.
+	 * The volume we want to approach. Between 0 and 1.
 	 */
-	private float targetVolumePercent;
+	private float targetVolume;
 
 	/**
 	 * Start up the thread and set the thread name.
@@ -60,14 +60,14 @@ public class VolumeThread extends Thread {
 	/**
 	 * Set a new target volume.
 	 *
-	 * @param volumePercent New target volume percentage from 0 to 1
+	 * @param volume New target volume from 0 to 1
 	 */
-	public void setTargetVolume(float volumePercent) {
+	public void setTargetVolume(float volume) {
 		// only set & wake if the target has actually changed
-		if (volumePercent != this.targetVolumePercent) {
-			Log.v(TAG, "Setting target volume to " + volumePercent);
+		if (volume != this.targetVolume) {
+			Log.v(TAG, "Setting target volume to " + volume);
 			synchronized (this.lock) {
-				this.targetVolumePercent = volumePercent;
+				this.targetVolume = volume;
 			}
 
 			// wake the thread up
@@ -84,10 +84,10 @@ public class VolumeThread extends Thread {
 		Log.d(TAG, "Thread starting");
 
 		// get the current system volume
-		int currentVolume = this.audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-		float currentVolumePercent = currentVolume / (float) this.maxVolume;
-		this.setTargetVolume(currentVolumePercent);
-		Log.d(TAG, "Current volume is " + currentVolumePercent);
+		int systemVolume = this.audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+		float currentVolume = systemVolume / (float) this.maxVolume;
+		this.setTargetVolume(currentVolume);
+		Log.d(TAG, "Current volume is " + currentVolume);
 
 		while (!this.isInterrupted()) {
 			// sleep for a while
@@ -98,13 +98,13 @@ public class VolumeThread extends Thread {
 			}
 
 			// safely grab the target volume
-			float targetVolumePercent;
+			float targetVolume;
 			synchronized (this.lock) {
-				targetVolumePercent = this.targetVolumePercent;
+				targetVolume = this.targetVolume;
 			}
 
 			// if the volume is matched, just sleep
-			if (currentVolumePercent == targetVolumePercent) {
+			if (currentVolume == targetVolume) {
 				Log.v(TAG, "Thread sleeping");
 				synchronized (this.signal) {
 					try {
@@ -117,19 +117,19 @@ public class VolumeThread extends Thread {
 
 				// get the updated volume
 				synchronized (this.lock) {
-					targetVolumePercent = this.targetVolumePercent;
+					targetVolume = this.targetVolume;
 				}
 			}
 
 			// if the target is close enough, just use it
-			float newVolumePercent;
-			if (Math.abs(currentVolumePercent - targetVolumePercent) < VolumeThread.VOLUME_THRESHOLD) {
-				newVolumePercent = targetVolumePercent;
+			float newVolume;
+			if (Math.abs(currentVolume - targetVolume) < VolumeThread.VOLUME_THRESHOLD) {
+				newVolume = targetVolume;
 			}
 
 			// otherwise, gently approach the target
 			else {
-				float approach = (targetVolumePercent - currentVolumePercent) * VolumeThread.APPROACH_RATE;
+				float approach = (targetVolume - currentVolume) * VolumeThread.APPROACH_RATE;
 
 				// don't approach more quickly than the max
 				if (Math.abs(approach) > VolumeThread.MAX_APPROACH) {
@@ -142,15 +142,15 @@ public class VolumeThread extends Thread {
 					}
 				}
 
-				newVolumePercent = currentVolumePercent + approach;
+				newVolume = currentVolume + approach;
 			}
 
 			// set the volume
-			int newVolume = (int) (this.maxVolume * newVolumePercent);
-			this.audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0);
-			currentVolumePercent = newVolumePercent;
+			int newSystemVolume = (int) (this.maxVolume * newVolume);
+			this.audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newSystemVolume, 0);
+			currentVolume = newVolume;
 
-			Log.v(TAG, "New volume is " + newVolumePercent + " translated to " + newVolume);
+			Log.v(TAG, "New volume is " + newVolume + " translated to " + newSystemVolume);
 		}
 
 		Log.d(TAG, "Thread exiting");
