@@ -28,6 +28,8 @@
 	<string name="speed_units">Unidades de velocidade</string>
 	<string name="speed_units_summary">Escolha as unidades de velocidade que você quer usar</string>
 	<string name="activation">Ativação</string>
+	<string name="start_automatically">Começar automaticamente</string>
+	<string name="start_automatically_summary">Começa o rastreamento ao abrir o aplicativo</string>
 	<string name="only_when_charging">Somente enquanto recarrega</string>
 	<string name="enable_only_charging_summary">Só rastrear automaticamente enquanto recarrega</string>
 	<string name="enable_on_headphones">Habilitar com fones-de-ouvido</string>
