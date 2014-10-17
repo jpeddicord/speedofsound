@@ -2,7 +2,6 @@ This is a list of smaller tasks to accomplish in this project.
 Interested contributors may want to start here.
 
 TODO: Get rid of deprecated dialogs in SpeedActivity and create DialogFragment classes.
-TODO: Move volume calculations out of SoundService.
 TODO: Enable multiple routes for MapperActivity. Needs a dropdown in the action bar.
 TODO: Add in a Tasker intent.
 TODO: Clean up SpeedConversions; use enums w/ conversion factors instead of strings

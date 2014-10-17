@@ -58,6 +58,7 @@ public class SoundService extends Service {
 	private LocalBroadcastManager localBroadcastManager;
 	private SoundServiceManager soundServiceManager = new SoundServiceManager();
 
+	private SharedPreferences settings;
 	private VolumeThread volumeThread = null;
 	private LocationManager locationManager;
 	private LocalBinder binder = new LocalBinder();
@@ -73,7 +74,7 @@ public class SoundService extends Service {
 
 		// set up preferences
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
 		AppPreferences.runUpgrade(this);
 		// TODO: try to get rid of this
 		AppPreferences.updateNativeSpeeds(settings);
@@ -81,7 +82,8 @@ public class SoundService extends Service {
 		// register handlers & audio
 		this.localBroadcastManager = LocalBroadcastManager.getInstance(this);
 		this.locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-		this.volumeConversion = new VolumeConversion(this);
+		this.volumeConversion = new VolumeConversion();
+		this.volumeConversion.onSharedPreferenceChanged(this.settings, null); // set initial
 		this.songTracker = SongTracker.getInstance(this);
 
 		// activation broadcasts
@@ -97,6 +99,9 @@ public class SoundService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(TAG, "Start command received");
+
+		// register pref watching
+		this.settings.registerOnSharedPreferenceChangeListener(this.volumeConversion);
 
 		// check if we've been commanded to start or stop tracking
 		if (intent != null) {
@@ -115,11 +120,13 @@ public class SoundService extends Service {
 	}
 
 	/**
-	 * Service shut-down log.
+	 * Service shut-down.
 	 */
 	@Override
 	public void onDestroy() {
 		Log.d(TAG, "Service shutting down");
+
+		this.settings.unregisterOnSharedPreferenceChangeListener(this.volumeConversion);
 	}
 
 	/**

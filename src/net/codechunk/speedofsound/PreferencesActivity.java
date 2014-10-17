@@ -35,6 +35,7 @@ public class PreferencesActivity extends PreferenceActivity {
 		super.onCreate(savedInstanceState);
 
 		// activate the up functionality on the action bar
+		// TODO: might not need to guard this w/ new support library
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			ActionBar ab = this.getActionBar();
 			if (ab != null) {
@@ -49,6 +50,7 @@ public class PreferencesActivity extends PreferenceActivity {
 
 		// register change listener
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		// FIXME: move to onResume/onPause, and keep a copy of the instance
 		prefs.registerOnSharedPreferenceChangeListener(new AppPreferences());
 	}
 

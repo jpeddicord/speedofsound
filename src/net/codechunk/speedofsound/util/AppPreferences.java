@@ -10,6 +10,8 @@ import android.util.Log;
 public class AppPreferences implements SharedPreferences.OnSharedPreferenceChangeListener {
 	private static final String TAG = "AppPreferences";
 
+	// TODO: some constants for preference keys
+
 	/**
 	 * Convert stored preferences when the speed units change.
 	 */

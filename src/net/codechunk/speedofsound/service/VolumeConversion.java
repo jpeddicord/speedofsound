@@ -7,15 +7,14 @@ import android.util.Log;
 
 import net.codechunk.speedofsound.util.AverageSpeed;
 
-public class VolumeConversion {
+public class VolumeConversion implements SharedPreferences.OnSharedPreferenceChangeListener {
 	private static final String TAG = "VolumeConversion";
 
 	private final AverageSpeed averager = new AverageSpeed(6);
-	private final SharedPreferences settings;
-
-	public VolumeConversion(Context context) {
-		this.settings = PreferenceManager.getDefaultSharedPreferences(context);
-	}
+	private float lowSpeed;
+	private float highSpeed;
+	private int lowVolume;
+	private int highVolume;
 
 	/**
 	 * Convert a speed instant to a desired volume. Stateful;
@@ -29,29 +28,32 @@ public class VolumeConversion {
 		float averageSpeed = this.averager.getAverage();
 		Log.v(TAG, "Average currently " + averageSpeed);
 
-		// TODO: only read these on preference change notification
-		float lowSpeed = this.settings.getFloat("low_speed", 0);
-		int lowVolume = this.settings.getInt("low_volume", 0);
-		float highSpeed = this.settings.getFloat("high_speed", 100);
-		int highVolume = this.settings.getInt("high_volume", 100);
-
-		if (averageSpeed < lowSpeed) {
+		if (averageSpeed < this.lowSpeed) {
 			// minimum volume
 			Log.d(TAG, "Low averageSpeed triggered at " + averageSpeed);
-			volume = lowVolume / 100f;
-		} else if (averageSpeed > highSpeed) {
+			volume = this.lowVolume / 100f;
+		} else if (averageSpeed > this.highSpeed) {
 			// high volume
 			Log.d(TAG, "High averageSpeed triggered at " + averageSpeed);
-			volume = highVolume / 100f;
+			volume = this.highVolume / 100f;
 		} else {
 			// log scaling
-			float volumeRange = (highVolume - lowVolume) / 100f;
-			float speedRangeFrac = (averageSpeed - lowSpeed) / (highSpeed - lowSpeed);
+			float volumeRange = (this.highVolume - this.lowVolume) / 100f;
+			float speedRangeFrac = (averageSpeed - this.lowSpeed) / (this.highSpeed - this.lowSpeed);
 			float volumeRangeFrac = (float) (Math.log1p(speedRangeFrac) / Math.log1p(1));
-			volume = lowVolume / 100f + volumeRange * volumeRangeFrac;
+			volume = this.lowVolume / 100f + volumeRange * volumeRangeFrac;
 			Log.d(TAG, "Log scale triggered with " + averageSpeed + ", using volume " + volume);
 		}
 
 		return volume;
 	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences prefs, String s) {
+		this.lowSpeed = prefs.getFloat("low_speed", 0);
+		this.lowVolume = prefs.getInt("low_volume", 0);
+		this.highSpeed = prefs.getFloat("high_speed", 100);
+		this.highVolume = prefs.getInt("high_volume", 100);
+	}
+
 }
