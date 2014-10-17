@@ -51,9 +51,9 @@ public class SoundService extends Service {
 	public static final String LOCATION_UPDATE_BROADCAST = "location-update";
 
 	/**
-	 * The current tracking state. FIXME: this should probably not be a public field
+	 * The current tracking state.
 	 */
-	public boolean tracking = false;
+	private boolean tracking = false;
 
 	private LocalBroadcastManager localBroadcastManager;
 	private SoundServiceManager soundServiceManager = new SoundServiceManager();
@@ -76,7 +76,6 @@ public class SoundService extends Service {
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
 		AppPreferences.runUpgrade(this);
-		// TODO: try to get rid of this
 		AppPreferences.updateNativeSpeeds(settings);
 
 		// register handlers & audio
@@ -127,6 +126,10 @@ public class SoundService extends Service {
 		Log.d(TAG, "Service shutting down");
 
 		this.settings.unregisterOnSharedPreferenceChangeListener(this.volumeConversion);
+	}
+
+	public boolean isTracking() {
+		return this.tracking;
 	}
 
 	/**

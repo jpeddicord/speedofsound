@@ -337,8 +337,8 @@ public class SpeedActivity extends ActionBarActivity implements View.OnClickList
 			SpeedActivity.this.bound = true;
 
 			// update the enabled check box
-			SpeedActivity.this.enabledCheckBox.setChecked(SpeedActivity.this.service.tracking);
-			SpeedActivity.this.updateStatusState(SpeedActivity.this.service.tracking);
+			SpeedActivity.this.enabledCheckBox.setChecked(SpeedActivity.this.service.isTracking());
+			SpeedActivity.this.updateStatusState(SpeedActivity.this.service.isTracking());
 
 			// start tracking if preference set
 			if (SpeedActivity.this.settings.getBoolean("enable_on_launch", false)) {
