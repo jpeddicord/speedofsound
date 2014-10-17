@@ -36,10 +36,13 @@ import net.codechunk.speedofsound.util.SpeedConversions;
  * actually track the volume itself; that is handled in SoundService.
  */
 public class SpeedActivity extends ActionBarActivity implements View.OnClickListener {
-	/**
-	 * Logging tag.
-	 */
 	private static final String TAG = "SpeedActivity";
+
+	private enum UIState {
+		INACTIVE, ACTIVE, TRACKING
+	}
+
+	private UIState uiState;
 
 	/**
 	 * Disclaimer dialog unique ID.
@@ -84,6 +87,7 @@ public class SpeedActivity extends ActionBarActivity implements View.OnClickList
 		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
 		this.enabledCheckBox = (CheckBox) findViewById(R.id.checkbox_enabled);
 		this.enabledCheckBox.setOnClickListener(this);
+		this.uiState = UIState.INACTIVE;
 
 		// show disclaimer and/or GPS nag
 		this.startupMessages();
@@ -237,7 +241,7 @@ public class SpeedActivity extends ActionBarActivity implements View.OnClickList
 			this.service.startTracking();
 
 			// update the UI
-			this.updateStatusState(true);
+			this.updateStatusState(UIState.ACTIVE);
 
 			// reset speed/volume to waiting state.
 			// we don't do this in updateStatusState as that would happen too
@@ -252,7 +256,7 @@ public class SpeedActivity extends ActionBarActivity implements View.OnClickList
 			this.service.stopTracking();
 
 			// update the UI
-			this.updateStatusState(false);
+			this.updateStatusState(UIState.INACTIVE);
 		}
 	}
 
@@ -261,12 +265,15 @@ public class SpeedActivity extends ActionBarActivity implements View.OnClickList
 	 *
 	 * @param tracking The current tracking state
 	 */
-	private void updateStatusState(boolean tracking) {
-		View statusDetails = findViewById(R.id.status_details);
-		statusDetails.setVisibility(tracking ? View.VISIBLE : View.GONE);
+	private void updateStatusState(UIState state) {
+		View trackingDetails = findViewById(R.id.tracking_details);
+		trackingDetails.setVisibility(state == UIState.TRACKING ? View.VISIBLE : View.GONE);
 
-		View disabledMessage = findViewById(R.id.disabled_message);
-		disabledMessage.setVisibility(tracking ? View.GONE : View.VISIBLE);
+		View waitingForGps = findViewById(R.id.waiting_for_gps);
+		waitingForGps.setVisibility(state == UIState.ACTIVE ? View.VISIBLE : View.GONE);
+
+		View inactiveIntro = findViewById(R.id.inactive_intro);
+		inactiveIntro.setVisibility(state == UIState.INACTIVE ? View.VISIBLE : View.GONE);
 	}
 
 	/**
@@ -282,9 +289,9 @@ public class SpeedActivity extends ActionBarActivity implements View.OnClickList
 			Log.v(TAG, "Received broadcast " + action);
 
 			if (SoundService.TRACKING_STATE_BROADCAST.equals(action)) {
-				boolean state = intent.getBooleanExtra("tracking", false);
-				SpeedActivity.this.enabledCheckBox.setChecked(state);
-				SpeedActivity.this.updateStatusState(state);
+				boolean tracking = intent.getBooleanExtra("tracking", false);
+				SpeedActivity.this.enabledCheckBox.setChecked(tracking);
+				SpeedActivity.this.updateStatusState(tracking ? UIState.ACTIVE : UIState.INACTIVE);
 			}
 
 			// new location data
@@ -296,6 +303,8 @@ public class SpeedActivity extends ActionBarActivity implements View.OnClickList
 				// convert the speed to the appropriate units
 				String units = SpeedActivity.this.settings.getString("speed_units", "");
 				float localizedSpeed = SpeedConversions.localizedSpeed(units, speed);
+
+				SpeedActivity.this.updateStatusState(UIState.TRACKING);
 
 				// display the speed
 				TextView speedView = (TextView) findViewById(R.id.speed_value);
@@ -338,7 +347,7 @@ public class SpeedActivity extends ActionBarActivity implements View.OnClickList
 
 			// update the enabled check box
 			SpeedActivity.this.enabledCheckBox.setChecked(SpeedActivity.this.service.isTracking());
-			SpeedActivity.this.updateStatusState(SpeedActivity.this.service.isTracking());
+			SpeedActivity.this.updateStatusState(SpeedActivity.this.service.isTracking() ? UIState.ACTIVE : UIState.INACTIVE);
 
 			// start tracking if preference set
 			if (SpeedActivity.this.settings.getBoolean("enable_on_launch", false)) {

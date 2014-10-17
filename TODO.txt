@@ -7,8 +7,5 @@ TODO: Add in a Tasker intent.
 TODO: Clean up SpeedConversions; use enums w/ conversion factors instead of strings
 TODO: Clean up VolumeThread; this logic can be tricky to follow
 TODO: Fix up binding code in SpeedActivity. Sometimes there's a race condition.
-TODO: Ensure that auto-activation starts only on app start, not activity start.
-TODO: Remove useless info when searching for GPS.
-      SpeedActivity should only show the checkbox, a loading spinner, and a GPS message.
 TODO: Unit tests, all around. All around.
 TODO: Switch to Material theme, where available.
