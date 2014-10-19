@@ -1,6 +1,10 @@
 <resources>
 
-	<style name="AppTheme" parent="Theme.AppCompat" />
+	<style name="AppTheme" parent="Theme.AppCompat">
+		<item name="colorPrimary">@color/material_red_500</item>
+		<item name="colorPrimaryDark">@color/material_red_700</item>
+		<item name="colorAccent">@color/material_orange_A400</item>
+	</style>
 
 	<style name="FallbackDialog" parent="@android:style/Theme.Dialog" />
 

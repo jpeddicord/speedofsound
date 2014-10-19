@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="material_red_100">#fff4c7c3</color>
+	<color name="material_red_300">#ffe67c73</color>
+	<color name="material_red_500">#ffdb4437</color>
+	<color name="material_red_700">#ffc53929</color>
+	<color name="material_red_A200">#ffff5252</color>
+	<color name="material_red_A400">#ffff1744</color>
+
+	<color name="material_orange_100">#ffffe0b2</color>
+	<color name="material_orange_300">#ffffb74d</color>
+	<color name="material_orange_500">#ffff9800</color>
+	<color name="material_orange_700">#fff57c00</color>
+	<color name="material_orange_A200">#ffffab40</color>
+	<color name="material_orange_A400">#ffff9100</color>
+</resources>

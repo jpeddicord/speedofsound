@@ -9,16 +9,16 @@ buildscript {
 apply plugin: 'com.android.application'
 
 dependencies {
-	compile 'com.android.support:support-v4:20.0.0'
-	compile 'com.android.support:appcompat-v7:20.0.0'
+	compile 'com.android.support:support-v4:21.0.0'
+	compile 'com.android.support:appcompat-v7:21.0.0'
 	compile 'com.google.android.gms:play-services:6.1.11'
 }
 
 
 
 android {
-	compileSdkVersion 19
-	buildToolsVersion '20.0.0'
+	compileSdkVersion 21
+	buildToolsVersion '21.0.1'
 
 	sourceSets {
 		main {
