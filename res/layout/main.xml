@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:orientation="vertical"
@@ -13,7 +14,7 @@
 			android:text="@string/enabled" />
 
 	<LinearLayout
-			android:id="@+id/status_details"
+			android:id="@+id/tracking_details"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:orientation="vertical">
@@ -46,8 +47,32 @@
 				android:textAppearance="?android:attr/textAppearanceLarge" />
 	</LinearLayout>
 
+	<LinearLayout
+			android:id="@+id/waiting_for_gps"
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_margin="20dp">
+
+		<ProgressBar
+				style="@android:style/Widget.ProgressBar.Inverse"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/progressBar"
+				android:indeterminate="true" />
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:text="@string/waiting"
+				android:id="@+id/textView"
+				android:layout_gravity="center_vertical"
+				android:layout_marginLeft="20dp" />
+	</LinearLayout>
+
 	<RelativeLayout
-			android:id="@+id/disabled_message"
+			android:id="@+id/inactive_intro"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content">
 
@@ -58,7 +83,8 @@
 				android:layout_alignParentLeft="true"
 				android:layout_alignParentTop="true"
 				android:layout_margin="8dp"
-				android:src="@drawable/ic_headphones" />
+				android:src="@drawable/ic_headphones"
+				tools:ignore="ContentDescription" />
 
 		<TextView
 				android:id="@+id/textView2"
@@ -77,7 +103,8 @@
 				android:layout_alignParentRight="true"
 				android:layout_below="@+id/textView2"
 				android:layout_margin="8dp"
-				android:src="@drawable/ic_logo_white" />
+				android:src="@drawable/ic_logo_white"
+				tools:ignore="ContentDescription" />
 
 		<TextView
 				android:id="@+id/textView3"
@@ -96,7 +123,8 @@
 				android:layout_alignParentLeft="true"
 				android:layout_below="@+id/textView3"
 				android:layout_margin="8dp"
-				android:src="@drawable/ic_play" />
+				android:src="@drawable/ic_play"
+				tools:ignore="ContentDescription" />
 
 		<TextView
 				android:id="@+id/textView1"
@@ -115,7 +143,8 @@
 				android:layout_alignParentRight="true"
 				android:layout_below="@+id/textView1"
 				android:layout_margin="8dp"
-				android:src="@drawable/ic_key" />
+				android:src="@drawable/ic_key"
+				tools:ignore="ContentDescription" />
 
 		<TextView
 				android:layout_width="230dp"

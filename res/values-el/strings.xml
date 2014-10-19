@@ -6,7 +6,7 @@
 	<string name="volume_header_low">Έτσι, έχει μειωθει η ενταση σας στο ελάχιστο:</string>
 	<string name="volume_header_high">Έτσι, η ενταση σας ορίζεται στο μέγιστο:</string>
 	<string name="enabled">Ενεργοποιηση του Speed of Sound</string>
-	<string name="waiting">(Αναμονή για σήμα GPS)</string>
+	<string name="waiting">Αναμονή για σήμα GPS</string>
 	<string name="notification_text">Αντιστοίχιση έντασης στην ταχύτητα σας</string>
 	<string name="ticker_text">Το Speed of Sound εκτελείται</string>
 	<string name="stop">Στοπ</string>

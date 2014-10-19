@@ -6,7 +6,7 @@
 	<string name="volume_header_low">Ses düzeyiniz en alçağa ayarlandı:</string>
 	<string name="volume_header_high">Ses düzeyiniz en yükseğe ayarlandı:</string>
 	<string name="enabled">Speed of Sound\'u Etkinleştir</string>
-	<string name="waiting">(GPS sinyali bekleniyor)</string>
+	<string name="waiting">GPS sinyali bekleniyor</string>
 	<string name="notification_text">Ses düzeyiniz hızınıza göre ayarlanıyor</string>
 	<string name="ticker_text">Speed of Sound çalışıyor</string>
 	<string name="stop">Dur</string>

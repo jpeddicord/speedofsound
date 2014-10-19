@@ -6,7 +6,7 @@
 	<string name="volume_header_low">Dus hebben we het volume op het minimum:</string>
 	<string name="volume_header_high">Dus hebben we het volume op het maximum:</string>
 	<string name="enabled">Activeer snelheid van het geluid</string>
-	<string name="waiting">(Wachten op GPS-signaal)</string>
+	<string name="waiting">Wachten op GPS-signaal</string>
 	<string name="notification_text">De volume aan het aanpassen naar uw snelheid</string>
 	<string name="ticker_text">Snelheid van het geluid is actief</string>
 	<string name="warning">Waarschuwing</string>

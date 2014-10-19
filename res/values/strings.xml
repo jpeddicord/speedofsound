@@ -7,7 +7,7 @@
 	<string name="volume_header_low">So we have your volume at the minimum:</string>
 	<string name="volume_header_high">So we have your volume set to the maximum:</string>
 	<string name="enabled">Enable Speed of Sound</string>
-	<string name="waiting">(Waiting for GPS signal)</string>
+	<string name="waiting">Waiting for GPS signal</string>
 	<string name="notification_text">Matching your volume to your speed</string>
 	<string name="ticker_text">Speed of Sound is running</string>
 	<string name="stop">Stop</string>

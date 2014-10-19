@@ -6,7 +6,7 @@
 	<string name="volume_header_low">Imamo minimalnu glasnoću pri:</string>
 	<string name="volume_header_high">Imamo maksmalnu glasnoću pri:</string>
 	<string name="enabled">Omogući Speed of Sound</string>
-	<string name="waiting">(Čekam GPS signal)</string>
+	<string name="waiting">Čekam GPS signal</string>
 	<string name="notification_text">Usklađujem glasnoću s brzinom</string>
 	<string name="ticker_text">Speed of Sound radi</string>
 	<string name="stop">Stani</string>

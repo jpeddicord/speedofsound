@@ -6,7 +6,7 @@
 	<string name="volume_header_low">Wir haben also Ihre Lautstärke auf das Minimum reduziert:</string>
 	<string name="volume_header_high">Wir haben also Ihre Lautstärke auf das Maximum erhöht:</string>
 	<string name="enabled">Speed of Sound aktivieren</string>
-	<string name="waiting">(Auf das GPS signal warten)</string>
+	<string name="waiting">Auf das GPS signal warten</string>
 	<string name="notification_text">Ihre Lautstärke wird der Geschwindigkeit angepasst</string>
 	<string name="ticker_text">Speed of Sound wird ausgeführt</string>
 	<string name="stop">Stopp</string>

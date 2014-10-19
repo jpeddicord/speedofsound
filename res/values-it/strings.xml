@@ -6,7 +6,7 @@
 	<string name="volume_header_low">Quindi il tuo volume è al minimo:</string>
 	<string name="volume_header_high">Quindi il tuo volume è al massimo:</string>
 	<string name="enabled">Attiva Speed of Sound</string>
-	<string name="waiting">(Attesa segnale GPS)</string>
+	<string name="waiting">Attesa segnale GPS</string>
 	<string name="notification_text">Regolazione volume in base alla velocità</string>
 	<string name="ticker_text">Speed of Sound in esecuzione</string>
 	<string name="stop">Stop</string>
