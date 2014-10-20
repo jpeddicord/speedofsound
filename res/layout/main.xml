@@ -10,8 +10,12 @@
 			android:id="@+id/checkbox_enabled"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_marginBottom="10dp"
-			android:text="@string/enabled" />
+			android:text="@string/enabled"
+			android:textAppearance="@android:style/TextAppearance.Large"
+			android:layout_marginLeft="10dp"
+			android:layout_marginRight="10dp"
+			android:layout_marginBottom="20dp"
+			android:layout_marginTop="10dp" />
 
 	<LinearLayout
 			android:id="@+id/tracking_details"
@@ -55,7 +59,7 @@
 			android:layout_margin="20dp">
 
 		<ProgressBar
-				style="@android:style/Widget.ProgressBar"
+				style="@style/Widget.AppCompat.ProgressBar"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:id="@+id/progressBar"
