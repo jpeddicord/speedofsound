@@ -1,17 +1,16 @@
 package net.codechunk.speedofsound;
 
-import android.annotation.TargetApi;
-import android.app.ActionBar;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.support.v4.view.MenuItemCompat;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.util.Log;
 
 import net.codechunk.speedofsound.util.AppPreferences;
 
@@ -20,62 +19,107 @@ import net.codechunk.speedofsound.util.AppPreferences;
  * Speed and volume preferences screen.
  */
 public class PreferencesActivity extends PreferenceActivity {
-	/**
-	 * Logging tag.
-	 */
 	private static final String TAG = "PreferencesActivity";
 
-	/**
-	 * Load preferences and prepare conversions.
-	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private SharedPreferences prefs;
+	private AppPreferences listener = new AppPreferences();
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// activate the up functionality on the action bar
-		// TODO: might not need to guard this w/ new support library
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			ActionBar ab = this.getActionBar();
-			if (ab != null) {
-				ab.setHomeButtonEnabled(true);
-				ab.setDisplayHomeAsUpEnabled(true);
-			}
-		}
-
 		// sadly, the newer fragment preference API is
 		// not yet in the support library.
 		addPreferencesFromResource(R.xml.preferences);
 
-		// register change listener
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		// FIXME: move to onResume/onPause, and keep a copy of the instance
-		prefs.registerOnSharedPreferenceChangeListener(new AppPreferences());
+		this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+		registerAbout();
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.prefs_menu, menu);
-		MenuItemCompat.setShowAsAction(menu.findItem(R.id.about), MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
-		return true;
+	public void onResume() {
+		super.onResume();
+		this.prefs.registerOnSharedPreferenceChangeListener(this.listener);
 	}
 
-	/**
-	 * Handle the home button press on the action bar.
-	 */
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				Intent intent = new Intent(this, SpeedActivity.class);
-				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivity(intent);
-				break;
-			case R.id.about:
-				startActivity(new Intent(this, AboutActivity.class));
-				break;
+	@Override
+	public void onPause() {
+		super.onPause();
+		this.prefs.unregisterOnSharedPreferenceChangeListener(this.listener);
+	}
+
+	@SuppressWarnings("deprecation")
+	private void registerAbout() {
+		// get version number
+		PackageInfo pi;
+		try {
+			pi = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
+		} catch (PackageManager.NameNotFoundException e) {
+			Log.e(TAG, "Couldn't get package information?!");
+			return;
 		}
-		return true;
+
+		Preference version = findPreference("about_version");
+		version.setSummary(pi.versionName);
+		version.setOnPreferenceClickListener(
+			new Preference.OnPreferenceClickListener() {
+				@Override
+				public boolean onPreferenceClick(Preference preference) {
+					try {
+						Uri uri = Uri.parse("market://details?id=net.codechunk.speedofsound");
+						PreferencesActivity.this.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+					} catch (ActivityNotFoundException e) {
+						Uri uri = Uri.parse("https://play.google.com/store/apps/details?id=net.codechunk.speedofsound");
+						PreferencesActivity.this.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+					}
+					return true;
+				}
+			}
+		);
+
+		Preference contact = findPreference("about_contact");
+		contact.setOnPreferenceClickListener(
+			new Preference.OnPreferenceClickListener() {
+				@Override
+				public boolean onPreferenceClick(Preference preference) {
+					Intent email = new Intent(Intent.ACTION_SEND);
+					email.setType("plain/text");
+					email.putExtra(Intent.EXTRA_EMAIL, new String[]{"mobile@octet.cc"});
+					email.putExtra(Intent.EXTRA_SUBJECT, "Speed of Sound");
+					PreferencesActivity.this.startActivity(email);
+					return true;
+				}
+			}
+		);
+
+		Preference translate = findPreference("about_translate");
+		translate.setOnPreferenceClickListener(
+			new Preference.OnPreferenceClickListener() {
+				@Override
+				public boolean onPreferenceClick(Preference preference) {
+					PreferencesActivity.this.startActivity(new Intent(
+						Intent.ACTION_VIEW,
+						Uri.parse("https://www.transifex.com/projects/p/speedofsound/")
+					));
+					return true;
+				}
+			}
+		);
+
+		Preference source = findPreference("about_source");
+		source.setOnPreferenceClickListener(
+			new Preference.OnPreferenceClickListener() {
+				@Override
+				public boolean onPreferenceClick(Preference preference) {
+					PreferencesActivity.this.startActivity(new Intent(
+						Intent.ACTION_VIEW,
+						Uri.parse("https://github.com/jpeddicord/speedofsound")
+					));
+					return true;
+				}
+			}
+		);
 	}
 }

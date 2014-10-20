@@ -75,4 +75,19 @@
 				android:title="@string/enable_on_bluetooth" />
 	</PreferenceCategory>
 
+	<PreferenceCategory android:title="@string/about">
+		<Preference
+				android:key="about_version"
+		        android:title="@string/version" />
+		<Preference
+				android:key="about_contact"
+				android:title="@string/contact" />
+		<Preference
+				android:key="about_translate"
+				android:title="@string/help_translate" />
+		<Preference
+				android:key="about_source"
+				android:title="@string/github" />
+	</PreferenceCategory>
+
 </PreferenceScreen>
