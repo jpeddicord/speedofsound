@@ -39,11 +39,7 @@ public class SoundServiceManager extends BroadcastReceiver {
 	public IntentFilter activationIntents() {
 		IntentFilter filter = new IntentFilter();
 
-		// power events
-		filter.addAction(Intent.ACTION_POWER_CONNECTED);
-		filter.addAction(Intent.ACTION_POWER_DISCONNECTED);
-
-		// headset plug/unplug events
+		// headset plug/unplug events (*mush* be registered dynamically)
 		filter.addAction(Intent.ACTION_HEADSET_PLUG);
 
 		// undocumented bluetooth API
