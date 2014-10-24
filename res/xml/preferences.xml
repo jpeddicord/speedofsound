@@ -78,7 +78,7 @@
 	<PreferenceCategory android:title="@string/about">
 		<Preference
 				android:key="about_version"
-		        android:title="@string/version" />
+				android:title="@string/version" />
 		<Preference
 				android:key="about_contact"
 				android:title="@string/contact" />
