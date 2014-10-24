@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.BatteryManager;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -21,6 +22,10 @@ public class SoundServiceManager extends BroadcastReceiver {
 	private static final String UNDOCUMENTED_A2DP_ACTION = "android.bluetooth.a2dp.action.SINK_STATE_CHANGED";
 	private static final String UNDOCUMENTED_A2DP_ACTION_ALTERNATE = "android.bluetooth.a2dp.intent.action.SINK_STATE_CHANGED";
 	private static final String UNDOCUMENTED_A2DP_EXTRA_STATE = "android.bluetooth.a2dp.extra.SINK_STATE";
+
+	public static final String LOCALE_BUNDLE = "com.twofortyfouram.locale.intent.extra.BUNDLE";
+	public static final String LOCALE_BLURB = "com.twofortyfouram.locale.intent.extra.BLURB";
+	public static final String LOCALE_FIRE = "com.twofortyfouram.locale.intent.action.FIRE_SETTING";
 
 	/**
 	 * Keep track of the bluetooth state here, as the undocumented broadcasts
@@ -73,7 +78,7 @@ public class SoundServiceManager extends BroadcastReceiver {
 			SoundServiceManager.setTracking(context, this.shouldTrack(context));
 		}
 
-		// these broadcasts are undocumented, but seem to work on a bunch of
+		// these broadcasts are undocumented, but seem to work on a bunch of <v11
 		// android versions. used with caution.
 		else if (action.equals(SoundServiceManager.UNDOCUMENTED_A2DP_ACTION) ||
 				action.equals(SoundServiceManager.UNDOCUMENTED_A2DP_ACTION_ALTERNATE)) {
@@ -109,6 +114,17 @@ public class SoundServiceManager extends BroadcastReceiver {
 
 			// start or stop tracking
 			SoundServiceManager.setTracking(context, this.shouldTrack(context));
+		}
+
+		// locale/tasker intents
+		else {
+			if (action.equals(SoundServiceManager.LOCALE_FIRE)) {
+				Bundle bundle = intent.getBundleExtra(SoundServiceManager.LOCALE_BUNDLE);
+				if (bundle != null) {
+					boolean state = bundle.getBoolean(SoundService.SET_TRACKING_STATE, true);
+					SoundServiceManager.setTracking(context, state);
+				}
+			}
 		}
 	}
 

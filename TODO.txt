@@ -3,9 +3,8 @@ Interested contributors may want to start here.
 
 TODO: Get rid of deprecated dialogs in SpeedActivity and create DialogFragment classes.
 TODO: Enable multiple routes for MapperActivity. Needs a dropdown in the action bar.
-TODO: Add in a Tasker intent.
 TODO: Clean up SpeedConversions; use enums w/ conversion factors instead of strings
 TODO: Clean up VolumeThread; this logic can be tricky to follow
 TODO: Fix up binding code in SpeedActivity. Sometimes there's a race condition.
 TODO: Unit tests, all around. All around.
-TODO: Switch to Material theme, where available.
+TODO: Sync with google backup stuff

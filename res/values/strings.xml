@@ -55,5 +55,7 @@
 	<string name="contact">Contact Us</string>
 	<string name="github">Open Source on GitHub</string>
 	<string name="help_translate">Translate into another language</string>
+	<string name="start_tracking">Start tracking</string>
+	<string name="stop_tracking">Stop tracking</string>
 
 </resources>
