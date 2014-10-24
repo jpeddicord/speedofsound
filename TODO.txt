@@ -8,3 +8,6 @@ TODO: Clean up VolumeThread; this logic can be tricky to follow
 TODO: Fix up binding code in SpeedActivity. Sometimes there's a race condition.
 TODO: Unit tests, all around. All around.
 TODO: Sync with google backup stuff
+TODO: SongTracker should operate exclusively through broadcasts
+TODO: SpeedSliderPreference should update converted value on save
+      (get rid of preference intent/update callback)

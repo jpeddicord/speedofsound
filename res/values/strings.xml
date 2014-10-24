@@ -32,7 +32,7 @@
 	<string name="start_automatically">Start Automatically</string>
 	<string name="start_automatically_summary">Start tracking when I open the app</string>
 	<string name="only_when_charging">Only when Charging</string>
-	<string name="enable_only_charging_summary">Only automatically track when charging</string>
+	<string name="enable_only_charging_summary">Only automatically track when charging (applies to settings below this one)</string>
 	<string name="enable_on_headphones">Enable on Headphones</string>
 	<string name="enable_headphones_summary">Track when headphones are plugged in</string>
 	<string name="enable_on_bluetooth">Enable on Bluetooth</string>
