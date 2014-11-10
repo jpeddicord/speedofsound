@@ -31,7 +31,7 @@
 	<string name="start_automatically">Começar automaticamente</string>
 	<string name="start_automatically_summary">Começa o rastreamento ao abrir o aplicativo</string>
 	<string name="only_when_charging">Somente enquanto recarrega</string>
-	<string name="enable_only_charging_summary">Só rastrear automaticamente enquanto recarrega</string>
+	<string name="enable_only_charging_summary">Só rastrear automaticamente enquanto recarrega (se aplica a configurações abaixo desta)</string>
 	<string name="enable_on_headphones">Habilitar com fones-de-ouvido</string>
 	<string name="enable_headphones_summary">Rastrear enquanto fones-de-ouvido estiverem conectados</string>
 	<string name="enable_on_bluetooth">Habilitar com bluetooth</string>
@@ -54,4 +54,6 @@
 	<string name="contact">Nos contate</string>
 	<string name="github">Código fonte no GitHub</string>
 	<string name="help_translate">Traduzir para outro idioma</string>
+	<string name="start_tracking">Iniciar rastreamento</string>
+	<string name="stop_tracking">Parar rastreamento</string>
 </resources>

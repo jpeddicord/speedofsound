@@ -31,7 +31,7 @@
 	<string name="start_automatically">Otomatik Başlat</string>
 	<string name="start_automatically_summary">Uygulamayı açtığımda takip etmeye başla</string>
 	<string name="only_when_charging">Sadece şarj olurken</string>
-	<string name="enable_only_charging_summary">Sadece şarj olurken otomatik takip et</string>
+	<string name="enable_only_charging_summary">Sadece şarj olurken otomatik takip et (bunun altındaki ayarlara uygular)</string>
 	<string name="enable_on_headphones">Kulaklık takıldığında etkinleştir</string>
 	<string name="enable_headphones_summary">Kulaklıklar takıldığında takip et</string>
 	<string name="enable_on_bluetooth">Bluetooth açıldığında etkinleştir</string>
@@ -54,4 +54,6 @@
 	<string name="contact">Bize Ulaşın</string>
 	<string name="github">Github üzerinde Açık Kaynaklı</string>
 	<string name="help_translate">Başka bir dile çevir</string>
+	<string name="start_tracking">Dolaşmaya başla</string>
+	<string name="stop_tracking">Dolaşmayı bitir</string>
 </resources>
