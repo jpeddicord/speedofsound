@@ -36,6 +36,10 @@ https://www.transifex.com/projects/p/speedofsound/
 
   * `teorouge <https://www.transifex.com/accounts/profile/teorouge/>`_
 
+* Japanese (je)
+
+  * `Naofumi <https://www.transifex.com/accounts/profile/Naofumi/>`_
+
 * Dutch (nl)
 
   * `Arthur <https://www.transifex.com/accounts/profile/Deputy/>`_
