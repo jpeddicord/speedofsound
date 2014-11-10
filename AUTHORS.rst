@@ -44,6 +44,10 @@ https://www.transifex.com/projects/p/speedofsound/
 
   * `Rafael Ferreira <https://www.transifex.com/accounts/profile/rafaelff1/>`_
 
+* Russian (ru_RU)
+
+  * `lifeslice <https://www.transifex.com/accounts/profile/lifeslice/>`_
+
 * Turkish (tr)
 
   * `Kudret Emre <https://www.transifex.com/accounts/profile/overbite/>`_
