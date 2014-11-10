@@ -1,17 +1,16 @@
 package net.codechunk.speedofsound;
 
-import android.annotation.TargetApi;
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -56,7 +55,6 @@ public class MapperActivity extends ActionBarActivity {
 	/**
 	 * Set up the map and overlay.
 	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -66,12 +64,10 @@ public class MapperActivity extends ActionBarActivity {
 		this.songTable = (TableLayout) findViewById(R.id.song_table);
 
 		// activate the up functionality on the action bar
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			ActionBar ab = this.getActionBar();
-			if (ab != null) {
-				ab.setHomeButtonEnabled(true);
-				ab.setDisplayHomeAsUpEnabled(true);
-			}
+		ActionBar ab = this.getSupportActionBar();
+		if (ab != null) {
+			ab.setHomeButtonEnabled(true);
+			ab.setDisplayHomeAsUpEnabled(true);
 		}
 
 		// load the map
@@ -226,15 +222,24 @@ public class MapperActivity extends ActionBarActivity {
 		}
 	}
 
-	/**
-	 * Handle the home button press on the action bar.
-	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.map_menu, menu);
+		return true;
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
 				Intent intent = new Intent(this, SpeedActivity.class);
 				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				startActivity(intent);
+				break;
+			case R.id.switch_route:
+				break;
+			case R.id.delete_route:
 				break;
 		}
 		return true;

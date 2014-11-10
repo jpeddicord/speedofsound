@@ -14,14 +14,17 @@ import android.util.Log;
 
 import net.codechunk.speedofsound.players.BasePlayer;
 import net.codechunk.speedofsound.service.SoundService;
+import net.codechunk.speedofsound.util.RouteInfo;
 import net.codechunk.speedofsound.util.SongInfo;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class SongTracker {
 	private static final String TAG = "SongTracker";
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static SongTracker inst = null;
 
 	private Context context;
@@ -84,15 +87,8 @@ public class SongTracker {
 	 * @return the route ID
 	 */
 	public long startRoute() {
-		// XXX: we're not supporting multiple routes in 0.8 initially.
-		// but when we do, get rid of this!
-		this.db.delete("points", null, null);
-		this.db.delete("songs", null, null);
-		this.db.delete("routes", null, null);
-
 		// grab the current time
 		Date date = new Date();
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 		// set a nice name according to the user's locale settings
 		DateFormat localeDF = android.text.format.DateFormat.getMediumDateFormat(this.context);
@@ -102,7 +98,7 @@ public class SongTracker {
 		// store the route
 		ContentValues values = new ContentValues();
 		values.put("name", routeName);
-		values.put("start", df.format(date));
+		values.put("start", DATE_FORMAT.format(date));
 		this.routeId = this.db.insert("routes", null, values);
 
 		// clear out the current song ID (it's linked to a route)
@@ -116,10 +112,13 @@ public class SongTracker {
 
 	/**
 	 * Stop recording to the current route.
-	 *
-	 * TODO: store the end time
 	 */
 	public void endRoute() {
+		Log.d(TAG, "Ending route " + this.routeId);
+		// store the end time
+		ContentValues values = new ContentValues();
+		values.put("end", DATE_FORMAT.format(new Date()));
+		this.db.update("routes", values, "id = ?", new String[]{Long.toString(routeId)});
 		this.routeId = 0;
 	}
 
@@ -129,10 +128,28 @@ public class SongTracker {
 	 * @param routeId the ID of the route to delete
 	 */
 	public void deleteRoute(long routeId) {
+		Log.d(TAG, "Removing route " + routeId);
 		String[] deleteArgs = new String[]{Long.toString(routeId)};
 		this.db.delete("points", "route_id = ?", deleteArgs);
 		this.db.delete("songs", "route_id = ?", deleteArgs);
 		this.db.delete("routes", "id = ?", deleteArgs);
+	}
+
+	/**
+	 * List all routes chronologically.
+	 *
+	 * @return sorted list of routes
+	 */
+	public List<RouteInfo> listRoutes() {
+		// TODO
+		return null;
+	}
+
+	/**
+	 * Prune the database of old entries when it grows too large.
+	 */
+	public void maintenance() {
+		// TODO
 	}
 
 	/**

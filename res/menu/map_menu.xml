@@ -4,16 +4,16 @@
 		xmlns:app="http://schemas.android.com/apk/res-auto">
 
 	<item
-			android:id="@+id/view_map"
-			android:icon="@drawable/ic_map"
+			android:id="@+id/switch_route"
+			android:icon="@drawable/ic_logo_white"
 			app:showAsAction="ifRoom"
-			android:title="@string/song_map">
+			android:title="Switch Route">
 	</item>
 	<item
-			android:id="@+id/preferences"
-			android:icon="@drawable/ic_preferences"
+			android:id="@+id/delete_route"
+			android:icon="@drawable/ic_logo_white"
 			app:showAsAction="ifRoom"
-			android:title="@string/preferences">
+			android:title="Delete">
 	</item>
 
 </menu>
