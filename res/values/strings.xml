@@ -50,7 +50,7 @@
 	<string name="mps_long">meters/second</string>
 	<string name="kph_long">kilometers/hour</string>
 	<string name="mph_long">miles/hour</string>
-	<string name="no_location_providers">Couldn\'t find any way to get your location. Please turn on GPS.</string>
+	<string name="no_location_providers">Couldn\'t find any way to get your location. Please grant location permissions and enable GPS.</string>
 	<string name="version">Version</string>
 	<string name="contact">Contact Us</string>
 	<string name="github">Open Source on GitHub</string>

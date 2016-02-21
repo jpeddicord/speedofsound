@@ -46,9 +46,8 @@ android {
 		release {
 			signingConfig signingConfigs.release
 			minifyEnabled true
-			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-googleplay.txt', 'proguard.txt'
-			// https://android-review.googlesource.com/#/c/109101
-			// shrinkResources true
+			shrinkResources true
+			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.txt'
 		}
 	}
 }

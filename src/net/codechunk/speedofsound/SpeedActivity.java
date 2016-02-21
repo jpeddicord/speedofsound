@@ -1,5 +1,6 @@
 package net.codechunk.speedofsound;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -10,11 +11,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -53,6 +57,11 @@ public class SpeedActivity extends ActionBarActivity implements View.OnClickList
 	 * GPS nag dialog unique ID.
 	 */
 	private static final int DIALOG_GPS = 2;
+
+	/**
+	 * Location permission identifier.
+	 */
+	private static final int LOCATION_PERMISSION_REQUEST = 3;
 
 	/**
 	 * Application's shared preferences.
@@ -201,7 +210,7 @@ public class SpeedActivity extends ActionBarActivity implements View.OnClickList
 		if (!runonce) {
 			SharedPreferences.Editor editor = this.settings.edit();
 			editor.putBoolean("runonce", true);
-			editor.commit();
+			editor.apply();
 
 			// driving disclaimer (followed by GPS)
 			this.showDialog(DIALOG_DISCLAIMER);
@@ -236,6 +245,39 @@ public class SpeedActivity extends ActionBarActivity implements View.OnClickList
 			return;
 		}
 
+		// go get 'em buddy
+		int hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+		if (isChecked && hasPermission != PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(this,
+					new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+					LOCATION_PERMISSION_REQUEST);
+			return;
+		}
+
+		this.toggleTracking();
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int code, String permissions[], int[] results) {
+		CheckBox enabled = (CheckBox) findViewById(R.id.checkbox_enabled);
+
+		switch (code) {
+			case LOCATION_PERMISSION_REQUEST:
+				if (results.length > 0 && results[0] != PackageManager.PERMISSION_GRANTED) {
+					SoundService.showNeedLocationToast(this);
+					enabled.setChecked(false);
+				} else {
+					this.toggleTracking();
+				}
+		}
+	}
+
+	/**
+	 * Start or stop the service depending on the checkbox state.
+	 */
+	private void toggleTracking() {
+		boolean isChecked = ((CheckBox) findViewById(R.id.checkbox_enabled)).isChecked();
+
 		// start up the service
 		if (isChecked) {
 			this.service.startTracking();
@@ -262,8 +304,6 @@ public class SpeedActivity extends ActionBarActivity implements View.OnClickList
 
 	/**
 	 * Switch between the intro message and the speed details.
-	 *
-	 * @param tracking The current tracking state
 	 */
 	private void updateStatusState(UIState state) {
 		View trackingDetails = findViewById(R.id.tracking_details);

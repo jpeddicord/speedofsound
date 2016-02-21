@@ -1,5 +1,6 @@
 package net.codechunk.speedofsound.service;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -7,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -16,6 +18,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -24,7 +27,6 @@ import net.codechunk.speedofsound.R;
 import net.codechunk.speedofsound.SongTracker;
 import net.codechunk.speedofsound.SpeedActivity;
 import net.codechunk.speedofsound.util.AppPreferences;
-import net.codechunk.speedofsound.util.AverageSpeed;
 
 /**
  * The main sound control service.
@@ -142,6 +144,13 @@ public class SoundService extends Service {
 			return;
 		}
 
+		// check runtime permission
+		int hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+		if (hasPermission != PackageManager.PERMISSION_GRANTED) {
+			SoundService.showNeedLocationToast(this);
+			return;
+		}
+
 		// request updates
 		Criteria criteria = new Criteria();
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
@@ -149,8 +158,7 @@ public class SoundService extends Service {
 		if (provider != null) {
 			this.locationManager.requestLocationUpdates(provider, 0, 0, this.locationUpdater);
 		} else {
-			Toast toast = Toast.makeText(this, this.getString(R.string.no_location_providers), Toast.LENGTH_LONG);
-			toast.show();
+			SoundService.showNeedLocationToast(this);
 			return;
 		}
 
@@ -173,6 +181,11 @@ public class SoundService extends Service {
 
 		this.tracking = true;
 		Log.d(TAG, "Tracking started with location provider " + provider);
+	}
+
+	public static void showNeedLocationToast(Context ctx) {
+		Toast toast = Toast.makeText(ctx, ctx.getString(R.string.no_location_providers), Toast.LENGTH_LONG);
+		toast.show();
 	}
 
 	/**
@@ -216,7 +229,11 @@ public class SoundService extends Service {
 		this.songTracker.endRoute();
 
 		// disable location updates
-		this.locationManager.removeUpdates(this.locationUpdater);
+		try {
+			this.locationManager.removeUpdates(this.locationUpdater);
+		} catch (SecurityException e) {
+			Log.w(TAG, "Somehow stopTracking was called and I didn't have permission to stop. Huh?");
+		}
 
 		// remove notification and go to background
 		stopForeground(true);
