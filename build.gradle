@@ -3,22 +3,22 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'com.android.tools.build:gradle:0.12.2'
+		classpath 'com.android.tools.build:gradle:2.0.0-beta5'
 	}
 }
 apply plugin: 'com.android.application'
 
 dependencies {
-	compile 'com.android.support:support-v4:21.0.0'
-	compile 'com.android.support:appcompat-v7:21.0.0'
-	compile 'com.google.android.gms:play-services:6.1.11'
+	compile 'com.android.support:support-v4:23.1.1'
+	compile 'com.android.support:appcompat-v7:23.1.1'
+	compile 'com.google.android.gms:play-services:8.4.0'
 }
 
 
 
 android {
-	compileSdkVersion 21
-	buildToolsVersion '21.0.1'
+	compileSdkVersion 23
+	buildToolsVersion '21.1.2'
 
 	sourceSets {
 		main {
@@ -45,7 +45,7 @@ android {
 	buildTypes {
 		release {
 			signingConfig signingConfigs.release
-			runProguard true
+			minifyEnabled true
 			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-googleplay.txt', 'proguard.txt'
 			// https://android-review.googlesource.com/#/c/109101
 			// shrinkResources true
