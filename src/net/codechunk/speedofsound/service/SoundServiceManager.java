@@ -1,5 +1,6 @@
 package net.codechunk.speedofsound.service;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,8 +8,14 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import net.codechunk.speedofsound.util.BluetoothDevicePreference;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Sound service activation manager. Used to start the service at boot;
@@ -67,6 +74,16 @@ public class SoundServiceManager extends BroadcastReceiver {
 		// official API 11+ bluetooth A2DP broadcasts
 		else if (action.equals(android.bluetooth.BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED)) {
 			Log.d(TAG, "A2DP API11+ event");
+
+			// grab the device address and check it against our list of things
+			BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+			boolean shouldCare = false;
+			if (device != null) {
+				shouldCare = isSelectedBluetoothDevice(context, device.getAddress());
+			}
+			if (!shouldCare) {
+				return;
+			}
 
 			// set the bluetooth state
 			int state = intent.getIntExtra(android.bluetooth.BluetoothA2dp.EXTRA_STATE, -1);
@@ -162,6 +179,24 @@ public class SoundServiceManager extends BroadcastReceiver {
 		Intent serviceIntent = new Intent(context, SoundService.class);
 		serviceIntent.putExtra(SoundService.SET_TRACKING_STATE, state);
 		context.startService(serviceIntent);
+	}
+
+	/**
+	 * Return whether the given Bluetooth address is enabled for tracking.
+	 *
+	 * Loaded from user preferences.
+	 */
+	private boolean isSelectedBluetoothDevice(Context context, String address) {
+		// fetched saved devices
+		Set<String> addresses = PreferenceManager.getDefaultSharedPreferences(context)
+				.getStringSet(BluetoothDevicePreference.KEY, new HashSet<String>());
+
+		// no selected devices means that *any* bluetooth device is valid
+		if (addresses.size() == 0) {
+			return true;
+		}
+
+		return addresses.contains(address);
 	}
 
 }

@@ -29,6 +29,8 @@ import java.util.Set;
 public class BluetoothDevicePreference extends DialogPreference {
     private static final String TAG = "BluetoothPreference";
 
+    public static final String KEY = "enable_bluetooth_devices";
+
     protected Set<String> value;
 
     private View view;
