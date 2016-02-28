@@ -17,12 +17,6 @@ import android.util.Log;
 public class SoundServiceManager extends BroadcastReceiver {
 	private static final String TAG = "SoundServiceManager";
 
-	private static final int UNDOCUMENTED_STATE_DISCONNECTED = 0;
-	private static final int UNDOCUMENTED_STATE_CONNECTED = 2;
-	private static final String UNDOCUMENTED_A2DP_ACTION = "android.bluetooth.a2dp.action.SINK_STATE_CHANGED";
-	private static final String UNDOCUMENTED_A2DP_ACTION_ALTERNATE = "android.bluetooth.a2dp.intent.action.SINK_STATE_CHANGED";
-	private static final String UNDOCUMENTED_A2DP_EXTRA_STATE = "android.bluetooth.a2dp.extra.SINK_STATE";
-
 	public static final String LOCALE_BUNDLE = "com.twofortyfouram.locale.intent.extra.BUNDLE";
 	public static final String LOCALE_BLURB = "com.twofortyfouram.locale.intent.extra.BLURB";
 	public static final String LOCALE_FIRE = "com.twofortyfouram.locale.intent.action.FIRE_SETTING";
@@ -41,10 +35,6 @@ public class SoundServiceManager extends BroadcastReceiver {
 
 		// headset plug/unplug events (*mush* be registered dynamically)
 		filter.addAction(Intent.ACTION_HEADSET_PLUG);
-
-		// undocumented bluetooth API
-		filter.addAction(SoundServiceManager.UNDOCUMENTED_A2DP_ACTION);
-		filter.addAction(SoundServiceManager.UNDOCUMENTED_A2DP_ACTION_ALTERNATE);
 
 		// documented API11+ bluetooth API
 		filter.addAction(android.bluetooth.BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED);
@@ -71,26 +61,6 @@ public class SoundServiceManager extends BroadcastReceiver {
 		if (action.equals(Intent.ACTION_POWER_CONNECTED) ||
 				action.equals(Intent.ACTION_POWER_DISCONNECTED) ||
 				action.equals(Intent.ACTION_HEADSET_PLUG)) {
-			SoundServiceManager.setTracking(context, this.shouldTrack(context));
-		}
-
-		// these broadcasts are undocumented, but seem to work on a bunch of <v11
-		// android versions. used with caution.
-		else if (action.equals(SoundServiceManager.UNDOCUMENTED_A2DP_ACTION) ||
-				action.equals(SoundServiceManager.UNDOCUMENTED_A2DP_ACTION_ALTERNATE)) {
-			Log.d(TAG, "A2DP undocumented event");
-
-			// set the bluetooth state
-			int state = intent.getIntExtra(SoundServiceManager.UNDOCUMENTED_A2DP_EXTRA_STATE, -1);
-			if (state == SoundServiceManager.UNDOCUMENTED_STATE_CONNECTED) {
-				Log.v(TAG, "A2DP active");
-				this.bluetoothConnected = true;
-			} else if (state == SoundServiceManager.UNDOCUMENTED_STATE_DISCONNECTED) {
-				Log.v(TAG, "A2DP inactive");
-				this.bluetoothConnected = false;
-			}
-
-			// start or stop tracking
 			SoundServiceManager.setTracking(context, this.shouldTrack(context));
 		}
 

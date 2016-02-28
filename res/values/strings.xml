@@ -57,5 +57,8 @@
 	<string name="help_translate">Translate into another language</string>
 	<string name="start_tracking">Start tracking</string>
 	<string name="stop_tracking">Stop tracking</string>
+	<string name="enable_bluetooth_devices_summary">Select Bluetooth devices to use with Speed of Sound. Optional; if you don\'t pick some here then any Bluetooth device will work.</string>
+	<string name="pick_bluetooth_devices">Pick Bluetooth Devices</string>
+	<string name="select_music_bluetooth_devices">Select any of your music-enabled Bluetooth devices below:</string>
 
 </resources>

@@ -73,6 +73,11 @@
 				android:key="enable_bluetooth"
 				android:summary="@string/enable_bluetooth_summary"
 				android:title="@string/enable_on_bluetooth" />
+		<net.codechunk.speedofsound.util.BluetoothDevicePreference
+				android:key="enable_bluetooth_devices"
+				android:summary="@string/enable_bluetooth_devices_summary"
+				android:title="@string/pick_bluetooth_devices"
+			/>
 	</PreferenceCategory>
 
 	<PreferenceCategory android:title="@string/about">
