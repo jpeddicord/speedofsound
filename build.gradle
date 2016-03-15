@@ -9,8 +9,8 @@ buildscript {
 apply plugin: 'com.android.application'
 
 dependencies {
-	compile 'com.android.support:support-v4:23.2.0'
-	compile 'com.android.support:appcompat-v7:23.2.0'
+	compile 'com.android.support:support-v4:23.2.1'
+	compile 'com.android.support:appcompat-v7:23.2.1'
 	compile 'com.google.android.gms:play-services-maps:8.4.0'
 }
 
@@ -18,7 +18,11 @@ dependencies {
 
 android {
 	compileSdkVersion 23
-	buildToolsVersion '21.1.2'
+	buildToolsVersion '23.0.2'
+
+	defaultConfig {
+		vectorDrawables.useSupportLibrary = true;
+	}
 
 	sourceSets {
 		main {
@@ -52,13 +56,3 @@ android {
 	}
 }
 
-// specify signing properties on the command line
-if (hasProperty('storeFile')) {
-	println 'Generating a signed package.'
-	android.signingConfigs.release.storeFile = file(storeFile)
-	android.signingConfigs.release.storePassword = storePassword
-	android.signingConfigs.release.keyAlias = keyAlias
-	android.signingConfigs.release.keyPassword = keyPassword
-} else {
-	android.buildTypes.release.signingConfig = null
-}
