@@ -1,14 +1,12 @@
 package net.codechunk.speedofsound;
 
 import android.annotation.TargetApi;
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -67,7 +65,7 @@ public class MapperActivity extends ActionBarActivity {
 
 		// activate the up functionality on the action bar
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			ActionBar ab = this.getActionBar();
+			ActionBar ab = this.getSupportActionBar();
 			if (ab != null) {
 				ab.setHomeButtonEnabled(true);
 				ab.setDisplayHomeAsUpEnabled(true);
@@ -75,27 +73,24 @@ public class MapperActivity extends ActionBarActivity {
 		}
 
 		// load the map
-		this.map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment)).getMap();
-		if (this.map == null) {
-			Log.e(TAG, "Couldn't load map");
-			this.finish();
-		}
+		((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment))
+				.getMapAsync(googleMap -> {
+					// update the path, table, and polyline
+					ArrayList<SongSet> mapContent = this.getPath();
+					this.displayTable(mapContent);
+					this.drawPaths(mapContent);
 
-		// update the path, table, and polyline
-		ArrayList<SongSet> mapContent = this.getPath();
-		this.displayTable(mapContent);
-		this.drawPaths(mapContent);
+					// zoom the map in to an appropriate spot if there are points
+					if (mapContent.size() > 0) {
+						SongSet loc = mapContent.get(mapContent.size() - 1);
 
-		// zoom the map in to an appropriate spot if there are points
-		if (mapContent.size() > 0) {
-			SongSet loc = mapContent.get(mapContent.size() - 1);
+						if (loc.points.size() > 0) {
+							LatLng lastpoint = loc.points.get(loc.points.size() - 1);
 
-			if (loc.points.size() > 0) {
-				LatLng lastpoint = loc.points.get(loc.points.size() - 1);
-
-				this.map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastpoint, MapperActivity.ZOOM_LEVEL));
-			}
-		}
+							this.map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastpoint, MapperActivity.ZOOM_LEVEL));
+						}
+					}
+				});
 	}
 
 	/**

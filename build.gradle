@@ -1,27 +1,40 @@
 buildscript {
 	repositories {
-		mavenCentral()
+		jcenter()
 	}
 	dependencies {
-		classpath 'com.android.tools.build:gradle:2.0.0-beta6'
+		classpath 'com.android.tools.build:gradle:2.2.2'
 	}
 }
+allprojects {
+	repositories {
+		jcenter()
+	}
+}
+
 apply plugin: 'com.android.application'
 
 dependencies {
-	compile 'com.android.support:support-v4:23.2.1'
-	compile 'com.android.support:appcompat-v7:23.2.1'
-	compile 'com.google.android.gms:play-services-maps:8.4.0'
+	compile 'com.android.support:support-v4:25.0.0'
+	compile 'com.android.support:appcompat-v7:25.0.0'
+	compile 'com.google.android.gms:play-services-maps:9.8.00'
 }
 
-
-
 android {
-	compileSdkVersion 23
-	buildToolsVersion '23.0.2'
+	compileSdkVersion 25
+	buildToolsVersion '25'
 
 	defaultConfig {
 		vectorDrawables.useSupportLibrary = true;
+
+		jackOptions {
+			enabled true
+		}
+	}
+
+	compileOptions {
+		sourceCompatibility JavaVersion.VERSION_1_8
+		targetCompatibility JavaVersion.VERSION_1_8
 	}
 
 	sourceSets {
@@ -51,7 +64,7 @@ android {
 			signingConfig signingConfigs.release
 			minifyEnabled true
 			shrinkResources true
-			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.txt'
+			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 		}
 	}
 }
