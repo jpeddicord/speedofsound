@@ -9,10 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -22,6 +19,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import net.codechunk.speedofsound.R;
 import net.codechunk.speedofsound.SongTracker;
@@ -57,12 +59,12 @@ public class SoundService extends Service {
 	 */
 	private boolean tracking = false;
 
+	private GoogleApiClient googleApiClient;
 	private LocalBroadcastManager localBroadcastManager;
 	private SoundServiceManager soundServiceManager = new SoundServiceManager();
 
 	private SharedPreferences settings;
 	private VolumeThread volumeThread = null;
-	private LocationManager locationManager;
 	private LocalBinder binder = new LocalBinder();
 	private VolumeConversion volumeConversion;
 	private SongTracker songTracker;
@@ -74,6 +76,11 @@ public class SoundService extends Service {
 	public void onCreate() {
 		Log.d(TAG, "Service starting up");
 
+		// connect to google api stuff, because for some reason you need to do that for location
+		this.googleApiClient = new GoogleApiClient.Builder(this)
+				.addApi(LocationServices.API)
+				.build();
+
 		// set up preferences
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		this.settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -82,7 +89,6 @@ public class SoundService extends Service {
 
 		// register handlers & audio
 		this.localBroadcastManager = LocalBroadcastManager.getInstance(this);
-		this.locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		this.volumeConversion = new VolumeConversion();
 		this.volumeConversion.onSharedPreferenceChanged(this.settings, null); // set initial
 		this.songTracker = SongTracker.getInstance(this);
@@ -100,6 +106,8 @@ public class SoundService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.d(TAG, "Start command received");
+
+		this.googleApiClient.connect();
 
 		// register pref watching
 		this.settings.registerOnSharedPreferenceChangeListener(this.volumeConversion);
@@ -128,6 +136,7 @@ public class SoundService extends Service {
 		Log.d(TAG, "Service shutting down");
 
 		this.settings.unregisterOnSharedPreferenceChangeListener(this.volumeConversion);
+		this.googleApiClient.disconnect();
 	}
 
 	public boolean isTracking() {
@@ -151,16 +160,13 @@ public class SoundService extends Service {
 			return;
 		}
 
-		// request updates
-		Criteria criteria = new Criteria();
-		criteria.setAccuracy(Criteria.ACCURACY_FINE);
-		String provider = this.locationManager.getBestProvider(criteria, true);
-		if (provider != null) {
-			this.locationManager.requestLocationUpdates(provider, 0, 0, this.locationUpdater);
-		} else {
-			SoundService.showNeedLocationToast(this);
-			return;
-		}
+		// request location updates
+		LocationRequest req = new LocationRequest();
+		req.setInterval(1000);
+		req.setFastestInterval(500);
+		req.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+		LocationServices.FusedLocationApi.requestLocationUpdates(
+				this.googleApiClient, req, this.locationUpdater);
 
 		// start a new route
 		this.songTracker.startRoute();
@@ -180,7 +186,7 @@ public class SoundService extends Service {
 		SoundService.this.localBroadcastManager.sendBroadcast(intent);
 
 		this.tracking = true;
-		Log.d(TAG, "Tracking started with location provider " + provider);
+		Log.d(TAG, "Tracking started");
 	}
 
 	public static void showNeedLocationToast(Context ctx) {
@@ -229,11 +235,8 @@ public class SoundService extends Service {
 		this.songTracker.endRoute();
 
 		// disable location updates
-		try {
-			this.locationManager.removeUpdates(this.locationUpdater);
-		} catch (SecurityException e) {
-			Log.w(TAG, "Somehow stopTracking was called and I didn't have permission to stop. Huh?");
-		}
+		LocationServices.FusedLocationApi.removeLocationUpdates(
+				this.googleApiClient, this.locationUpdater);
 
 		// remove notification and go to background
 		stopForeground(true);
@@ -297,15 +300,6 @@ public class SoundService extends Service {
 			intent.putExtra("speed", speed);
 			intent.putExtra("volumePercent", (int) (volume * 100));
 			SoundService.this.localBroadcastManager.sendBroadcast(intent);
-		}
-
-		public void onProviderDisabled(String provider) {
-		}
-
-		public void onProviderEnabled(String provider) {
-		}
-
-		public void onStatusChanged(String provider, int status, Bundle extras) {
 		}
 	};
 

@@ -75,6 +75,8 @@ public class MapperActivity extends ActionBarActivity {
 		// load the map
 		((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment))
 				.getMapAsync(googleMap -> {
+					this.map = googleMap;
+
 					// update the path, table, and polyline
 					ArrayList<SongSet> mapContent = this.getPath();
 					this.displayTable(mapContent);
