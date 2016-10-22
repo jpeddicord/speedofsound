@@ -1,8 +1,6 @@
 package net.codechunk.speedofsound.service;
 
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import net.codechunk.speedofsound.util.AverageSpeed;
@@ -37,12 +35,11 @@ public class VolumeConversion implements SharedPreferences.OnSharedPreferenceCha
 			Log.d(TAG, "High averageSpeed triggered at " + averageSpeed);
 			volume = this.highVolume / 100f;
 		} else {
-			// log scaling
+			// linear scaling
 			float volumeRange = (this.highVolume - this.lowVolume) / 100f;
-			float speedRangeFrac = (averageSpeed - this.lowSpeed) / (this.highSpeed - this.lowSpeed);
-			float volumeRangeFrac = (float) (Math.log1p(speedRangeFrac) / Math.log1p(1));
-			volume = this.lowVolume / 100f + volumeRange * volumeRangeFrac;
-			Log.d(TAG, "Log scale triggered with " + averageSpeed + ", using volume " + volume);
+			float relativeSpeed = (averageSpeed - this.lowSpeed) / (this.highSpeed - this.lowSpeed);
+			volume = this.lowVolume / 100f + volumeRange * relativeSpeed;
+			Log.d(TAG, "Linear scale triggered with " + averageSpeed + ", using volume " + volume);
 		}
 
 		return volume;
