@@ -64,7 +64,7 @@ android {
 		release {
 			signingConfig signingConfigs.release
 			minifyEnabled true
-			shrinkResources true
+			shrinkResources false // incompatible with 2.2.0/jack or something
 			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 		}
 	}
