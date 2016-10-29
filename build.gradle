@@ -17,8 +17,8 @@ apply plugin: 'com.android.application'
 dependencies {
 	compile 'com.android.support:support-v4:25.0.0'
 	compile 'com.android.support:appcompat-v7:25.0.0'
-	compile 'com.google.android.gms:play-services-maps:9.8.00'
-	compile 'com.google.android.gms:play-services-location:9.8.00'
+	compile 'com.google.android.gms:play-services-maps:9.8.0'
+	compile 'com.google.android.gms:play-services-location:9.8.0'
 }
 
 android {
@@ -63,7 +63,7 @@ android {
 	buildTypes {
 		release {
 			signingConfig signingConfigs.release
-			minifyEnabled true
+			minifyEnabled false // causes a crash on map w/ current play services
 			shrinkResources false // incompatible with 2.2.0/jack or something
 			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 		}
