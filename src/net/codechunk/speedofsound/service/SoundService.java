@@ -14,12 +14,15 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -36,7 +39,7 @@ import net.codechunk.speedofsound.util.AppPreferences;
  * Responsible for adjusting the volume based on the current speed. Can be
  * started and stopped externally, but is largely independent.
  */
-public class SoundService extends Service {
+public class SoundService extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 	private static final String TAG = "SoundService";
 
 	/**
@@ -59,6 +62,7 @@ public class SoundService extends Service {
 	 */
 	private boolean tracking = false;
 
+	private boolean pendingStart = false;
 	private GoogleApiClient googleApiClient;
 	private LocalBroadcastManager localBroadcastManager;
 	private SoundServiceManager soundServiceManager = new SoundServiceManager();
@@ -79,6 +83,8 @@ public class SoundService extends Service {
 		// connect to google api stuff, because for some reason you need to do that for location
 		this.googleApiClient = new GoogleApiClient.Builder(this)
 				.addApi(LocationServices.API)
+				.addConnectionCallbacks(this)
+				.addOnConnectionFailedListener(this)
 				.build();
 
 		// set up preferences
@@ -150,6 +156,13 @@ public class SoundService extends Service {
 	public void startTracking() {
 		// ignore requests when we're already tracking
 		if (this.tracking) {
+			return;
+		}
+
+		// if we're still connecting, then defer this (see onConnected)
+		if (this.googleApiClient.isConnecting()) {
+			Log.i(TAG, "Google API client not yet connected; waiting to start");
+			this.pendingStart = true;
 			return;
 		}
 
@@ -302,6 +315,25 @@ public class SoundService extends Service {
 			SoundService.this.localBroadcastManager.sendBroadcast(intent);
 		}
 	};
+
+	@Override
+	public void onConnected(@Nullable Bundle bundle) {
+		Log.i(TAG, "Google API client connected");
+		if (this.pendingStart) {
+			this.startTracking();
+			this.pendingStart = false;
+		}
+	}
+
+	@Override
+	public void onConnectionSuspended(int i) {
+		// no-op
+	}
+
+	@Override
+	public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+		Log.e(TAG, "Google API Connection failed: " + connectionResult.getErrorMessage());
+	}
 
 	/**
 	 * Service-level access for external classes and activities.
