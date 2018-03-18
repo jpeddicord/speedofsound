@@ -22,11 +22,16 @@ https://www.transifex.com/projects/p/speedofsound/
 * German (de)
 
   * `Ettore Atalan <https://www.transifex.com/accounts/profile/Atalanttore/>`_
+  * `Thor77 <https://www.transifex.com/user/profile/thor77/>`_
   * `Wasilis <https://www.transifex.com/accounts/profile/wasilis.mandratzis/>`_
 
 * Greek (el)
 
   * `Wasilis <https://www.transifex.com/accounts/profile/wasilis.mandratzis/>`_
+
+* French (fr)
+
+  * `Simon Porte <https://www.transifex.com/user/profile/sporte/>`_
 
 * Croatian (hr)
 
@@ -36,7 +41,7 @@ https://www.transifex.com/projects/p/speedofsound/
 
   * `teorouge <https://www.transifex.com/accounts/profile/teorouge/>`_
 
-* Japanese (je)
+* Japanese (ja)
 
   * `Naofumi <https://www.transifex.com/accounts/profile/Naofumi/>`_
 
