@@ -6,8 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.util.LongSparseArray;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -34,7 +35,7 @@ import java.util.Map;
  * Draws a path based on the points in the database. Paths are colored based on
  * the song that was being listened to at that point.
  */
-public class MapperActivity extends ActionBarActivity {
+public class MapperActivity extends AppCompatActivity {
 	private static final String TAG = "DrawMapActivity";
 	private static final float ZOOM_LEVEL = 16.0f;
 	private static final int LINE_WIDTH = 8;
@@ -44,7 +45,7 @@ public class MapperActivity extends ActionBarActivity {
 
 	private SongTracker songTracker;
 	private ColorCreator colorCreator = new ColorCreator();
-	private Map<Long, Integer> songColors = new HashMap<Long, Integer>();
+	private LongSparseArray<Integer> songColors = new LongSparseArray<>();
 
 	private class SongSet {
 		SongInfo song;
@@ -64,12 +65,10 @@ public class MapperActivity extends ActionBarActivity {
 		this.songTable = (TableLayout) findViewById(R.id.song_table);
 
 		// activate the up functionality on the action bar
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			ActionBar ab = this.getSupportActionBar();
-			if (ab != null) {
-				ab.setHomeButtonEnabled(true);
-				ab.setDisplayHomeAsUpEnabled(true);
-			}
+		ActionBar ab = this.getSupportActionBar();
+		if (ab != null) {
+			ab.setHomeButtonEnabled(true);
+			ab.setDisplayHomeAsUpEnabled(true);
 		}
 
 		// load the map
@@ -142,7 +141,7 @@ public class MapperActivity extends ActionBarActivity {
 				loc.song = this.songTracker.getSongInfo(songId);
 
 				// set a color if we don't have one
-				if (!this.songColors.containsKey(songId)) {
+				if (this.songColors.get(songId) == null) {
 					this.songColors.put(songId, this.colorCreator.getColor());
 				}
 

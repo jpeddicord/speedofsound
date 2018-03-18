@@ -21,7 +21,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,7 +39,7 @@ import net.codechunk.speedofsound.util.SpeedConversions;
  * Main status activity. Displays the current speed and set volume. Does not
  * actually track the volume itself; that is handled in SoundService.
  */
-public class SpeedActivity extends ActionBarActivity implements View.OnClickListener {
+public class SpeedActivity extends AppCompatActivity implements View.OnClickListener {
 	private static final String TAG = "SpeedActivity";
 
 	private enum UIState {

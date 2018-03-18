@@ -2,6 +2,8 @@ package net.codechunk.speedofsound.service;
 
 import android.Manifest;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -11,12 +13,15 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationCompatExtras;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -211,9 +216,17 @@ public class SoundService extends Service implements GoogleApiClient.ConnectionC
 	 * Build a fancy-pants notification.
 	 */
 	private Notification getNotification() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			int importance = NotificationManager.IMPORTANCE_LOW;
+			CharSequence name = getString(R.string.app_name);
+			NotificationChannel channel = new NotificationChannel("main", name, importance);
+			NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+			notificationManager.createNotificationChannel(channel);
+		}
+
 		// force foreground with an ongoing notification
 		Intent notificationIntent = new Intent(this, SpeedActivity.class);
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "main");
 		builder.setContentTitle(getString(R.string.app_name));
 		builder.setContentText(getString(R.string.notification_text));
 		builder.setContentIntent(PendingIntent.getActivity(this, 0, notificationIntent, 0));
