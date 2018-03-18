@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
 	<string name="app_name">Speed of Sound</string>
 	<string name="moving_header">Şimdiki hızınız:</string>
 	<string name="volume_header_scaled">Ayarlanan ses düzeyiniz:</string>
@@ -49,11 +49,14 @@
 	<string name="mps_long">metre/saniye</string>
 	<string name="kph_long">kilometre/saat</string>
 	<string name="mph_long">mil/saat</string>
-	<string name="no_location_providers">Konumunuzu belirlemek için bir yol bulunamadı. Lütfen GPS\'i açın.</string>
+	<string name="no_location_providers">Konumunuzu almak için bir yol bulunamadı. Lütfen konum yetkilerini verdiğinizden emin olun GPS\'i aktif edin.</string>
 	<string name="version">Sürüm</string>
 	<string name="contact">Bize Ulaşın</string>
 	<string name="github">Github üzerinde Açık Kaynaklı</string>
 	<string name="help_translate">Başka bir dile çevir</string>
 	<string name="start_tracking">Dolaşmaya başla</string>
 	<string name="stop_tracking">Dolaşmayı bitir</string>
+	<string name="enable_bluetooth_devices_summary">Lütfen Speed of Sound ile kullanmak için bir Bluetooth aygıtı seçin. Eğer buradan bir tane seçmezseniz herhangi biri çalışabilir.</string>
+	<string name="pick_bluetooth_devices">Bluetooth Aygıtı Seç</string>
+	<string name="select_music_bluetooth_devices">Lütfen aşağıdaki Bluetooth aygıtlarınızdan birini seçin:</string>
 </resources>

@@ -1,19 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 	<string name="app_name">Speed of Sound</string>
-	<string name="moving_header">Você está movendo no momento em:</string>
-	<string name="volume_header_scaled">Então, seu você está definido em:</string>
+	<string name="moving_header">Você está se movendo no momento em:</string>
+	<string name="volume_header_scaled">Então, seu volume está definido para:</string>
 	<string name="volume_header_low">Então, nós deixamos seu volume no mínimo:</string>
 	<string name="volume_header_high">Então, nós deixamos seu volume no máximo:</string>
 	<string name="enabled">Habilitar Speed of Sound</string>
 	<string name="waiting">Esperando pelo sinal do GPS</string>
 	<string name="notification_text">Batendo seu volume com sua velocidade</string>
-	<string name="ticker_text">Speed of Sound está rodando</string>
+	<string name="ticker_text">Speed of Sound está em execução</string>
 	<string name="stop">Parar</string>
 	<string name="warning">Aviso</string>
-	<string name="launch_disclaimer">Speed of Sound foi desenhado para manter seus olhos na estrada, e não no seu telefone. DEssa forma, não tente alterar as configurações ou usar seu telefone enquanto dirige.</string>
+	<string name="launch_disclaimer">Speed of Sound foi desenhado para manter seus olhos na estrada, e não no seu telefone. Dessa forma, não tente alterar as configurações ou usar seu telefone enquanto dirige.</string>
 	<string name="launch_disclaimer_accept">Aceitar</string>
-	<string name="gps_warning">Você deveria ativar so GPS nas configurações de Localização ou esse aplicativo não vai funcionar corretamente.</string>
+	<string name="gps_warning">Você deveria ativar so GPS nas configurações de localização ou esse aplicativo não vai funcionar corretamente.</string>
 	<string name="location_settings">Configurações de localização</string>
 	<string name="gps_warning_dismiss">Ignorar</string>
 	<string name="ct_song">Música</string>
@@ -31,11 +31,11 @@
 	<string name="start_automatically">Começar automaticamente</string>
 	<string name="start_automatically_summary">Começa o rastreamento ao abrir o aplicativo</string>
 	<string name="only_when_charging">Somente enquanto recarrega</string>
-	<string name="enable_only_charging_summary">Só rastrear automaticamente enquanto recarrega (se aplica a configurações abaixo desta)</string>
+	<string name="enable_only_charging_summary">Só rastrea automaticamente enquanto recarrega (se aplica a configurações abaixo desta)</string>
 	<string name="enable_on_headphones">Habilitar com fones-de-ouvido</string>
-	<string name="enable_headphones_summary">Rastrear enquanto fones-de-ouvido estiverem conectados</string>
+	<string name="enable_headphones_summary">Rastrea enquanto fones-de-ouvido estiverem conectados</string>
 	<string name="enable_on_bluetooth">Habilitar com bluetooth</string>
-	<string name="enable_bluetooth_summary">Rastrear quando um dispositivo Bluetooth de música estiver conectado</string>
+	<string name="enable_bluetooth_summary">Rastrea quando um dispositivo de música A2DP Bluetooth estiver conectado</string>
 	<string name="slow_speed">Velocidade baixa</string>
 	<string name="low_speed">Velocidade mais baixa</string>
 	<string name="low_speed_summary">Velocidade mínima para começar a ajustar o volume</string>
@@ -44,16 +44,19 @@
 	<string name="high_speed">Alta velocidade</string>
 	<string name="fast_speed">Velocidade mais alta</string>
 	<string name="fast_speed_summary">Velocidade na qual o volume máximo se aplica</string>
-	<string name="fast_volume">Volume Max</string>
+	<string name="fast_volume">Volume Máx</string>
 	<string name="fast_volume_summary">Volume na velocidade máxima</string>
 	<string name="mps_long">metros/segundo</string>
 	<string name="kph_long">quilômetros/hora</string>
 	<string name="mph_long">milhas/hora</string>
-	<string name="no_location_providers">Não foi possível encontrar qualquer forma de obter sua localização. Por favor, ative o GPS.</string>
+	<string name="no_location_providers">Não foi possível encontrar uma forma de obter sua localização. Por favor conceda permissões  de localização e habilite o GPS.</string>
 	<string name="version">Versão</string>
 	<string name="contact">Nos contate</string>
 	<string name="github">Código fonte no GitHub</string>
 	<string name="help_translate">Traduzir para outro idioma</string>
 	<string name="start_tracking">Iniciar rastreamento</string>
 	<string name="stop_tracking">Parar rastreamento</string>
+	<string name="enable_bluetooth_devices_summary">Selecione dispositivos Bluetooth para usar com Speed of Sound. Opcionalmente, se você não escolher um aqui, então qualquer dispositivo Bluetooth vai funcionar.</string>
+	<string name="pick_bluetooth_devices">Escolher dispositivos Bluetooth</string>
+	<string name="select_music_bluetooth_devices">Selecione algum de seus dispositivos Bluetooth de música abaixo:</string>
 </resources>

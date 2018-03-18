@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 	<string name="app_name">Speed of Sound</string>
 	<string name="moving_header">Trenutno se gibate brzinom:</string>
 	<string name="volume_header_scaled">pa je glasnoća postavljena na:</string>
@@ -31,7 +31,6 @@
 	<string name="start_automatically">Počni automatski</string>
 	<string name="start_automatically_summary">Počni pratiti čim otvorim aplikaciju</string>
 	<string name="only_when_charging">Samo pri punjenju</string>
-	<string name="enable_only_charging_summary">Automatski radi samo pri punjenju</string>
 	<string name="enable_on_headphones">Omogući sa slušalicama</string>
 	<string name="enable_headphones_summary">Puštaj i kada su slušalice uključene</string>
 	<string name="enable_on_bluetooth">Omogući na Bluetoothu</string>
@@ -49,7 +48,6 @@
 	<string name="mps_long">metara/sekundi</string>
 	<string name="kph_long">kilometara/sat</string>
 	<string name="mph_long">milja/sat</string>
-	<string name="no_location_providers">Nemogu pronaći lokaciju. Upalite GPS</string>
 	<string name="version">Inačica</string>
 	<string name="contact">Konaktirajte nas</string>
 	<string name="github">Izvorni kod na GitHub</string>

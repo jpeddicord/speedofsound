@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 	<string name="app_name">Snelheid van het Geluid</string>
 	<string name="moving_header">Uw snelheid is:</string>
 	<string name="volume_header_scaled">Dus uw volume is ingesteld op:</string>
@@ -9,6 +9,7 @@
 	<string name="waiting">Wachten op GPS-signaal</string>
 	<string name="notification_text">De volume aan het aanpassen naar uw snelheid</string>
 	<string name="ticker_text">Snelheid van het geluid is actief</string>
+	<string name="stop">Stop</string>
 	<string name="warning">Waarschuwing</string>
 	<string name="launch_disclaimer">Snelheid van geluid is ontworpen om uw ogen op de weg houden, niet de op telefoon. Probeer niet om de instellingen te wijzigen of uw telefoon te gebruiken tijdens het rijden.</string>
 	<string name="launch_disclaimer_accept">Accepteren</string>
@@ -27,8 +28,10 @@
 	<string name="speed_units">Eenheden van snelheid</string>
 	<string name="speed_units_summary">Kies de snelheid eenheden die u wilt gebruiken</string>
 	<string name="activation">Activeren</string>
+	<string name="start_automatically">Start Automatisch</string>
+	<string name="start_automatically_summary">Start volgen wanneer ik de app open</string>
 	<string name="only_when_charging">Alleen tijdens opladen</string>
-	<string name="enable_only_charging_summary">Alleen automatisch te volgen tijdens het opladen</string>
+	<string name="enable_only_charging_summary">Alleen automatisch volgen wanneer aan het opladen (instellingen hieronder van toepassing) </string>
 	<string name="enable_on_headphones">Inschakelen voor Hoofdtelefoons</string>
 	<string name="enable_headphones_summary">Volg wanneer u een koptelefoon heeft aangesloten</string>
 	<string name="enable_on_bluetooth">Activeer Bluetooth in</string>
@@ -46,9 +49,12 @@
 	<string name="mps_long">meters/second</string>
 	<string name="kph_long">kilometers/uur</string>
 	<string name="mph_long">Mijlen/uur</string>
-	<string name="no_location_providers">Kon geen manier vinden om uw locatie te krijgen. Schakel uw GPS in.</string>
+	<string name="no_location_providers">Kon geen manier vinden om jouw locatie te krijgen. Verleen locatiemachtigingen en zet GPS aan. </string>
 	<string name="version">Versie</string>
 	<string name="contact">Contacteer ons.</string>
 	<string name="github">Open Source op GitHub</string>
 	<string name="help_translate">Vertalen in een andere taal</string>
+	<string name="start_tracking">Start volgen</string>
+	<string name="stop_tracking">Stop volgen</string>
+	<string name="pick_bluetooth_devices">Selecteer Bluetooth Apparaten</string>
 </resources>

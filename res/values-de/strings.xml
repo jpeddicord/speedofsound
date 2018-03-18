@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 	<string name="app_name">Speed of Sound</string>
 	<string name="moving_header">Ihre aktuelle Geschwindigkeit und Bewegungsrichtung ist:</string>
 	<string name="volume_header_scaled">Ihre Lautstärke ist eingestellt auf:</string>
 	<string name="volume_header_low">Wir haben also Ihre Lautstärke auf das Minimum reduziert:</string>
 	<string name="volume_header_high">Wir haben also Ihre Lautstärke auf das Maximum erhöht:</string>
 	<string name="enabled">Speed of Sound aktivieren</string>
-	<string name="waiting">Auf das GPS signal warten</string>
+	<string name="waiting">Auf das GPS-Signal warten</string>
 	<string name="notification_text">Ihre Lautstärke wird der Geschwindigkeit angepasst</string>
 	<string name="ticker_text">Speed of Sound wird ausgeführt</string>
 	<string name="stop">Stopp</string>
@@ -29,8 +29,9 @@
 	<string name="speed_units_summary">Wählen Sie die Geschwindigkeitseinheiten, die Sie verwenden möchten</string>
 	<string name="activation">Aktivierung</string>
 	<string name="start_automatically">Automatisch starten</string>
+	<string name="start_automatically_summary">Starte Überwachung, sobald ich die App starte</string>
 	<string name="only_when_charging">Nur beim Ladevorgang</string>
-	<string name="enable_only_charging_summary">Nur automatisch Überwachen beim Aufladen</string>
+	<string name="enable_only_charging_summary">Aktiviere automatische Überwachung nur, wenn das Gerält geladen wird (wird auf Einstellungen unter dieser angewendet)</string>
 	<string name="enable_on_headphones">Auf Kopfhörer aktivieren</string>
 	<string name="enable_headphones_summary">Verfolgen, wenn die Kopfhörer eingesteckt sind</string>
 	<string name="enable_on_bluetooth">Auf Bluetooth aktivieren</string>
@@ -48,9 +49,14 @@
 	<string name="mps_long">meter/sekunde</string>
 	<string name="kph_long">kilometer/stunde</string>
 	<string name="mph_long">meilen/stunde</string>
-	<string name="no_location_providers">Es konnte kein Weg gefunden werden, um Ihren Standort zu erhalten. Bitte schalten Sie ihr GPS ein.</string>
+	<string name="no_location_providers">Ihr Standort konnte nicht ermittelt werden. Bitte vergeben Sie die Standort-Berechtigung und aktivieren Sie GPS.</string>
 	<string name="version">Version</string>
 	<string name="contact">Kontaktieren Sie uns</string>
 	<string name="github">Open Source auf GitHub</string>
 	<string name="help_translate">In eine andere Sprache übersetzen</string>
+	<string name="start_tracking">Starte Überwachung</string>
+	<string name="stop_tracking">Stoppe Überwachung</string>
+	<string name="enable_bluetooth_devices_summary">Wählen Sie ein Bluetooth-Gerät aus, das mit Speed of Sound genutzt werden soll. Optional; wenn Sie keins Auswählen, werden alle Bluetooth-Geräte funktionieren.</string>
+	<string name="pick_bluetooth_devices">Bluetooth-Gerät auswählen</string>
+	<string name="select_music_bluetooth_devices">Wählen Sie eines ihrer Bluetooth-Geräte:</string>
 </resources>
