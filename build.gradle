@@ -1,36 +1,33 @@
 buildscript {
 	repositories {
 		jcenter()
+		google()
 	}
 	dependencies {
-		classpath 'com.android.tools.build:gradle:2.2.2'
+		classpath 'com.android.tools.build:gradle:3.0.1'
 	}
 }
 allprojects {
 	repositories {
 		jcenter()
+		google()
 	}
 }
 
 apply plugin: 'com.android.application'
 
 dependencies {
-	compile 'com.android.support:support-v4:25.0.0'
-	compile 'com.android.support:appcompat-v7:25.0.0'
-	compile 'com.google.android.gms:play-services-maps:9.8.0'
-	compile 'com.google.android.gms:play-services-location:9.8.0'
+	compile 'com.android.support:support-v4:27.1.0'
+	compile 'com.android.support:appcompat-v7:27.1.0'
+	compile 'com.google.android.gms:play-services-maps:11.8.0'
+	compile 'com.google.android.gms:play-services-location:11.8.0'
 }
 
 android {
-	compileSdkVersion 25
-	buildToolsVersion '25'
+	compileSdkVersion 27
 
 	defaultConfig {
-		vectorDrawables.useSupportLibrary = true;
-
-		jackOptions {
-			enabled true
-		}
+		vectorDrawables.useSupportLibrary = true
 	}
 
 	compileOptions {
