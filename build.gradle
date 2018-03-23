@@ -1,11 +1,13 @@
 buildscript {
-	repositories {
+    ext.kotlin_version = '1.2.31'
+    repositories {
 		jcenter()
 		google()
 	}
 	dependencies {
 		classpath 'com.android.tools.build:gradle:3.0.1'
-	}
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
 }
 allprojects {
 	repositories {
@@ -15,12 +17,13 @@ allprojects {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 dependencies {
 	compile 'com.android.support:support-v4:27.1.0'
 	compile 'com.android.support:appcompat-v7:27.1.0'
-	compile 'com.google.android.gms:play-services-maps:11.8.0'
-	compile 'com.google.android.gms:play-services-location:11.8.0'
+	compile 'com.google.android.gms:play-services-location:12.0.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 
 android {
@@ -65,5 +68,8 @@ android {
 			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 		}
 	}
+}
+repositories {
+    mavenCentral()
 }
 
