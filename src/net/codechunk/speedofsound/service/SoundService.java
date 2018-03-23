@@ -295,6 +295,11 @@ public class SoundService extends Service implements GoogleApiClient.ConnectionC
 			if (location == null)
 				return;
 
+			// during shut-down, the volume thread might have finished.
+			// ignore location updates from this point on.
+			if (SoundService.this.volumeThread == null)
+				return;
+
 			// use the GPS-provided speed if available
 			float speed;
 			if (location.hasSpeed()) {

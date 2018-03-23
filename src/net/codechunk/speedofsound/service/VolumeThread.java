@@ -146,11 +146,17 @@ public class VolumeThread extends Thread {
 			}
 
 			// set the volume
-			int newSystemVolume = (int) (this.maxVolume * newVolume);
-			this.audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newSystemVolume, 0);
-			currentVolume = newVolume;
+			try {
+				int newSystemVolume = (int) (this.maxVolume * newVolume);
+				this.audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newSystemVolume, 0);
+				currentVolume = newVolume;
 
-			Log.v(TAG, "New volume is " + newVolume + " translated to " + newSystemVolume);
+				Log.v(TAG, "New volume is " + newVolume + " translated to " + newSystemVolume);
+			} catch (SecurityException e) {
+				// fucking Samsung devices throw this when that stupid "you might
+				// hurt your ears" pop-up comes up when changing the volume.
+				Log.e(TAG, "SecurityException when trying to change the volume", e);
+			}
 		}
 
 		Log.d(TAG, "Thread exiting");
