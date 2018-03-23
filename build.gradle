@@ -1,73 +1,71 @@
 buildscript {
     ext.kotlin_version = '1.2.31'
     repositories {
-		jcenter()
-		google()
-	}
-	dependencies {
-		classpath 'com.android.tools.build:gradle:3.0.1'
+        jcenter()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 allprojects {
-	repositories {
-		jcenter()
-		google()
-	}
+    repositories {
+        jcenter()
+        google()
+    }
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 dependencies {
-	compile 'com.android.support:support-v4:27.1.0'
-	compile 'com.android.support:appcompat-v7:27.1.0'
-	compile 'com.google.android.gms:play-services-location:12.0.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile 'com.android.support:support-v4:27.1.0'
+    compile 'com.android.support:appcompat-v7:27.1.0'
+    compile 'com.google.android.gms:play-services-location:12.0.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 android {
-	compileSdkVersion 27
+    compileSdkVersion 27
 
-	defaultConfig {
-		vectorDrawables.useSupportLibrary = true
-	}
+    defaultConfig {
+        vectorDrawables.useSupportLibrary = true
+    }
 
-	compileOptions {
-		sourceCompatibility JavaVersion.VERSION_1_8
-		targetCompatibility JavaVersion.VERSION_1_8
-	}
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
-	sourceSets {
-		main {
-			manifest.srcFile 'AndroidManifest.xml'
-			java.srcDirs = ['src']
-			resources.srcDirs = ['src']
-			aidl.srcDirs = ['src']
-			renderscript.srcDirs = ['src']
-			res.srcDirs = ['res']
-			assets.srcDirs = ['assets']
-		}
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
 
-		instrumentTest.setRoot('tests')
-	}
+        instrumentTest.setRoot('tests')
+    }
 
-	lintOptions {
-		abortOnError false
-	}
+    lintOptions {
+        abortOnError false
+    }
 
-	signingConfigs {
-		release
-	}
+    signingConfigs {
+        release
+    }
 
-	buildTypes {
-		release {
-			signingConfig signingConfigs.release
-			minifyEnabled false // causes a crash on map w/ current play services
-			shrinkResources false // incompatible with 2.2.0/jack or something
-			proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-		}
-	}
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
 }
 repositories {
     mavenCentral()
