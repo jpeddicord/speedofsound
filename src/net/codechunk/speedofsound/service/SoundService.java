@@ -34,7 +34,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import net.codechunk.speedofsound.R;
-import net.codechunk.speedofsound.SongTracker;
 import net.codechunk.speedofsound.SpeedActivity;
 import net.codechunk.speedofsound.util.AppPreferences;
 
@@ -76,7 +75,6 @@ public class SoundService extends Service implements GoogleApiClient.ConnectionC
 	private VolumeThread volumeThread = null;
 	private LocalBinder binder = new LocalBinder();
 	private VolumeConversion volumeConversion;
-	private SongTracker songTracker;
 
 	/**
 	 * Start up the service and initialize some values. Does not start tracking.
@@ -102,7 +100,6 @@ public class SoundService extends Service implements GoogleApiClient.ConnectionC
 		this.localBroadcastManager = LocalBroadcastManager.getInstance(this);
 		this.volumeConversion = new VolumeConversion();
 		this.volumeConversion.onSharedPreferenceChanged(this.settings, null); // set initial
-		this.songTracker = SongTracker.getInstance(this);
 
 		// activation broadcasts
 		IntentFilter activationFilter = this.soundServiceManager.activationIntents();
@@ -186,9 +183,6 @@ public class SoundService extends Service implements GoogleApiClient.ConnectionC
 		LocationServices.FusedLocationApi.requestLocationUpdates(
 				this.googleApiClient, req, this.locationUpdater);
 
-		// start a new route
-		this.songTracker.startRoute();
-
 		// start up the volume thread
 		if (this.volumeThread == null) {
 			this.volumeThread = new VolumeThread(this);
@@ -256,9 +250,6 @@ public class SoundService extends Service implements GoogleApiClient.ConnectionC
 			this.volumeThread.interrupt();
 			this.volumeThread = null;
 		}
-
-		// end the current route
-		this.songTracker.endRoute();
 
 		// disable location updates
 		LocationServices.FusedLocationApi.removeLocationUpdates(

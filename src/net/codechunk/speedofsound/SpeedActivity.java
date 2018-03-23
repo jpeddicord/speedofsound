@@ -413,7 +413,6 @@ public class SpeedActivity extends AppCompatActivity implements View.OnClickList
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.speed_menu, menu);
 		MenuItemCompat.setShowAsAction(menu.findItem(R.id.preferences), MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
-		MenuItemCompat.setShowAsAction(menu.findItem(R.id.view_map), MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
 
 		return true;
 	}
@@ -428,18 +427,6 @@ public class SpeedActivity extends AppCompatActivity implements View.OnClickList
 				startActivity(new Intent(this, PreferencesActivity.class));
 				break;
 
-			case R.id.view_map:
-				// verify Google Play Services is available
-				int result = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-				Dialog dlg = GooglePlayServicesUtil.getErrorDialog(result, this, 0);
-				if (dlg != null) {
-					dlg.show();
-					return true;
-				}
-
-				// launch the map
-				startActivity(new Intent(this, MapperActivity.class));
-				break;
 		}
 		return true;
 	}
