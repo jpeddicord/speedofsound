@@ -62,7 +62,7 @@ open class SliderPreference(context: Context, attrs: AttributeSet) : DialogPrefe
      * Set the initial value.
      * Needed to properly load the default value.
      */
-    override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any) {
+    override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
         if (restorePersistedValue) {
             // Restore existing state
             this.value = this.getPersistedInt(-1)

@@ -89,12 +89,7 @@ class BluetoothDevicePreference(context: Context, attrs: AttributeSet) : DialogP
         if (adapter != null) {
             val deviceSet = adapter.bondedDevices
             for (bluetoothDevice in deviceSet) {
-                val bluetoothClass = bluetoothDevice.bluetoothClass
-                if (bluetoothClass.majorDeviceClass == BluetoothClass.Device.Major.AUDIO_VIDEO) {
-                    this.adapterDevices.add(PrettyBluetoothDevice(bluetoothDevice))
-                } else {
-                    Log.d(TAG, "Skipping " + bluetoothDevice.name + " with class " + bluetoothClass.deviceClass)
-                }
+                this.adapterDevices.add(PrettyBluetoothDevice(bluetoothDevice))
             }
         }
 
