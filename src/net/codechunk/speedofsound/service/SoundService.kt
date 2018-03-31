@@ -9,7 +9,6 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Binder
 import android.os.Build
-import android.os.Bundle
 import android.os.IBinder
 import android.preference.PreferenceManager
 import android.support.annotation.RequiresApi
@@ -18,11 +17,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.widget.Toast
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.LocationListener
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import net.codechunk.speedofsound.R
 import net.codechunk.speedofsound.SpeedActivity
 import net.codechunk.speedofsound.util.AppPreferences
@@ -33,7 +28,7 @@ import net.codechunk.speedofsound.util.AppPreferences
  * Responsible for adjusting the volume based on the current speed. Can be
  * started and stopped externally, but is largely independent.
  */
-class SoundService : Service(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+class SoundService : Service() {
 
     /**
      * The current tracking state.
@@ -41,8 +36,7 @@ class SoundService : Service(), GoogleApiClient.ConnectionCallbacks, GoogleApiCl
     var isTracking = false
         private set
 
-    private var pendingStart = false
-    private var googleApiClient: GoogleApiClient? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var localBroadcastManager: LocalBroadcastManager? = null
     private val soundServiceManager = SoundServiceManager()
 
@@ -86,7 +80,7 @@ class SoundService : Service(), GoogleApiClient.ConnectionCallbacks, GoogleApiCl
      * Custom location listener. Triggers volume changes based on the current
      * average speed.
      */
-    private val locationUpdater = object : LocationListener {
+    private val locationUpdater = object : LocationCallback() {
         private var previousLocation: Location? = null
 
         /**
@@ -95,16 +89,12 @@ class SoundService : Service(), GoogleApiClient.ConnectionCallbacks, GoogleApiCl
          * previous location. After updating the average and updating the
          * volume, send out a broadcast notifying of the changes.
          */
-        override fun onLocationChanged(location: Location?) {
-            // some stupid phones occasionally send a null location.
-            // who does that, seriously.
-            if (location == null)
-                return
+        override fun onLocationResult(locations: LocationResult?) {
+            val location = locations?.lastLocation ?: return
 
             // during shut-down, the volume thread might have finished.
             // ignore location updates from this point on.
-            if (this@SoundService.volumeThread == null)
-                return
+            this@SoundService.volumeThread ?: return
 
             // use the GPS-provided speed if available
             val speed: Float
@@ -146,12 +136,7 @@ class SoundService : Service(), GoogleApiClient.ConnectionCallbacks, GoogleApiCl
     override fun onCreate() {
         Log.d(TAG, "Service starting up")
 
-        // connect to google api stuff, because for some reason you need to do that for location
-        this.googleApiClient = GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build()
+        this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         // set up preferences
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
@@ -176,8 +161,6 @@ class SoundService : Service(), GoogleApiClient.ConnectionCallbacks, GoogleApiCl
      */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "Start command received")
-
-        this.googleApiClient!!.connect()
 
         // register pref watching
         this.settings!!.registerOnSharedPreferenceChangeListener(this.volumeConversion)
@@ -205,7 +188,6 @@ class SoundService : Service(), GoogleApiClient.ConnectionCallbacks, GoogleApiCl
         Log.d(TAG, "Service shutting down")
 
         this.settings!!.unregisterOnSharedPreferenceChangeListener(this.volumeConversion)
-        this.googleApiClient!!.disconnect()
     }
 
     /**
@@ -218,13 +200,6 @@ class SoundService : Service(), GoogleApiClient.ConnectionCallbacks, GoogleApiCl
             return
         }
 
-        // if we're still connecting, then defer this (see onConnected)
-        if (this.googleApiClient!!.isConnecting) {
-            Log.i(TAG, "Google API client not yet connected; waiting to start")
-            this.pendingStart = true
-            return
-        }
-
         // check runtime permission
         val hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
         if (hasPermission != PackageManager.PERMISSION_GRANTED) {
@@ -233,12 +208,12 @@ class SoundService : Service(), GoogleApiClient.ConnectionCallbacks, GoogleApiCl
         }
 
         // request location updates
-        val req = LocationRequest()
-        req.interval = 1000
-        req.fastestInterval = 500
-        req.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                this.googleApiClient, req, this.locationUpdater)
+        val req = LocationRequest.create().apply {
+            interval = 1000
+            fastestInterval = 500
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+        this.fusedLocationClient.requestLocationUpdates(req, this.locationUpdater, null)
 
         // start up the volume thread
         if (this.volumeThread == null) {
@@ -267,15 +242,14 @@ class SoundService : Service(), GoogleApiClient.ConnectionCallbacks, GoogleApiCl
             return
         }
 
+        // stop location updates
+        this.fusedLocationClient.removeLocationUpdates(this.locationUpdater)
+
         // shut off the volume thread
         if (this.volumeThread != null) {
             this.volumeThread!!.interrupt()
             this.volumeThread = null
         }
-
-        // disable location updates
-        LocationServices.FusedLocationApi.removeLocationUpdates(
-                this.googleApiClient, this.locationUpdater)
 
         // remove notification and go to background
         stopForeground(true)
@@ -287,22 +261,6 @@ class SoundService : Service(), GoogleApiClient.ConnectionCallbacks, GoogleApiCl
 
         this.isTracking = false
         Log.d(TAG, "Tracking stopped")
-    }
-
-    override fun onConnected(bundle: Bundle?) {
-        Log.i(TAG, "Google API client connected")
-        if (this.pendingStart) {
-            this.startTracking()
-            this.pendingStart = false
-        }
-    }
-
-    override fun onConnectionSuspended(i: Int) {
-        // no-op
-    }
-
-    override fun onConnectionFailed(connectionResult: ConnectionResult) {
-        Log.e(TAG, "Google API Connection failed: " + connectionResult.errorMessage!!)
     }
 
     /**
