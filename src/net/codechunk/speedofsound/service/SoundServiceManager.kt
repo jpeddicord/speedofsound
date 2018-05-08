@@ -5,6 +5,7 @@ import android.content.*
 import android.os.BatteryManager
 import android.preference.PreferenceManager
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import net.codechunk.speedofsound.util.BluetoothDevicePreference
 import java.util.*
@@ -26,45 +27,53 @@ class SoundServiceManager : BroadcastReceiver() {
      */
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action
-        Log.d(TAG, "Received intent " + action!!)
+        Log.d(TAG, "Received intent with action $action")
 
         // resume tracking if we're also in a satisfactory mode
         if (action == Intent.ACTION_POWER_CONNECTED ||
                 action == Intent.ACTION_POWER_DISCONNECTED ||
                 action == Intent.ACTION_HEADSET_PLUG) {
             SoundServiceManager.setTracking(context, this.shouldTrack(context))
-        } else if (action == android.bluetooth.BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED) {
-            Log.d(TAG, "A2DP API11+ event")
+        } else if (action == BluetoothDevice.ACTION_ACL_CONNECTED ||
+                action == BluetoothDevice.ACTION_ACL_DISCONNECTED) {
+            Log.d(TAG, "Bluetooth ACL connect/disconnect event")
+
+            // check whether we care about this event at all
+            val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+            if (!prefs.getBoolean("enable_bluetooth", false)) {
+                Log.v(TAG, "Bluetooth pref disabled; ignoring")
+                return
+            }
 
             // grab the device address and check it against our list of things
             val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-            var shouldCare = false
-            if (device != null) {
-                shouldCare = isSelectedBluetoothDevice(context, device.address)
+            val shouldCare = when (device) {
+                null -> false
+                else -> isSelectedBluetoothDevice(prefs, device.address)
             }
             if (!shouldCare) {
+                Log.v(TAG, "Bluetooth pref enabled but we don't care about this device")
                 return
             }
 
             // set the bluetooth state
-            val state = intent.getIntExtra(android.bluetooth.BluetoothA2dp.EXTRA_STATE, -1)
-            if (state == android.bluetooth.BluetoothA2dp.STATE_CONNECTED) {
-                Log.v(TAG, "A2DP active")
-                this.bluetoothConnected = true
-            } else if (state == android.bluetooth.BluetoothA2dp.STATE_DISCONNECTED) {
-                Log.v(TAG, "A2DP inactive")
-                this.bluetoothConnected = false
-            }
+            this.bluetoothConnected = action == BluetoothDevice.ACTION_ACL_CONNECTED
+            Log.v(TAG, "Bluetooth active: ${this.bluetoothConnected}")
 
             // start or stop tracking
             SoundServiceManager.setTracking(context, this.shouldTrack(context))
+        } else if (action == SoundServiceManager.LOCALE_FIRE) {
+            // Tasker!
+            val bundle = intent.getBundleExtra(SoundServiceManager.LOCALE_BUNDLE)
+            if (bundle != null) {
+                val state = bundle.getBoolean(SoundService.SET_TRACKING_STATE, true)
+                SoundServiceManager.setTracking(context, state)
+            }
         } else {
-            if (action == SoundServiceManager.LOCALE_FIRE) {
-                val bundle = intent.getBundleExtra(SoundServiceManager.LOCALE_BUNDLE)
-                if (bundle != null) {
-                    val state = bundle.getBoolean(SoundService.SET_TRACKING_STATE, true)
-                    SoundServiceManager.setTracking(context, state)
-                }
+            // external intent (likely from notification "Stop" action)
+            val state = intent.extras?.getBoolean(SoundService.SET_TRACKING_STATE)
+            if (state != null) {
+                SoundServiceManager.setTracking(context, state)
             }
         }
     }
@@ -132,10 +141,9 @@ class SoundServiceManager : BroadcastReceiver() {
      *
      * Loaded from user preferences.
      */
-    private fun isSelectedBluetoothDevice(context: Context, address: String): Boolean {
+    private fun isSelectedBluetoothDevice(prefs: SharedPreferences, address: String): Boolean {
         // fetched saved devices
-        val addresses = PreferenceManager.getDefaultSharedPreferences(context)
-                .getStringSet(BluetoothDevicePreference.KEY, HashSet())
+        val addresses = prefs.getStringSet(BluetoothDevicePreference.KEY, HashSet())
 
         // no selected devices means that *any* bluetooth device is valid
         return if (addresses!!.size == 0) {
@@ -152,16 +160,24 @@ class SoundServiceManager : BroadcastReceiver() {
         const val LOCALE_FIRE = "com.twofortyfouram.locale.intent.action.FIRE_SETTING"
 
         /**
-         * Set the tracking state by sending a service start command.
-         *
-         * @param context Application context.
-         * @param state   Turn tracking on or off.
+         * Set the tracking state by sending a service start command or broadcast.
          */
-        private fun setTracking(context: Context, state: Boolean) {
-            Log.d(TAG, "Setting tracking state: $state")
-            val serviceIntent = Intent(context, SoundService::class.java)
-            serviceIntent.putExtra(SoundService.SET_TRACKING_STATE, state)
-            ContextCompat.startForegroundService(context, serviceIntent)
+        private fun setTracking(context: Context, desiredState: Boolean) {
+            Log.d(TAG, "Setting tracking desiredState: $desiredState")
+
+            // only call startForegroundService if we want to start tracking;
+            // in 8.0+ the service *must* start up and present a notification
+            // within 5 seconds or Android will kill the whole app
+            if (desiredState) {
+                val serviceIntent = Intent(context, SoundService::class.java)
+                serviceIntent.putExtra(SoundService.SET_TRACKING_STATE, desiredState)
+                ContextCompat.startForegroundService(context, serviceIntent)
+            } else {
+                val commandIntent = Intent(SoundService.SET_TRACKING_STATE)
+                commandIntent.putExtra(SoundService.SET_TRACKING_STATE, desiredState)
+                LocalBroadcastManager.getInstance(context).sendBroadcast(commandIntent)
+            }
+
         }
     }
 

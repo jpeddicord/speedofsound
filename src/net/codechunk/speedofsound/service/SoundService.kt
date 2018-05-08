@@ -2,9 +2,7 @@ package net.codechunk.speedofsound.service
 
 import android.Manifest
 import android.app.*
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Binder
@@ -38,7 +36,6 @@ class SoundService : Service() {
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var localBroadcastManager: LocalBroadcastManager? = null
-    private val soundServiceManager = SoundServiceManager()
 
     private var settings: SharedPreferences? = null
     private var volumeThread: VolumeThread? = null
@@ -68,10 +65,10 @@ class SoundService : Service() {
             builder.setSmallIcon(R.drawable.ic_notification)
             builder.setWhen(System.currentTimeMillis())
 
-            val stopIntent = Intent(this, SoundService::class.java)
+            val stopIntent = Intent(this, SoundServiceManager::class.java)
             stopIntent.putExtra(SoundService.SET_TRACKING_STATE, false)
             builder.addAction(R.drawable.ic_stop, getString(R.string.stop),
-                    PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_ONE_SHOT))
+                    PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_ONE_SHOT))
 
             return builder.build()
         }
@@ -160,18 +157,16 @@ class SoundService : Service() {
 
         // register pref watching
         this.settings!!.registerOnSharedPreferenceChangeListener(this.volumeConversion)
+        LocalBroadcastManager
+                .getInstance(this)
+                .registerReceiver(this.messageReceiver, IntentFilter(SoundService.SET_TRACKING_STATE))
 
-        // check if we've been commanded to start or stop tracking
-        if (intent != null) {
-            val extras = intent.extras
-            if (extras != null && extras.containsKey(SoundService.SET_TRACKING_STATE)) {
-                Log.v(TAG, "Commanded to change state")
-                if (extras.getBoolean(SoundService.SET_TRACKING_STATE)) {
-                    this.startTracking()
-                } else {
-                    this.stopTracking()
-                }
-            }
+        // check if we've been commanded to start tracking;
+        // we may be started only for the activity view and don't want to start
+        // anything up implicitly (note: don't handle stop requests here)
+        if (intent?.extras?.containsKey(SoundService.SET_TRACKING_STATE) != null) {
+            Log.v(TAG, "Start command included tracking intent; starting tracking")
+            this.startTracking()
         }
 
         return Service.START_STICKY
@@ -184,6 +179,26 @@ class SoundService : Service() {
         Log.d(TAG, "Service shutting down")
 
         this.settings!!.unregisterOnSharedPreferenceChangeListener(this.volumeConversion)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(this.messageReceiver)
+    }
+
+    /**
+     * The only way to stop tracking is by sending a local broadcast to this service
+     * or by binding to it (for UI); stopping the service during onStartCommand can cause an
+     * ANR in 8.0+ due to the fact that a foreground service _must_ present itself.
+     */
+    private val messageReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.extras?.containsKey(SoundService.SET_TRACKING_STATE) != null) {
+                Log.v(TAG, "Commanded to change state")
+                val wanted = intent.extras.getBoolean(SoundService.SET_TRACKING_STATE)
+                if (wanted) {
+                    this@SoundService.startTracking()
+                } else {
+                    this@SoundService.stopTracking()
+                }
+            }
+        }
     }
 
     /**

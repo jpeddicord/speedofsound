@@ -61,7 +61,8 @@
 				android:enabled="true"
 				android:exported="true">
 			<intent-filter>
-				<action android:name="android.bluetooth.BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED" />
+				<action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
+				<action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
 				<action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
 				<action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
 				<action android:name="com.twofortyfouram.locale.intent.action.FIRE_SETTING" />
