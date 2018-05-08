@@ -32,7 +32,7 @@ class PreferencesActivity : PreferenceActivity() {
 
         this.prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
-        registerAbout()
+        registerClickables()
     }
 
     public override fun onResume() {
@@ -45,7 +45,7 @@ class PreferencesActivity : PreferenceActivity() {
         this.prefs!!.unregisterOnSharedPreferenceChangeListener(this.listener)
     }
 
-    private fun registerAbout() {
+    private fun registerClickables() {
         // get version number
         val pi: PackageInfo
         try {
@@ -93,6 +93,15 @@ class PreferencesActivity : PreferenceActivity() {
             this@PreferencesActivity.startActivity(Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse("https://github.com/jpeddicord/speedofsound")
+            ))
+            true
+        }
+
+        val headphones = findPreference("enable_headphones")
+        headphones.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            this@PreferencesActivity.startActivity(Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://github.com/jpeddicord/speedofsound/wiki/Tasker-Headphone-Detection")
             ))
             true
         }

@@ -70,6 +70,10 @@
 			android:summary="@string/enable_headphones_summary"
 			android:title="@string/enable_on_headphones" />
 		-->
+		<Preference
+			android:key="enable_headphones"
+			android:summary="@string/no_longer_functions"
+			android:title="@string/enable_on_headphones" />
 		<CheckBoxPreference
 				android:defaultValue="false"
 				android:key="enable_bluetooth"
