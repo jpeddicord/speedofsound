@@ -1,0 +1,57 @@
+<TaskerData sr="" dvi="1" tv="5.1m">
+	<Profile sr="prof16" ve="2">
+		<cdate>1525798587683</cdate>
+		<clp>true</clp>
+		<edate>1525799324449</edate>
+		<id>16</id>
+		<mid0>17</mid0>
+		<mid1>18</mid1>
+		<nme>Headphone Detection</nme>
+		<State sr="con0" ve="2">
+			<code>30</code>
+			<Int sr="arg0" val="0"/>
+		</State>
+	</Profile>
+	<Task sr="task17">
+		<cdate>1525798594231</cdate>
+		<edate>1525798619053</edate>
+		<id>17</id>
+		<Action sr="act0" ve="7">
+			<code>576172402</code>
+			<Bundle sr="arg0">
+				<Vals sr="val">
+					<com.twofortyfouram.locale.intent.extra.BLURB>Start tracking</com.twofortyfouram.locale.intent.extra.BLURB>
+					<com.twofortyfouram.locale.intent.extra.BLURB-type>java.lang.String</com.twofortyfouram.locale.intent.extra.BLURB-type>
+					<net.dinglisch.android.tasker.subbundled>true</net.dinglisch.android.tasker.subbundled>
+					<net.dinglisch.android.tasker.subbundled-type>java.lang.Boolean</net.dinglisch.android.tasker.subbundled-type>
+					<set-tracking-state>true</set-tracking-state>
+					<set-tracking-state-type>java.lang.Boolean</set-tracking-state-type>
+				</Vals>
+			</Bundle>
+			<Str sr="arg1" ve="3">net.codechunk.speedofsound</Str>
+			<Str sr="arg2" ve="3">net.codechunk.speedofsound.LocaleActivity</Str>
+			<Int sr="arg3" val="0"/>
+		</Action>
+	</Task>
+	<Task sr="task18">
+		<cdate>1525798624363</cdate>
+		<edate>1525798635194</edate>
+		<id>18</id>
+		<Action sr="act0" ve="7">
+			<code>576172402</code>
+			<Bundle sr="arg0">
+				<Vals sr="val">
+					<com.twofortyfouram.locale.intent.extra.BLURB>Stop tracking</com.twofortyfouram.locale.intent.extra.BLURB>
+					<com.twofortyfouram.locale.intent.extra.BLURB-type>java.lang.String</com.twofortyfouram.locale.intent.extra.BLURB-type>
+					<net.dinglisch.android.tasker.subbundled>true</net.dinglisch.android.tasker.subbundled>
+					<net.dinglisch.android.tasker.subbundled-type>java.lang.Boolean</net.dinglisch.android.tasker.subbundled-type>
+					<set-tracking-state>false</set-tracking-state>
+					<set-tracking-state-type>java.lang.Boolean</set-tracking-state-type>
+				</Vals>
+			</Bundle>
+			<Str sr="arg1" ve="3">net.codechunk.speedofsound</Str>
+			<Str sr="arg2" ve="3">net.codechunk.speedofsound.LocaleActivity</Str>
+			<Int sr="arg3" val="0"/>
+		</Action>
+	</Task>
+</TaskerData>
