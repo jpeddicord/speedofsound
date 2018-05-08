@@ -63,11 +63,13 @@
 				android:key="enable_only_charging"
 				android:summary="@string/enable_only_charging_summary"
 				android:title="@string/only_when_charging" />
+		<!-- This no longer works in Android 8.0+: https://issuetracker.google.com/issues/65672608
 		<CheckBoxPreference
-				android:defaultValue="false"
-				android:key="enable_headphones"
-				android:summary="@string/enable_headphones_summary"
-				android:title="@string/enable_on_headphones" />
+			android:defaultValue="false"
+			android:key="enable_headphones"
+			android:summary="@string/enable_headphones_summary"
+			android:title="@string/enable_on_headphones" />
+		-->
 		<CheckBoxPreference
 				android:defaultValue="false"
 				android:key="enable_bluetooth"

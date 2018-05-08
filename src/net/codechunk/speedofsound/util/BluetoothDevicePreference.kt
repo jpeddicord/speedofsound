@@ -64,7 +64,7 @@ class BluetoothDevicePreference(context: Context, attrs: AttributeSet) : DialogP
             }
         }
 
-    override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any) {
+    override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
         if (restorePersistedValue) {
             this.value = persistedDevices
         } else {

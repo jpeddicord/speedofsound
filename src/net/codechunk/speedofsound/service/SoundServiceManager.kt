@@ -1,12 +1,10 @@
 package net.codechunk.speedofsound.service
 
 import android.bluetooth.BluetoothDevice
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.BatteryManager
 import android.preference.PreferenceManager
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import net.codechunk.speedofsound.util.BluetoothDevicePreference
 import java.util.*
@@ -24,33 +22,11 @@ class SoundServiceManager : BroadcastReceiver() {
     private var bluetoothConnected = false
 
     /**
-     * Get the filter of extra intents we care about.
-     */
-    fun activationIntents(): IntentFilter {
-        val filter = IntentFilter()
-
-        // headset plug/unplug events (*mush* be registered dynamically)
-        filter.addAction(Intent.ACTION_HEADSET_PLUG)
-
-        // documented API11+ bluetooth API
-        filter.addAction(android.bluetooth.BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED)
-
-        return filter
-    }
-
-    /**
      * Receive a broadcast and start the service or update the tracking state.
      */
     override fun onReceive(context: Context, intent: Intent) {
         val action = intent.action
         Log.d(TAG, "Received intent " + action!!)
-
-        // start the service on boot
-        if (action == Intent.ACTION_BOOT_COMPLETED) {
-            val startIntent = Intent(context, SoundService::class.java)
-            context.startService(startIntent)
-            return
-        }
 
         // resume tracking if we're also in a satisfactory mode
         if (action == Intent.ACTION_POWER_CONNECTED ||
@@ -90,8 +66,7 @@ class SoundServiceManager : BroadcastReceiver() {
                     SoundServiceManager.setTracking(context, state)
                 }
             }
-        }// locale/tasker intents
-        // official API 11+ bluetooth A2DP broadcasts
+        }
     }
 
     /**
@@ -104,7 +79,7 @@ class SoundServiceManager : BroadcastReceiver() {
         // load preferences
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val powerPreference = prefs.getBoolean("enable_only_charging", false)
-        val headphonePreference = prefs.getBoolean("enable_headphones", false)
+        //val headphonePreference = prefs.getBoolean("enable_headphones", false)
         val bluetoothPreference = prefs.getBoolean("enable_bluetooth", false)
 
         // get power status
@@ -124,6 +99,7 @@ class SoundServiceManager : BroadcastReceiver() {
             return false
         }
 
+        /* XXX: No longer functions in Android 8.0, see preferences.xml comment
         // get headphone status
         val headsetFilter = IntentFilter(Intent.ACTION_HEADSET_PLUG)
         val headphoneStatus = context.applicationContext.registerReceiver(null, headsetFilter)
@@ -139,6 +115,7 @@ class SoundServiceManager : BroadcastReceiver() {
             Log.v(TAG, "Headphone connected")
             return true
         }
+        */
 
         // also activate if bluetooth is connected
         if (bluetoothPreference && this.bluetoothConnected) {
@@ -181,10 +158,10 @@ class SoundServiceManager : BroadcastReceiver() {
          * @param state   Turn tracking on or off.
          */
         private fun setTracking(context: Context, state: Boolean) {
-            Log.d(TAG, "Setting tracking state: " + state)
+            Log.d(TAG, "Setting tracking state: $state")
             val serviceIntent = Intent(context, SoundService::class.java)
             serviceIntent.putExtra(SoundService.SET_TRACKING_STATE, state)
-            context.startService(serviceIntent)
+            ContextCompat.startForegroundService(context, serviceIntent)
         }
     }
 

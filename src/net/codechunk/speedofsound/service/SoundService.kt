@@ -148,10 +148,6 @@ class SoundService : Service() {
         this.localBroadcastManager = LocalBroadcastManager.getInstance(this)
         this.volumeConversion = VolumeConversion()
         this.volumeConversion!!.onSharedPreferenceChanged(this.settings!!, "") // set initial
-
-        // activation broadcasts
-        val activationFilter = this.soundServiceManager.activationIntents()
-        this.registerReceiver(this.soundServiceManager, activationFilter)
     }
 
     /**
