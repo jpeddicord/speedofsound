@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<attr name="minValue" format="integer" />
-	<attr name="maxValue" format="integer" />
-	<attr name="units" format="string" />
+    <attr name="minValue" format="integer" />
+    <attr name="maxValue" format="integer" />
+    <attr name="units" format="string" />
 
-	<declare-styleable name="net.codechunk.speedofsound.util.SliderPreference">
-		<attr name="minValue" />
-		<attr name="maxValue" />
-		<attr name="units" />
-	</declare-styleable>
+    <declare-styleable name="net.codechunk.speedofsound.util.SliderPreference">
+        <attr name="minValue" />
+        <attr name="maxValue" />
+        <attr name="units" />
+    </declare-styleable>
 
-	<declare-styleable name="net.codechunk.speedofsound.util.SpeedSliderPreference">
-		<attr name="minValue" />
-		<attr name="maxValue" />
-		<attr name="units" />
-	</declare-styleable>
+    <declare-styleable name="net.codechunk.speedofsound.util.SpeedSliderPreference">
+        <attr name="minValue" />
+        <attr name="maxValue" />
+        <attr name="units" />
+    </declare-styleable>
 
 </resources>

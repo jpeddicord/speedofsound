@@ -82,8 +82,8 @@ class PreferencesActivity : PreferenceActivity() {
         val translate = findPreference("about_translate")
         translate.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             this@PreferencesActivity.startActivity(Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://www.transifex.com/projects/p/speedofsound/")
+                Intent.ACTION_VIEW,
+                Uri.parse("https://www.transifex.com/projects/p/speedofsound/")
             ))
             true
         }
@@ -91,8 +91,8 @@ class PreferencesActivity : PreferenceActivity() {
         val source = findPreference("about_source")
         source.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             this@PreferencesActivity.startActivity(Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://github.com/jpeddicord/speedofsound")
+                Intent.ACTION_VIEW,
+                Uri.parse("https://github.com/jpeddicord/speedofsound")
             ))
             true
         }
@@ -100,8 +100,8 @@ class PreferencesActivity : PreferenceActivity() {
         val headphones = findPreference("enable_headphones")
         headphones.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             this@PreferencesActivity.startActivity(Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://github.com/jpeddicord/speedofsound/wiki/Tasker-Headphone-Detection")
+                Intent.ACTION_VIEW,
+                Uri.parse("https://github.com/jpeddicord/speedofsound/wiki/Tasker-Headphone-Detection")
             ))
             true
         }

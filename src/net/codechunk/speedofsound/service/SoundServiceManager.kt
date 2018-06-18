@@ -31,11 +31,11 @@ class SoundServiceManager : BroadcastReceiver() {
 
         // resume tracking if we're also in a satisfactory mode
         if (action == Intent.ACTION_POWER_CONNECTED ||
-                action == Intent.ACTION_POWER_DISCONNECTED ||
-                action == Intent.ACTION_HEADSET_PLUG) {
+            action == Intent.ACTION_POWER_DISCONNECTED ||
+            action == Intent.ACTION_HEADSET_PLUG) {
             SoundServiceManager.setTracking(context, this.shouldTrack(context))
         } else if (action == BluetoothDevice.ACTION_ACL_CONNECTED ||
-                action == BluetoothDevice.ACTION_ACL_DISCONNECTED) {
+            action == BluetoothDevice.ACTION_ACL_DISCONNECTED) {
             Log.d(TAG, "Bluetooth ACL connect/disconnect event")
 
             // check whether we care about this event at all

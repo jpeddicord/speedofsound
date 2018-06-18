@@ -68,7 +68,7 @@ class SoundService : Service() {
             val stopIntent = Intent(this, SoundServiceManager::class.java)
             stopIntent.putExtra(SoundService.SET_TRACKING_STATE, false)
             builder.addAction(R.drawable.ic_stop, getString(R.string.stop),
-                    PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_ONE_SHOT))
+                PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_ONE_SHOT))
 
             return builder.build()
         }
@@ -158,8 +158,8 @@ class SoundService : Service() {
         // register pref watching
         this.settings!!.registerOnSharedPreferenceChangeListener(this.volumeConversion)
         LocalBroadcastManager
-                .getInstance(this)
-                .registerReceiver(this.messageReceiver, IntentFilter(SoundService.SET_TRACKING_STATE))
+            .getInstance(this)
+            .registerReceiver(this.messageReceiver, IntentFilter(SoundService.SET_TRACKING_STATE))
 
         // check if we've been commanded to start tracking;
         // we may be started only for the activity view and don't want to start

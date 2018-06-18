@@ -16,7 +16,7 @@ class LocaleActivity : Activity() {
         val radio = view as RadioButton
         val data = Bundle()
         data.putBoolean(SoundService.SET_TRACKING_STATE,
-                radio.id == R.id.tasker_radio_start)
+            radio.id == R.id.tasker_radio_start)
         val result = Intent()
         result.putExtra(SoundServiceManager.LOCALE_BUNDLE, data)
         result.putExtra(SoundServiceManager.LOCALE_BLURB, radio.text.toString())

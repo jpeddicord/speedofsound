@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-	<!-- do NOT i18n these! -->
-	<string-array name="speed_units" tools:ignore="MissingTranslation">
-		<item>m/s</item>
-		<item>km/h</item>
-		<item>mph</item>
-	</string-array>
+    <!-- do NOT i18n these! -->
+    <string-array name="speed_units" tools:ignore="MissingTranslation">
+        <item>m/s</item>
+        <item>km/h</item>
+        <item>mph</item>
+    </string-array>
 
-	<!-- but these are fine -->
-	<string-array name="speed_units_display">
-		<item>@string/mps_long</item>
-		<item>@string/kph_long</item>
-		<item>@string/mph_long</item>
-	</string-array>
+    <!-- but these are fine -->
+    <string-array name="speed_units_display">
+        <item>@string/mps_long</item>
+        <item>@string/kph_long</item>
+        <item>@string/mph_long</item>
+    </string-array>
 
 </resources>

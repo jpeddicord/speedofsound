@@ -218,19 +218,19 @@ class SpeedActivity : AppCompatActivity(), View.OnClickListener {
         when (id) {
             DIALOG_DISCLAIMER -> {
                 builder.setMessage(getString(R.string.launch_disclaimer))
-                        .setTitle(getString(R.string.warning))
-                        .setCancelable(false)
-                        .setPositiveButton(getString(R.string.launch_disclaimer_accept)
-                        ) { dialog, id -> this@SpeedActivity.checkGPS() }
+                    .setTitle(getString(R.string.warning))
+                    .setCancelable(false)
+                    .setPositiveButton(getString(R.string.launch_disclaimer_accept)
+                    ) { dialog, id -> this@SpeedActivity.checkGPS() }
                 dialog = builder.create()
             }
 
             DIALOG_GPS -> {
                 builder.setMessage(getString(R.string.gps_warning))
-                        .setCancelable(false)
-                        .setPositiveButton(getString(R.string.location_settings)
-                        ) { dialog, which -> startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
-                        .setNegativeButton(getString(R.string.gps_warning_dismiss), null)
+                    .setCancelable(false)
+                    .setPositiveButton(getString(R.string.location_settings)
+                    ) { dialog, which -> startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
+                    .setNegativeButton(getString(R.string.gps_warning_dismiss), null)
                 dialog = builder.create()
             }
 
@@ -289,8 +289,8 @@ class SpeedActivity : AppCompatActivity(), View.OnClickListener {
         val hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
         if (isChecked && hasPermission != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    LOCATION_PERMISSION_REQUEST)
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST)
             return
         }
 
