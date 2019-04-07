@@ -7,5 +7,5 @@ filters:
   source_file: res/values/strings.xml
   source_language: en
   file_format: ANDROID
-  translation_files_expression: res/values/values-<lang>/strings.xml
+  translation_files_expression: res/values-<lang>/strings.xml
 
