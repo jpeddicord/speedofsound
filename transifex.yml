@@ -1,0 +1,11 @@
+---
+# informational: this needs to be manually copied into Transifex settings
+# https://docs.transifex.com/integrations/transifex-github-integration#linking-a-specific-project-with-a-github-repository
+
+filters:
+- filter_type: file
+  source_file: res/values/strings.xml
+  source_language: en
+  file_format: ANDROID
+  translation_files_expression: res/values/values-<lang>/strings.xml
+
