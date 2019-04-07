@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+
+    <string name="app_name">Speed of Sound</string>
+    <string name="moving_header">Je huidige snelheid is:</string>
+    <string name="volume_header_scaled">Dus je volume is ingesteld op:</string>
+    <string name="volume_header_low">Dus hebben we het volume op minimaal ingesteld:</string>
+    <string name="volume_header_high">Dus hebben we het volume op maximaal ingesteld:</string>
+    <string name="enabled">Speed of Sound inschakelen</string>
+    <string name="waiting">Bezig met wachten op GPS-signaal</string>
+    <string name="notification_text">Bezig met aanpassen van volume aan je snelheid</string>
+    <string name="ticker_text">Speed of Sound is actief</string>
+    <string name="stop">Stoppen</string>
+    <string name="warning">Waarschuwing</string>
+    <string name="launch_disclaimer">Speed of Sound is ontworpen om je ogen op de weg houden in plaats van op je telefoon. Probeer dus niet om de instellingen te wijzigen of je telefoon te gebruiken tijdens het rijden.</string>
+    <string name="launch_disclaimer_accept">Accepteren</string>
+    <string name="gps_warning">Je moet GPS inschakelen in de Locatie-instellingen, anders zal deze app niet goed werken.</string>
+    <string name="location_settings">Locatie-instellingen</string>
+    <string name="gps_warning_dismiss">Negeren</string>
+    <string name="ct_song">Nummer</string>
+    <string name="intro_enable_speedofsound">Speed of Sound inschakelen of instellingen aanpassen</string>
+    <string name="intro_open_music">Open je muziekspeler en start een nummer</string>
+    <string name="intro_plug_phone">Sluit je telefoon aan op het stereosysteem van je auto</string>
+    <string name="intro_start_driving">Begin met rijden en geniet van automatische volume-aanpassingen</string>
+    <string name="song_map">Nummerkaart</string>
+    <string name="preferences">Voorkeuren</string>
+    <string name="about">Over</string>
+    <string name="general">Algemeen</string>
+    <string name="speed_units">Eenheid</string>
+    <string name="speed_units_summary">Kies de eenheid die je wilt gebruiken</string>
+    <string name="activation">Activeren</string>
+    <string name="start_automatically">Automatisch starten</string>
+    <string name="start_automatically_summary">Volgen starten zodra ik de app open</string>
+    <string name="only_when_charging">Alleen tijdens opladen</string>
+    <string name="enable_only_charging_summary">Alleen automatisch volgen tijdens het opladen (van toepassing op de instellingen hieronder) </string>
+    <string name="enable_on_headphones">Inschakelen voor hoofdtelefoons</string>
+    <string name="enable_headphones_summary">Volgen zodra je een koptelefoon aansluit</string>
+    <string name="enable_on_bluetooth">Inschakelen bij bluetooth-verbinding</string>
+    <string name="enable_bluetooth_summary">Volgen zodra je een Bluetooth A2DP-muziekapparaat aansluit</string>
+    <string name="slow_speed">Lage snelheid</string>
+    <string name="low_speed">Laagste snelheid</string>
+    <string name="low_speed_summary">Minimale snelheid waarbij het volume aangepast wordt</string>
+    <string name="low_volume">Minimale volume</string>
+    <string name="low_volume_summary">Volume bij de minimale snelheid en lager</string>
+    <string name="high_speed">Hoge snelheid</string>
+    <string name="fast_speed">Hoogste snelheid</string>
+    <string name="fast_speed_summary">Maximale snelheid waarbij het volume niet meer aangepast wordt</string>
+    <string name="fast_volume">Maximale volume</string>
+    <string name="fast_volume_summary">Volume bij de maximale snelheid en hoger</string>
+    <string name="mps_long">meter per seconde</string>
+    <string name="kph_long">kilometer per uur</string>
+    <string name="mph_long">mijl per uur</string>
+    <string name="no_location_providers">Je locatie kan niet worden opgevraagd. Machtig de app om toegang te krijgen tot je locatie en schakel GPS in.</string>
+    <string name="version">Versie</string>
+    <string name="contact">Contact opnemen</string>
+    <string name="github">Open source op GitHub</string>
+    <string name="help_translate">Vertalen</string>
+    <string name="start_tracking">Beginnen met volgen</string>
+    <string name="stop_tracking">Stoppen met volgen</string>
+    <string name="enable_bluetooth_devices_summary">Kies de te gebruiken Bluetooth-apparaten. Als je hier niks kiest, dan kan elk Bluetooth-apparaat worden gebruikt.</string>
+    <string name="pick_bluetooth_devices">Bluetooth-apparaten kiezen</string>
+    <string name="select_music_bluetooth_devices">Kies hieronder één van je Bluetooth-muziekapparaten:</string>
+    <string name="no_longer_functions">Werkt niet meer. Druk voor meer informatie.</string>
+
+</resources>
