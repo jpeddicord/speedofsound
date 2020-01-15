@@ -33,7 +33,7 @@ class SoundServiceManager : BroadcastReceiver() {
         if (action == Intent.ACTION_POWER_CONNECTED ||
             action == Intent.ACTION_POWER_DISCONNECTED ||
             action == Intent.ACTION_HEADSET_PLUG) {
-            SoundServiceManager.setTracking(context, this.shouldTrack(context))
+            setTracking(context, this.shouldTrack(context))
         } else if (action == BluetoothDevice.ACTION_ACL_CONNECTED ||
             action == BluetoothDevice.ACTION_ACL_DISCONNECTED) {
             Log.d(TAG, "Bluetooth ACL connect/disconnect event")
@@ -46,8 +46,7 @@ class SoundServiceManager : BroadcastReceiver() {
             }
 
             // grab the device address and check it against our list of things
-            val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-            val shouldCare = when (device) {
+            val shouldCare = when (val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)) {
                 null -> false
                 else -> isSelectedBluetoothDevice(prefs, device.address)
             }
@@ -61,19 +60,19 @@ class SoundServiceManager : BroadcastReceiver() {
             Log.v(TAG, "Bluetooth active: ${this.bluetoothConnected}")
 
             // start or stop tracking
-            SoundServiceManager.setTracking(context, this.shouldTrack(context))
-        } else if (action == SoundServiceManager.LOCALE_FIRE) {
+            setTracking(context, this.shouldTrack(context))
+        } else if (action == LOCALE_FIRE) {
             // Tasker!
-            val bundle = intent.getBundleExtra(SoundServiceManager.LOCALE_BUNDLE)
+            val bundle = intent.getBundleExtra(LOCALE_BUNDLE)
             if (bundle != null) {
                 val state = bundle.getBoolean(SoundService.SET_TRACKING_STATE, true)
-                SoundServiceManager.setTracking(context, state)
+                setTracking(context, state)
             }
         } else {
             // external intent (likely from notification "Stop" action)
             val state = intent.extras?.getBoolean(SoundService.SET_TRACKING_STATE)
             if (state != null) {
-                SoundServiceManager.setTracking(context, state)
+                setTracking(context, state)
             }
         }
     }

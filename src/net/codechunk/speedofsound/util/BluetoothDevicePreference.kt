@@ -1,13 +1,11 @@
 package net.codechunk.speedofsound.util
 
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothClass
 import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.preference.DialogPreference
 import android.preference.PreferenceManager
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
@@ -20,7 +18,7 @@ import java.util.*
  */
 class BluetoothDevicePreference(context: Context, attrs: AttributeSet) : DialogPreference(context, attrs) {
 
-    private var value: Set<String>? = null;
+    private var value: Set<String>? = null
 
     private var view: View? = null
     private val adapterDevices = ArrayList<PrettyBluetoothDevice>()
@@ -138,9 +136,8 @@ class BluetoothDevicePreference(context: Context, attrs: AttributeSet) : DialogP
     }
 
     companion object {
-        private val TAG = "BluetoothPreference"
 
-        val KEY = "enable_bluetooth_devices"
+        const val KEY = "enable_bluetooth_devices"
     }
 
 }

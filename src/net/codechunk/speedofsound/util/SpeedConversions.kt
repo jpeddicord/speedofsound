@@ -9,14 +9,11 @@ object SpeedConversions {
      * @return Converted speed in m/s
      */
     fun nativeSpeed(local_units: String, localizedSpeed: Float): Float {
-        return if (local_units == "m/s") {
-            localizedSpeed
-        } else if (local_units == "km/h") {
-            localizedSpeed * 0.27778f
-        } else if (local_units == "mph") {
-            localizedSpeed * 0.44704f
-        } else {
-            throw IllegalArgumentException("Not a valid unit: " + local_units)
+        return when (local_units) {
+            "m/s" -> localizedSpeed
+            "km/h" -> localizedSpeed * 0.27778f
+            "mph" -> localizedSpeed * 0.44704f
+            else -> throw IllegalArgumentException("Not a valid unit: $local_units")
         }
     }
 
@@ -35,7 +32,7 @@ object SpeedConversions {
         } else if (local_units == "mph") {
             nativeSpeed * 2.23693f
         } else {
-            throw IllegalArgumentException("Not a valid unit: " + local_units)
+            throw IllegalArgumentException("Not a valid unit: $local_units")
         }
     }
 

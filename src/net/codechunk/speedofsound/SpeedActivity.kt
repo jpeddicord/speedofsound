@@ -81,11 +81,11 @@ class SpeedActivity : AppCompatActivity(), View.OnClickListener {
 
                 // display the speed
                 val speedView = findViewById<View>(R.id.speed_value) as TextView
-                speedView.setText(String.format("%.1f %s", localizedSpeed, units))
+                speedView.text = String.format("%.1f %s", localizedSpeed, units)
 
                 // display the volume as well
                 val volumeView = findViewById<View>(R.id.volume_value) as TextView
-                volumeView.setText(String.format("%d%%", volume))
+                volumeView.text = String.format("%d%%", volume)
 
                 // ui goodies
                 val volumeDesc = findViewById<View>(R.id.volume_description) as TextView
@@ -93,12 +93,10 @@ class SpeedActivity : AppCompatActivity(), View.OnClickListener {
                 val highVolume = this@SpeedActivity.settings!!.getInt("high_volume", 100)
 
                 // show different text values depending on the limits hit
-                if (volume <= lowVolume) {
-                    volumeDesc.text = getString(R.string.volume_header_low)
-                } else if (volume >= highVolume) {
-                    volumeDesc.text = getText(R.string.volume_header_high)
-                } else {
-                    volumeDesc.text = getText(R.string.volume_header_scaled)
+                when {
+                    volume <= lowVolume -> volumeDesc.text = getString(R.string.volume_header_low)
+                    volume >= highVolume -> volumeDesc.text = getText(R.string.volume_header_high)
+                    else -> volumeDesc.text = getText(R.string.volume_header_scaled)
                 }
             }// new location data
         }
@@ -277,7 +275,7 @@ class SpeedActivity : AppCompatActivity(), View.OnClickListener {
      */
     override fun onClick(view: View) {
         val isChecked = (view as CheckBox).isChecked
-        Log.d(TAG, "Checkbox changed to " + isChecked)
+        Log.d(TAG, "Checkbox changed to $isChecked")
 
         // uh-oh
         if (!this.bound) {
@@ -301,7 +299,7 @@ class SpeedActivity : AppCompatActivity(), View.OnClickListener {
         val enabled = findViewById<View>(R.id.checkbox_enabled) as CheckBox
 
         when (code) {
-            LOCATION_PERMISSION_REQUEST -> if (results.size > 0 && results[0] != PackageManager.PERMISSION_GRANTED) {
+            LOCATION_PERMISSION_REQUEST -> if (results.isNotEmpty() && results[0] != PackageManager.PERMISSION_GRANTED) {
                 SoundService.showNeedLocationToast(this)
                 enabled.isChecked = false
             } else {
@@ -375,21 +373,21 @@ class SpeedActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     companion object {
-        private val TAG = "SpeedActivity"
+        private const val TAG = "SpeedActivity"
 
         /**
          * Disclaimer dialog unique ID.
          */
-        private val DIALOG_DISCLAIMER = 1
+        private const val DIALOG_DISCLAIMER = 1
 
         /**
          * GPS nag dialog unique ID.
          */
-        private val DIALOG_GPS = 2
+        private const val DIALOG_GPS = 2
 
         /**
          * Location permission identifier.
          */
-        private val LOCATION_PERMISSION_REQUEST = 3
+        private const val LOCATION_PERMISSION_REQUEST = 3
     }
 }

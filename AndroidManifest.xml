@@ -23,7 +23,8 @@
 			android:icon="@mipmap/ic_launcher"
 			android:label="@string/app_name"
 			android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        android:fullBackupContent="@xml/backup_descriptor">
 
 		<activity
 				android:name="net.codechunk.speedofsound.SpeedActivity"

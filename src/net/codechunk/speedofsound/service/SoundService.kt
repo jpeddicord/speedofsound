@@ -66,7 +66,7 @@ class SoundService : Service() {
             builder.setWhen(System.currentTimeMillis())
 
             val stopIntent = Intent(this, SoundServiceManager::class.java)
-            stopIntent.putExtra(SoundService.SET_TRACKING_STATE, false)
+            stopIntent.putExtra(SET_TRACKING_STATE, false)
             builder.addAction(R.drawable.ic_stop, getString(R.string.stop),
                 PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_ONE_SHOT))
 
@@ -119,7 +119,7 @@ class SoundService : Service() {
             this@SoundService.volumeThread!!.setTargetVolume(volume)
 
             // send out a local broadcast with the details
-            val intent = Intent(SoundService.LOCATION_UPDATE_BROADCAST)
+            val intent = Intent(LOCATION_UPDATE_BROADCAST)
             intent.putExtra("location", location)
             intent.putExtra("speed", speed)
             intent.putExtra("volumePercent", (volume * 100).toInt())
@@ -159,17 +159,17 @@ class SoundService : Service() {
         this.settings!!.registerOnSharedPreferenceChangeListener(this.volumeConversion)
         LocalBroadcastManager
             .getInstance(this)
-            .registerReceiver(this.messageReceiver, IntentFilter(SoundService.SET_TRACKING_STATE))
+            .registerReceiver(this.messageReceiver, IntentFilter(SET_TRACKING_STATE))
 
         // check if we've been commanded to start tracking;
         // we may be started only for the activity view and don't want to start
         // anything up implicitly (note: don't handle stop requests here)
-        if (intent?.extras?.containsKey(SoundService.SET_TRACKING_STATE) != null) {
+        if (intent?.extras?.containsKey(SET_TRACKING_STATE) != null) {
             Log.v(TAG, "Start command included tracking intent; starting tracking")
             this.startTracking()
         }
 
-        return Service.START_STICKY
+        return START_STICKY
     }
 
     /**
@@ -189,9 +189,9 @@ class SoundService : Service() {
      */
     private val messageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.extras?.containsKey(SoundService.SET_TRACKING_STATE) != null) {
+            if (intent?.extras?.containsKey(SET_TRACKING_STATE) != null) {
                 Log.v(TAG, "Commanded to change state")
-                val wanted = intent.extras.getBoolean(SoundService.SET_TRACKING_STATE)
+                val wanted = intent.extras.getBoolean(SET_TRACKING_STATE)
                 if (wanted) {
                     this@SoundService.startTracking()
                 } else {
@@ -214,7 +214,7 @@ class SoundService : Service() {
         // check runtime permission
         val hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
         if (hasPermission != PackageManager.PERMISSION_GRANTED) {
-            SoundService.showNeedLocationToast(this)
+            showNeedLocationToast(this)
             return
         }
 
@@ -236,7 +236,7 @@ class SoundService : Service() {
         startForeground(R.string.notification_text, notification)
 
         // let everyone know
-        val intent = Intent(SoundService.TRACKING_STATE_BROADCAST)
+        val intent = Intent(TRACKING_STATE_BROADCAST)
         intent.putExtra("tracking", true)
         this@SoundService.localBroadcastManager!!.sendBroadcast(intent)
 
@@ -266,7 +266,7 @@ class SoundService : Service() {
         stopForeground(true)
 
         // let everyone know
-        val intent = Intent(SoundService.TRACKING_STATE_BROADCAST)
+        val intent = Intent(TRACKING_STATE_BROADCAST)
         intent.putExtra("tracking", false)
         this@SoundService.localBroadcastManager!!.sendBroadcast(intent)
 

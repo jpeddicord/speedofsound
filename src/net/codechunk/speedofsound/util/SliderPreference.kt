@@ -89,7 +89,7 @@ open class SliderPreference(context: Context, attrs: AttributeSet) : DialogPrefe
         this.value = getPersistedInt(-1)
 
         // load the layout
-        val inflater = getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         this.view = inflater.inflate(R.layout.slider_preference_dialog, null)
 
         // setup the slider
@@ -122,7 +122,7 @@ open class SliderPreference(context: Context, attrs: AttributeSet) : DialogPrefe
     }
 
     protected fun updateDisplay() {
-        var text = Integer.toString(this.value)
+        var text = this.value.toString()
         if (this.units != null) {
             text += this.units
         }

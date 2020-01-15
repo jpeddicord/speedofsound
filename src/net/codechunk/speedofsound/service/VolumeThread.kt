@@ -3,6 +3,7 @@ package net.codechunk.speedofsound.service
 import android.content.Context
 import android.media.AudioManager
 import android.util.Log
+import kotlin.math.abs
 
 /**
  * Smooth volume thread. Does its best to approach a set volume rather than
@@ -18,9 +19,9 @@ class VolumeThread
 (context: Context) : Thread() {
 
     // FIXME: this is a java hold-over that I didn't fix when converting to kotlin
-    private val lock = java.lang.Object()
-    private val signal = java.lang.Object()
-    private val audioManager: AudioManager
+    private val lock = Object()
+    private val signal = Object()
+    private val audioManager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     private val maxVolume: Int
 
     /**
@@ -29,7 +30,6 @@ class VolumeThread
     private var targetVolume: Float = 0.toFloat()
 
     init {
-        this.audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         this.maxVolume = this.audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
         this.name = TAG
 
@@ -44,7 +44,7 @@ class VolumeThread
     fun setTargetVolume(volume: Float) {
         // only set & wake if the target has actually changed
         if (volume != this.targetVolume) {
-            Log.v(TAG, "Setting target volume to " + volume)
+            Log.v(TAG, "Setting target volume to $volume")
             synchronized(this.lock) {
                 this.targetVolume = volume
             }
@@ -72,7 +72,7 @@ class VolumeThread
             while (!this.isInterrupted) {
                 // sleep for a while
                 try {
-                    Thread.sleep(VolumeThread.UPDATE_DELAY.toLong())
+                    sleep(UPDATE_DELAY.toLong())
                 } catch (e: InterruptedException) {
                     break
                 }
@@ -104,20 +104,20 @@ class VolumeThread
 
                 // if the target is close enough, just use it
                 val newVolume: Float
-                if (Math.abs(currentVolume - targetVolume) < VolumeThread.VOLUME_THRESHOLD) {
+                if (abs(currentVolume - targetVolume) < VOLUME_THRESHOLD) {
                     newVolume = targetVolume
                 } else {
                     // otherwise, gently approach the target
-                    var approach = (targetVolume - currentVolume) * VolumeThread.APPROACH_RATE
+                    var approach = (targetVolume - currentVolume) * APPROACH_RATE
 
                     // don't approach more quickly than the max
-                    if (Math.abs(approach) > VolumeThread.MAX_APPROACH) {
+                    if (abs(approach) > MAX_APPROACH) {
                         // approach with the max rate, but with the same sign as the
                         // original
-                        if (approach < 0) {
-                            approach = -VolumeThread.MAX_APPROACH
+                        approach = if (approach < 0) {
+                            -MAX_APPROACH
                         } else {
-                            approach = VolumeThread.MAX_APPROACH
+                            MAX_APPROACH
                         }
                     }
 

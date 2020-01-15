@@ -14,19 +14,19 @@ class AppPreferences : SharedPreferences.OnSharedPreferenceChangeListener {
      * Convert stored preferences when the speed units change.
      */
     override fun onSharedPreferenceChanged(prefs: SharedPreferences, key: String) {
-        Log.v(TAG, "Preferences " + key)
+        Log.v(TAG, "Preferences $key")
 
         if (key == "low_speed_localized" || key == "high_speed_localized") {
             // update the internal native speeds
-            AppPreferences.updateNativeSpeeds(prefs)
+            updateNativeSpeeds(prefs)
         } else if (key == "speed_units") {
             // convert localized speeds from their internal values on unit change
-            AppPreferences.updateLocalizedSpeeds(prefs)
+            updateLocalizedSpeeds(prefs)
         }
     }
 
     companion object {
-        private val TAG = "AppPreferences"
+        private const val TAG = "AppPreferences"
 
         /**
          * Run an upgrade from one app version to another.
@@ -87,7 +87,7 @@ class AppPreferences : SharedPreferences.OnSharedPreferenceChangeListener {
             // }
 
             // process the next upgrade
-            AppPreferences.processUpgrade(context, processing, to)
+            processUpgrade(context, processing, to)
         }
 
         /**

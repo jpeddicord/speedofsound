@@ -20,7 +20,7 @@ class LocaleActivity : Activity() {
         val result = Intent()
         result.putExtra(SoundServiceManager.LOCALE_BUNDLE, data)
         result.putExtra(SoundServiceManager.LOCALE_BLURB, radio.text.toString())
-        setResult(Activity.RESULT_OK, result)
+        setResult(RESULT_OK, result)
 
         finish()
     }

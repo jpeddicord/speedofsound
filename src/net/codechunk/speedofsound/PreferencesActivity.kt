@@ -108,6 +108,6 @@ class PreferencesActivity : PreferenceActivity() {
     }
 
     companion object {
-        private val TAG = "PreferencesActivity"
+        private const val TAG = "PreferencesActivity"
     }
 }
