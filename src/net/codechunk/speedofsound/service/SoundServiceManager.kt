@@ -87,7 +87,6 @@ class SoundServiceManager : BroadcastReceiver() {
         // load preferences
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val powerPreference = prefs.getBoolean("enable_only_charging", false)
-        //val headphonePreference = prefs.getBoolean("enable_headphones", false)
         val bluetoothPreference = prefs.getBoolean("enable_bluetooth", false)
 
         // get power status

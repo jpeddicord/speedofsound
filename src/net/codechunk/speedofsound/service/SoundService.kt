@@ -161,6 +161,9 @@ class SoundService : Service() {
             .getInstance(this)
             .registerReceiver(this.messageReceiver, IntentFilter(SET_TRACKING_STATE))
 
+        // show mandatory notification
+        startForeground(R.string.notification_text, notification)
+
         // check if we've been commanded to start tracking;
         // we may be started only for the activity view and don't want to start
         // anything up implicitly (note: don't handle stop requests here)
@@ -231,9 +234,6 @@ class SoundService : Service() {
             this.volumeThread = VolumeThread(this)
             this.volumeThread!!.start()
         }
-
-        // show the notification
-        startForeground(R.string.notification_text, notification)
 
         // let everyone know
         val intent = Intent(TRACKING_STATE_BROADCAST)
