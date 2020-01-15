@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.*
 import android.content.pm.PackageManager
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.preference.PreferenceManager
@@ -74,7 +75,7 @@ class SpeedActivity : AppCompatActivity(), View.OnClickListener {
                 val volume = intent.getIntExtra("volumePercent", -1)
 
                 // convert the speed to the appropriate units
-                val units = this@SpeedActivity.settings!!.getString("speed_units", "")
+                val units = this@SpeedActivity.settings!!.getString("speed_units", "")!!
                 val localizedSpeed = SpeedConversions.localizedSpeed(units, speed)
 
                 this@SpeedActivity.updateStatusState(UIState.TRACKING)
@@ -283,13 +284,32 @@ class SpeedActivity : AppCompatActivity(), View.OnClickListener {
             return
         }
 
-        // go get 'em buddy
-        val hasPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-        if (isChecked && hasPermission != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST)
+        if (isChecked) {
+            checkLocationPermissions()
             return
+        }
+
+        this.toggleTracking()
+    }
+
+    private fun checkLocationPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val hasFine = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            val hasBackground = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            if (hasFine != PackageManager.PERMISSION_GRANTED || hasBackground != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                    LOCATION_PERMISSION_REQUEST)
+                return
+            }
+        } else {
+            val hasFine = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            if (hasFine != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST)
+                return
+            }
         }
 
         this.toggleTracking()
@@ -299,7 +319,7 @@ class SpeedActivity : AppCompatActivity(), View.OnClickListener {
         val enabled = findViewById<View>(R.id.checkbox_enabled) as CheckBox
 
         when (code) {
-            LOCATION_PERMISSION_REQUEST -> if (results.isNotEmpty() && results[0] != PackageManager.PERMISSION_GRANTED) {
+            LOCATION_PERMISSION_REQUEST -> if (results.isNotEmpty() && !results.all { it == PackageManager.PERMISSION_GRANTED }) {
                 SoundService.showNeedLocationToast(this)
                 enabled.isChecked = false
             } else {
@@ -314,8 +334,8 @@ class SpeedActivity : AppCompatActivity(), View.OnClickListener {
     private fun toggleTracking() {
         val isChecked = (findViewById<View>(R.id.checkbox_enabled) as CheckBox).isChecked
 
-        // start up the service
         if (isChecked) {
+            // start up the service
             this.service!!.startTracking()
 
             // update the UI
@@ -329,11 +349,12 @@ class SpeedActivity : AppCompatActivity(), View.OnClickListener {
             speed.text = getString(R.string.waiting)
             volume.text = getString(R.string.waiting)
         } else {
+            // stop the service
             this.service!!.stopTracking()
 
             // update the UI
             this.updateStatusState(UIState.INACTIVE)
-        }// stop the service
+        }
     }
 
     /**
@@ -375,19 +396,10 @@ class SpeedActivity : AppCompatActivity(), View.OnClickListener {
     companion object {
         private const val TAG = "SpeedActivity"
 
-        /**
-         * Disclaimer dialog unique ID.
-         */
         private const val DIALOG_DISCLAIMER = 1
 
-        /**
-         * GPS nag dialog unique ID.
-         */
         private const val DIALOG_GPS = 2
 
-        /**
-         * Location permission identifier.
-         */
         private const val LOCATION_PERMISSION_REQUEST = 3
     }
 }

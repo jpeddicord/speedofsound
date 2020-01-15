@@ -107,24 +107,6 @@ class SoundServiceManager : BroadcastReceiver() {
             return false
         }
 
-        /* XXX: No longer functions in Android 8.0, see preferences.xml comment
-        // get headphone status
-        val headsetFilter = IntentFilter(Intent.ACTION_HEADSET_PLUG)
-        val headphoneStatus = context.applicationContext.registerReceiver(null, headsetFilter)
-        var headphoneConnected = false
-        if (headphoneStatus != null) {
-            headphoneConnected = headphoneStatus.getIntExtra("state", 0) == 1
-        } else {
-            Log.e(TAG, "Headphone status was null")
-        }
-
-        // activate if headphones are plugged in
-        if (headphonePreference && headphoneConnected) {
-            Log.v(TAG, "Headphone connected")
-            return true
-        }
-        */
-
         // also activate if bluetooth is connected
         if (bluetoothPreference && this.bluetoothConnected) {
             Log.v(TAG, "Bluetooth connected")

@@ -100,7 +100,7 @@ class AppPreferences : SharedPreferences.OnSharedPreferenceChangeListener {
             Log.v(TAG, "Converting preferences to m/s internally")
 
             // get the stored units
-            val units = prefs.getString("speed_units", "")
+            val units = prefs.getString("speed_units", "")!!
 
             // convert speed units into m/s for low-level stuff
             val editor = prefs.edit()
@@ -121,7 +121,7 @@ class AppPreferences : SharedPreferences.OnSharedPreferenceChangeListener {
             Log.v(TAG, "Converting native speeds to localized values")
 
             // get the stored units
-            val units = prefs.getString("speed_units", "")
+            val units = prefs.getString("speed_units", "")!!
 
             // convert speed units into m/s for low-level stuff
             val editor = prefs.edit()

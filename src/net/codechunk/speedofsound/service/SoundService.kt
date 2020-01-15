@@ -191,7 +191,7 @@ class SoundService : Service() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.extras?.containsKey(SET_TRACKING_STATE) != null) {
                 Log.v(TAG, "Commanded to change state")
-                val wanted = intent.extras.getBoolean(SET_TRACKING_STATE)
+                val wanted = intent.extras!!.getBoolean(SET_TRACKING_STATE)
                 if (wanted) {
                     this@SoundService.startTracking()
                 } else {

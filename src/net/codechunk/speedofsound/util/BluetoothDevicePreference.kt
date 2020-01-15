@@ -25,7 +25,7 @@ class BluetoothDevicePreference(context: Context, attrs: AttributeSet) : DialogP
 
     private val persistedDevices: Set<String>
         get() = PreferenceManager.getDefaultSharedPreferences(context)
-            .getStringSet(key, HashSet())
+            .getStringSet(key, HashSet())!!
 
     /**
      * Get a set of checked devices from this dialog's ListView.
