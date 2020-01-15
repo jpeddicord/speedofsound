@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -87,7 +88,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_margin="8dp"
-            android:src="@drawable/ic_headphones"
+            app:srcCompat="@drawable/ic_headphones"
             tools:ignore="ContentDescription" />
 
         <TextView
@@ -107,7 +108,7 @@
             android:layout_alignParentRight="true"
             android:layout_below="@+id/textView2"
             android:layout_margin="8dp"
-            android:src="@drawable/ic_logo_white"
+            app:srcCompat="@drawable/ic_logo_white"
             tools:ignore="ContentDescription" />
 
         <TextView
@@ -127,7 +128,7 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/textView3"
             android:layout_margin="8dp"
-            android:src="@drawable/ic_play"
+            app:srcCompat="@drawable/ic_play"
             tools:ignore="ContentDescription" />
 
         <TextView
@@ -147,7 +148,7 @@
             android:layout_alignParentRight="true"
             android:layout_below="@+id/textView1"
             android:layout_margin="8dp"
-            android:src="@drawable/ic_key"
+            app:srcCompat="@drawable/ic_key"
             tools:ignore="ContentDescription" />
 
         <TextView

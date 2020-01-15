@@ -1,6 +1,6 @@
 package net.codechunk.speedofsound
 
-import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -10,7 +10,7 @@ import net.codechunk.speedofsound.service.SoundService
 import net.codechunk.speedofsound.service.SoundServiceManager
 
 
-class LocaleActivity : Activity() {
+class LocaleActivity : AppCompatActivity() {
 
     private val listener: View.OnClickListener = View.OnClickListener { view ->
         val radio = view as RadioButton

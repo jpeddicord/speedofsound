@@ -1,7 +1,7 @@
 package net.codechunk.speedofsound
 
 import android.Manifest
-import android.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import android.app.Dialog
 import android.content.*
 import android.content.pm.PackageManager
