@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+
+    <string name="app_name">Speed of Sound</string>
+    <string name="moving_header">Emaoc\'h o vont betek:</string>
+    <string name="volume_header_scaled">Setu m\'eo lakaet ho live-son da:</string>
+    <string name="volume_header_low">Ho live-son a zo d\'ar minimom:</string>
+    <string name="volume_header_high">Ho live-son a zo d\'ar maksimom:</string>
+    <string name="enabled">Enaouiñ Speed of Sound</string>
+    <string name="waiting">O c\'hortoz ar sinal GPS</string>
+    <string name="notification_text">Oc\'h azasaat ho live-son gant ho tizh</string>
+    <string name="ticker_text">Speed of Sound a zo war-implijout</string>
+    <string name="stop">Paouez</string>
+    <string name="warning">Kemennoù-diwall</string>
+    <string name="launch_disclaimer">Speed of Sound a zo graet evit mirout ho taoulagad war an hent, ha neket war ho pellgomzer. Dre-se, na glaskit ket cheñch hoc\'h arventennoù pe da implijout ho pellgomzer p\'emaoc\'h o vleniañ.</string>
+    <string name="launch_disclaimer_accept">Asantiñ</string>
+    <string name="gps_warning">Rankout a rafec\'h enaouiñ ar GPS e-barzh an arventennoù douarlec\'hiañ, mod-all ne \'z aio ket en-dro en un doare dereat.</string>
+    <string name="location_settings">Arventennoù douarlec\'hiañ</string>
+    <string name="gps_warning_dismiss">Na ober van</string>
+    <string name="ct_song">Kanaouenn</string>
+    <string name="intro_enable_speedofsound">Enaouit Speed of Sound pe personnelait hoc\'h arventennoù</string>
+    <string name="intro_open_music">Digorit ho lenner sonerezh ha lennit neuze</string>
+    <string name="intro_plug_phone">Lugit ho pellgomzer e-barzh sistem stereo ho karr-tan</string>
+    <string name="intro_start_driving">Krogit da vleniañ ha profitit eus an em-spisa live-son</string>
+    <string name="song_map">Kartenn ar c\'hanaouennoù</string>
+    <string name="preferences">Arventennoù</string>
+    <string name="about">Diwar-benn</string>
+    <string name="general">Hollek</string>
+    <string name="speed_units">Unanenn tizh</string>
+    <string name="speed_units_summary">Dibabit an unanenn-tizh ho peus c\'hoant da implijout</string>
+    <string name="activation">Enaouiñ</string>
+    <string name="start_automatically">Em-loc\'hañ</string>
+    <string name="start_automatically_summary">Stagañ da heuliañ pa zigoran an arload</string>
+    <string name="only_when_charging">P\'emañ o kargañ hepken</string>
+    <string name="enable_only_charging_summary">Em-heuliañ p\'emañ o kargañ hepken (talvezout a raio d\'an arventennoù dindan houmañ)</string>
+    <string name="enable_on_headphones">Enaouiñ pa \'z eus Selaouerioù</string>
+    <string name="enable_headphones_summary">Heuliañ pa vez luget ar selaouerioù e-barzh</string>
+    <string name="enable_on_bluetooth">Enaouiñ war Bluetooth</string>
+    <string name="enable_bluetooth_summary">Heuliañ pa vez kevreet ul lenner Bluetooth A2DP</string>
+    <string name="slow_speed">Tizh gorrek</string>
+    <string name="low_speed">Tizh gorrekañ</string>
+    <string name="low_speed_summary">Tizh izelañ evit gellet kregiñ da geidañ al live-son</string>
+    <string name="low_volume">Live-son izelañ</string>
+    <string name="low_volume_summary">Live-son d\'an tizh izelañ hag izeloc\'h c\'hoazh</string>
+    <string name="high_speed">Tizh herr</string>
+    <string name="fast_speed">Tizh herrekañ</string>
+    <string name="fast_speed_summary">Tizh uhelañ evit paouez da geidañ al live-son</string>
+    <string name="fast_volume">Live-son uhelañ</string>
+    <string name="fast_volume_summary">Live-son d\'an tizh herrekañ ha herrekoc\'h c\'hoazh</string>
+    <string name="mps_long">metradoù dre segondenn</string>
+    <string name="kph_long">kilometradoù dre eurvezh</string>
+    <string name="mph_long">\"miles\" dre eurvezh</string>
+    <string name="no_location_providers">N\'heller ket douarlec\'hiañ ac\'hanoc\'h. Roit an aotreoù douarlec\'hiañ hag enaouit ar GPS.</string>
+    <string name="version">Stumm</string>
+    <string name="contact">Mont e darempred ganeomp</string>
+    <string name="github">Mammenn digor war GitHub</string>
+    <string name="help_translate">Treiñ e-barzh ur yezh all</string>
+    <string name="start_tracking">Stagañ da heuliañ</string>
+    <string name="stop_tracking">Paouez da heuliañ</string>
+    <string name="enable_bluetooth_devices_summary">Diuzit aparailhoù Blutooth evit gellout implijout Speed of Sound. Ma ne ziuzit ket unan amañ, kement aparailh Blutooth az aio en-dro.</string>
+    <string name="pick_bluetooth_devices">Dibabit aparailhoù Bluetooth</string>
+    <string name="select_music_bluetooth_devices">Diuzit unan eus hoc\'h aparailhoù-sonerezh Bluetooth dindan:</string>
+    <string name="no_longer_functions">Arc\'hweladur ebet ken. Pouezit evit titouroù.</string>
+
+</resources>
