@@ -78,7 +78,7 @@ class VolumeThread
                 }
 
                 // safely grab the target volume
-                var targetVolume = 0.0f
+                var targetVolume: Float
                 synchronized(this.lock) {
                     targetVolume = this.targetVolume
                 }

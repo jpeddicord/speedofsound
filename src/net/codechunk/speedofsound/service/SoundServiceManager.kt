@@ -4,8 +4,8 @@ import android.bluetooth.BluetoothDevice
 import android.content.*
 import android.os.BatteryManager
 import android.preference.PreferenceManager
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.LocalBroadcastManager
+import androidx.core.content.ContextCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.util.Log
 import net.codechunk.speedofsound.util.BluetoothDevicePreference
 import java.util.*

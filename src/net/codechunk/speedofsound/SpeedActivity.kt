@@ -10,11 +10,11 @@ import android.os.Bundle
 import android.os.IBinder
 import android.preference.PreferenceManager
 import android.provider.Settings
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v4.view.MenuItemCompat
-import android.support.v7.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.core.view.MenuItemCompat
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -219,7 +219,7 @@ class SpeedActivity : AppCompatActivity(), View.OnClickListener {
                     .setTitle(getString(R.string.warning))
                     .setCancelable(false)
                     .setPositiveButton(getString(R.string.launch_disclaimer_accept)
-                    ) { dialog, id -> this@SpeedActivity.checkGPS() }
+                    ) { _, _ -> this@SpeedActivity.checkGPS() }
                 dialog = builder.create()
             }
 
@@ -227,7 +227,7 @@ class SpeedActivity : AppCompatActivity(), View.OnClickListener {
                 builder.setMessage(getString(R.string.gps_warning))
                     .setCancelable(false)
                     .setPositiveButton(getString(R.string.location_settings)
-                    ) { dialog, which -> startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
+                    ) { _, _ -> startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
                     .setNegativeButton(getString(R.string.gps_warning_dismiss), null)
                 dialog = builder.create()
             }
