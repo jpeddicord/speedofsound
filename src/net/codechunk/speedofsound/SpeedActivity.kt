@@ -1,7 +1,6 @@
 package net.codechunk.speedofsound
 
 import android.Manifest
-import androidx.appcompat.app.AlertDialog
 import android.app.Dialog
 import android.content.*
 import android.content.pm.PackageManager
@@ -10,17 +9,18 @@ import android.os.Bundle
 import android.os.IBinder
 import android.preference.PreferenceManager
 import android.provider.Settings
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.core.view.MenuItemCompat
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.view.MenuItemCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import net.codechunk.speedofsound.service.SoundService
 import net.codechunk.speedofsound.util.SpeedConversions
 
