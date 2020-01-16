@@ -1,5 +1,6 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+
     <string name="app_name">Snelheid van het Geluid</string>
     <string name="moving_header">Uw snelheid is:</string>
     <string name="volume_header_scaled">Dus uw volume is ingesteld op:</string>
@@ -49,12 +50,16 @@
     <string name="mps_long">meters/second</string>
     <string name="kph_long">kilometers/uur</string>
     <string name="mph_long">Mijlen/uur</string>
-    <string name="no_location_providers">Kon geen manier vinden om jouw locatie te krijgen. Verleen locatiemachtigingen en zet GPS aan. </string>
+    <string name="no_location_providers">Je locatie kan niet worden opgevraagd. Machtig de app om toegang te krijgen tot je locatie en schakel GPS in. Schakel tevens in dat je locatie mag worden opgehaald op de achtergrond.</string>
     <string name="version">Versie</string>
     <string name="contact">Contacteer ons.</string>
     <string name="github">Open Source op GitHub</string>
     <string name="help_translate">Vertalen in een andere taal</string>
     <string name="start_tracking">Start volgen</string>
     <string name="stop_tracking">Stop volgen</string>
+    <string name="enable_bluetooth_devices_summary">Kies de te gebruiken Bluetooth-apparaten. Als je hier niks kiest, dan kan elk Bluetooth-apparaat worden gebruikt.</string>
     <string name="pick_bluetooth_devices">Selecteer Bluetooth Apparaten</string>
+    <string name="select_music_bluetooth_devices">Kies hieronder één van je Bluetooth-muziekapparaten:</string>
+    <string name="no_longer_functions">Werkt niet meer. Druk voor meer informatie.</string>
+
 </resources>
