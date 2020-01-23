@@ -50,7 +50,7 @@
     <string name="mps_long">メートル毎秒</string>
     <string name="kph_long">km毎時</string>
     <string name="mph_long">マイル毎時</string>
-    <string name="no_location_providers">位置を取得する方法が見つかりませんでした。位置アクセス許可を付与してGPSをオンにしてください。</string>
+    <string name="no_location_providers">現在地を取得する方法が見つかりませんでした。 位置のアクセス許可を付与して、GPSを有効にしてください。 バックグラウンドの位置も有効にする必要があります。</string>
     <string name="version">バージョン</string>
     <string name="contact">お問い合わせ</string>
     <string name="github">GitHub 上のオープンソース</string>
