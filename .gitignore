@@ -1,6 +1,7 @@
 # Build
 build/
 gen/
+release/
 .gradle/
 local.properties
 

@@ -145,7 +145,7 @@ open class SliderPreference(context: Context, attrs: AttributeSet) : DialogPrefe
         /**
          * Our custom namespace for this preference.
          */
-        protected const val LOCAL_NS = "http://schemas.android.com/apk/res/net.codechunk.speedofsound"
+        protected const val LOCAL_NS = "http://schemas.android.com/apk/res-auto"
     }
 
 }
