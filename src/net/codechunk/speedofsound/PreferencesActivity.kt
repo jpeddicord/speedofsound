@@ -73,7 +73,7 @@ class PreferencesActivity : PreferenceActivity() {
         contact.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             val email = Intent(Intent.ACTION_SEND)
             email.type = "plain/text"
-            email.putExtra(Intent.EXTRA_EMAIL, arrayOf("mobile@octet.cc"))
+            email.putExtra(Intent.EXTRA_EMAIL, arrayOf("octet@jmp.name"))
             email.putExtra(Intent.EXTRA_SUBJECT, "Speed of Sound")
             this@PreferencesActivity.startActivity(email)
             true
